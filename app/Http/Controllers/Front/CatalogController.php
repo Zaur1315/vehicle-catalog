@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Brand;
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\VehicleMake;
+use App\Models\VehicleModel;
+use App\Models\Vehicle;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
@@ -17,16 +17,16 @@ final class CatalogController extends Controller
         return $this->renderCatalog($request);
     }
 
-    public function category(Request $request, Category $category): View
+    public function category(Request $request, VehicleModel $category): View
     {
         abort_if(!$category->is_active, 404);
 
         return $this->renderCatalog($request, $category);
     }
 
-    private function renderCatalog(Request $request, ?Category $currentCategory = null): View
+    private function renderCatalog(Request $request, ?VehicleModel $currentCategory = null): View
     {
-        $query = Product::query()
+        $query = Vehicle::query()
             ->with(['category', 'brand'])
             ->where('is_active', true);
 
@@ -72,13 +72,13 @@ final class CatalogController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $categories = Category::query()
+        $categories = VehicleModel::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
-        $brands = Brand::query()
+        $brands = VehicleMake::query()
             ->where('is_active', true)
             ->orderBy('name')
             ->get();

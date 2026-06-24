@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Leads;
 
 use App\Filament\Resources\Leads\Pages\CreateLead;
@@ -13,12 +15,23 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
-class LeadResource extends Resource
+final class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedInbox;
+
+    protected static ?string $navigationLabel = 'Leads';
+
+    protected static ?string $modelLabel = 'Lead';
+
+    protected static ?string $pluralModelLabel = 'Leads';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Sales';
+
+    protected static ?int $navigationSort = 10;
 
     public static function form(Schema $schema): Schema
     {
@@ -28,13 +41,6 @@ class LeadResource extends Resource
     public static function table(Table $table): Table
     {
         return LeadsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

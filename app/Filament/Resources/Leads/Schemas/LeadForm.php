@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Leads\Schemas;
 
 use App\Models\Lead;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -18,10 +17,49 @@ final class LeadForm
     {
         return $schema
             ->components([
+                Section::make('Lead details')
+                    ->schema([
+                        Select::make('type')
+                            ->required()
+                            ->options([
+                                Lead::TYPE_VEHICLE_INQUIRY => 'Vehicle inquiry',
+                                Lead::TYPE_CONTACT => 'Contact',
+                                Lead::TYPE_FINANCE => 'Finance',
+                                Lead::TYPE_TRADE_IN => 'Trade-in',
+                            ])
+                            ->default(Lead::TYPE_CONTACT),
+
+                        Select::make('vehicle_id')
+                            ->label('Vehicle')
+                            ->relationship('vehicle', 'name')
+                            ->searchable()
+                            ->preload(),
+
+                        Select::make('status')
+                            ->required()
+                            ->options([
+                                Lead::STATUS_NEW => 'New',
+                                Lead::STATUS_CONTACTED => 'Contacted',
+                                Lead::STATUS_QUALIFIED => 'Qualified',
+                                Lead::STATUS_CLOSED => 'Closed',
+                                Lead::STATUS_SPAM => 'Spam',
+                            ])
+                            ->default(Lead::STATUS_NEW),
+
+                        TextInput::make('source')
+                            ->required()
+                            ->default('website')
+                            ->maxLength(255),
+                    ])
+                    ->columns(2),
+
                 Section::make('Customer information')
                     ->schema([
-                        TextInput::make('name')
+                        TextInput::make('first_name')
                             ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('last_name')
                             ->maxLength(255),
 
                         TextInput::make('email')
@@ -33,22 +71,11 @@ final class LeadForm
                             ->tel()
                             ->maxLength(255),
 
-                        TextInput::make('subject')
+                        TextInput::make('preferred_contact_time')
+                            ->label('Preferred contact time')
                             ->maxLength(255),
 
-                        Select::make('status')
-                            ->required()
-                            ->options([
-                                Lead::STATUS_NEW => 'New',
-                                Lead::STATUS_IN_PROGRESS => 'In progress',
-                                Lead::STATUS_CLOSED => 'Closed',
-                                Lead::STATUS_SPAM => 'Spam',
-                            ])
-                            ->default(Lead::STATUS_NEW),
-
-                        TextInput::make('source')
-                            ->required()
-                            ->default('website')
+                        TextInput::make('subject')
                             ->maxLength(255),
 
                         Textarea::make('message')
@@ -56,37 +83,6 @@ final class LeadForm
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
-
-                Section::make('Requested products')
-                    ->schema([
-                        Repeater::make('items')
-                            ->relationship('items')
-                            ->schema([
-                                Select::make('product_id')
-                                    ->label('Product')
-                                    ->relationship('product', 'name')
-                                    ->searchable()
-                                    ->preload(),
-
-                                TextInput::make('product_name')
-                                    ->required()
-                                    ->maxLength(255),
-
-                                TextInput::make('quantity')
-                                    ->numeric()
-                                    ->default(1)
-                                    ->minValue(1),
-
-                                TextInput::make('price')
-                                    ->numeric()
-                                    ->prefix('$')
-                                    ->minValue(0)
-                                    ->step('0.01'),
-                            ])
-                            ->columns(4)
-                            ->defaultItems(0)
-                            ->columnSpanFull(),
-                    ]),
             ]);
     }
 }

@@ -1,8 +1,8 @@
-@extends('front.layouts.app', ['title' => $currentCategory?->name ?? 'Equipment Catalog'])
+@extends('front.layouts.app', ['title' => $currentCategory?->name ?? 'Auto dealer inventory'])
 
 @section('content')
     @include('front.components.page-banner', [
-        'title' => $currentCategory?->name ?? 'Equipment Catalog',
+        'title' => $currentCategory?->name ?? 'Auto dealer inventory',
         'description' => $currentCategory?->description ?? 'Browse available agricultural equipment, compare specifications and add machines to your quote list.',
         'badge' => 'Catalog',
         'statLabel' => 'Available results',

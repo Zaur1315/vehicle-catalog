@@ -17,13 +17,13 @@ final class DatabaseSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'password' => Hash::make('password'),
-            ]
+            ],
         );
 
         $this->call([
-            CategorySeeder::class,
-            BrandSeeder::class,
-            ProductSeeder::class,
+            VehicleMakeSeeder::class,
+            VehicleModelSeeder::class,
+            VehicleSeeder::class,
         ]);
     }
 }

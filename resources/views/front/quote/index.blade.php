@@ -40,7 +40,7 @@
                 <div class="space-y-4">
                     @foreach($items as $item)
                         @php
-                            /** @var \App\Models\Product $product */
+                            /** @var \App\Models\Vehicle $product */
                             $product = $item['product'];
                         @endphp
 

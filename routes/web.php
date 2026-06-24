@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Front\CatalogController;
 use App\Http\Controllers\Front\ContactController;
 use App\Http\Controllers\Front\HomeController;
-use App\Http\Controllers\Front\ProductController;
+use App\Http\Controllers\Front\VehicleController;
 use App\Http\Controllers\Front\QuoteCartController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +18,10 @@ Route::get('/catalog', [CatalogController::class, 'index'])
 Route::get('/catalog/{category:slug}', [CatalogController::class, 'category'])
     ->name('catalog.category');
 
-Route::get('/equipment/{product:slug}', [ProductController::class, 'show'])
+Route::get('/equipment/{product:slug}', [VehicleController::class, 'show'])
     ->name('products.show');
 
-Route::post('/equipment/{product:slug}/quote', [ProductController::class, 'quote'])
+Route::post('/equipment/{product:slug}/quote', [VehicleController::class, 'quote'])
     ->name('products.quote');
 
 Route::get('/quote', [QuoteCartController::class, 'index'])

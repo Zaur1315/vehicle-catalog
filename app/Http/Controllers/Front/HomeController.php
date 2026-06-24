@@ -4,21 +4,21 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use App\Models\Category;
-use App\Models\Product;
+use App\Models\VehicleModel;
+use App\Models\Vehicle;
 use Illuminate\Contracts\View\View;
 
 final class HomeController extends Controller
 {
     public function index(): View
     {
-        $categories = Category::query()
+        $categories = VehicleModel::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
 
-        $featuredProducts = Product::query()
+        $featuredProducts = Vehicle::query()
             ->with(['category', 'brand'])
             ->where('is_active', true)
             ->where('is_featured', true)
@@ -26,7 +26,7 @@ final class HomeController extends Controller
             ->limit(6)
             ->get();
 
-        $latestProducts = Product::query()
+        $latestProducts = Vehicle::query()
             ->with(['category', 'brand'])
             ->where('is_active', true)
             ->latest()

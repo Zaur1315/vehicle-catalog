@@ -83,7 +83,7 @@
         <div>
             <div class="font-semibold">Quick links</div>
             <div class="mt-3 space-y-1 text-sm text-slate-300">
-                <p><a href="{{ route('catalog.index') }}" class="hover:text-white">Equipment catalog</a></p>
+                <p><a href="{{ route('catalog.index') }}" class="hover:text-white">Auto dealer inventory</a></p>
                 <p><a href="{{ url('/admin') }}" class="hover:text-white">Admin panel</a></p>
                 <p><a href="{{ route('contact.index') }}" class="hover:text-white">Contact us</a></p>
             </div>

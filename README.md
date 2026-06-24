@@ -1,21 +1,22 @@
-# AgroTech Catalog
+# Vehicle Catalog
 
-AgroTech Catalog is a Laravel-based MVP for an agricultural equipment dealer website.
+Vehicle Catalog is a Laravel-based MVP for an auto dealer website.
 
-The project was built as a reusable base for commercial catalog websites in agriculture, automotive, motorcycle, powersports, and equipment sales niches. It includes a public catalog, equipment detail pages, quote request workflow, quote list functionality, and an admin panel for managing inventory and leads.
+The project is built as a reusable base for automotive dealership websites. It includes a public vehicle inventory,
+vehicle detail pages, lead generation forms, and a Filament admin panel for managing makes, models, vehicles, images,
+and customer inquiries.
 
 ---
 
 ## Tech Stack
 
-- PHP 8.2+
-- Laravel 12
+- PHP 8.3+
+- Laravel 13
 - PostgreSQL
 - Filament Admin Panel
-- Blade
+- Blade / Inertia-ready frontend structure
 - Tailwind CSS
 - Vite
-- Session-based quote cart
 
 ---
 
@@ -23,23 +24,26 @@ The project was built as a reusable base for commercial catalog websites in agri
 
 ### Public Website
 
-- Modern landing page
-- Equipment catalog
-- Category pages
-- Product detail pages
-- Product image gallery
-- Product specifications
-- Catalog filters:
-    - Brand
-    - Condition
-    - Price range
+- Modern dealership landing page
+- Vehicle inventory page
+- Vehicle detail pages
+- Vehicle image gallery
+- Vehicle specifications
+- Inventory filters:
+    - Make
+    - Model
     - Model year
+    - Price range
+    - Mileage range
+    - Body type
+    - Transmission
+    - Drivetrain
+    - Exterior color
     - Sorting
-- Single product quote request form
-- Quote list for multiple products
+- Single vehicle inquiry form
 - Contact page
 - Responsive layout
-- Dark commercial UI with green accent styling
+- Commercial dealership UI
 
 ### Admin Panel
 
@@ -47,22 +51,21 @@ The project includes a Filament-based admin panel.
 
 Admin can manage:
 
-- Categories
-- Brands
-- Products
-- Product images
-- Product specifications
-- Leads / quote requests
+- Vehicle makes
+- Vehicle models
+- Vehicles
+- Vehicle images
+- Leads / customer inquiries
 
-### Quote Workflow
+### Lead Workflow
 
-The project supports two lead generation flows:
+The project supports dealership lead generation flows:
 
-1. Product quote request  
-   A customer sends a request directly from a product detail page.
+1. Vehicle inquiry  
+   A customer sends a request directly from a vehicle detail page.
 
-2. Quote list request  
-   A customer adds multiple products to the quote list and sends one combined request.
+2. Contact request  
+   A customer sends a general message from the contact page.
 
 All requests are stored as leads and can be reviewed in the admin panel.
 
@@ -70,16 +73,17 @@ All requests are stored as leads and can be reviewed in the admin panel.
 
 ## Project Goal
 
-The goal of this project is not only to build a single MVP website, but also to create a reusable Laravel base for fast production of similar commercial equipment catalog websites.
+The goal of this project is to build a reusable Laravel base for fast production of auto dealer websites.
 
 The structure can be reused for:
 
-- Agricultural equipment dealers
+- Used car dealerships
+- Independent auto dealers
+- Luxury car dealers
+- Truck dealers
 - Motorcycle dealers
-- Powersports stores
-- Automotive catalogs
-- Heavy machinery catalogs
-- Parts and equipment request platforms
+- Powersports dealers
+- Vehicle export / delivery businesses
 
 ---
 
@@ -89,7 +93,7 @@ Clone the repository:
 
 ```bash
 git clone <repository-url>
-cd agrotech-catalog
+cd vehicle-catalog
 ```
 
 Install PHP dependencies:
@@ -125,9 +129,12 @@ The project is configured for PostgreSQL by default.
 Create database and user:
 
 ```sql
-CREATE USER agrotech_user WITH PASSWORD 'agrotech_password';
-CREATE DATABASE agrotech_catalog OWNER agrotech_user;
-GRANT ALL PRIVILEGES ON DATABASE agrotech_catalog TO agrotech_user;
+CREATE
+USER vehicle_catalog_user WITH PASSWORD 'vehicle_catalog_password';
+CREATE
+DATABASE vehicle_catalog OWNER vehicle_catalog_user;
+GRANT ALL PRIVILEGES ON DATABASE
+vehicle_catalog TO vehicle_catalog_user;
 ```
 
 Update `.env` if needed:
@@ -136,9 +143,9 @@ Update `.env` if needed:
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=agrotech_catalog
-DB_USERNAME=agrotech_user
-DB_PASSWORD=agrotech_password
+DB_DATABASE=vehicle_catalog
+DB_USERNAME=vehicle_catalog_user
+DB_PASSWORD=vehicle_catalog_password
 ```
 
 Run migrations and seeders:
@@ -200,31 +207,34 @@ The default admin user is created by `DatabaseSeeder`.
 
 Seeders create demo data for:
 
-- Categories
-- Brands
-- Products
-- Product specifications
-- Product images
+- Vehicle makes
+- Vehicle models
+- Vehicles
 - Admin user
 
-Demo equipment includes tractors, harvesters, utility vehicles, balers, and attachments.
+Demo vehicles include sedans, SUVs, trucks, and luxury vehicles.
 
 ---
 
 ## Public Routes
 
 ```text
-GET     /                    Home page
-GET     /catalog             Equipment catalog
-GET     /catalog/{slug}      Category page
-GET     /equipment/{slug}    Product detail page
-POST    /equipment/{slug}/quote
-GET     /quote               Quote list page
-POST    /quote/{slug}/add
-DELETE  /quote/{slug}/remove
-POST    /quote/submit
-GET     /contact
-POST    /contact
+GET     /                       Home page
+GET     /inventory              Vehicle inventory
+GET     /inventory/{slug}       Vehicle detail page
+POST    /inventory/{slug}/lead  Vehicle inquiry form
+GET     /contact                Contact page
+POST    /contact                Contact form
+```
+
+Additional planned routes:
+
+```text
+GET     /delivery
+GET     /warranty-return
+GET     /about
+GET     /finance
+GET     /trade-in
 ```
 
 ---
@@ -232,13 +242,39 @@ POST    /contact
 ## Admin Resources
 
 ```text
-Catalog
-- Categories
-- Brands
-- Products
+Inventory
+- Makes
+- Models
+- Vehicles
 
 Sales
 - Leads
+```
+
+---
+
+## Core Domain Model
+
+```text
+VehicleMake
+    has many VehicleModel
+    has many Vehicle
+
+VehicleModel
+    belongs to VehicleMake
+    has many Vehicle
+
+Vehicle
+    belongs to VehicleMake
+    belongs to VehicleModel
+    has many VehicleImage
+    has many Lead
+
+VehicleImage
+    belongs to Vehicle
+
+Lead
+    belongs to Vehicle nullable
 ```
 
 ---
@@ -275,15 +311,22 @@ Check routes:
 php artisan route:list
 ```
 
+Search for old equipment/product references:
+
+```bash
+grep -R "Product\|Brand\|Category\|QuoteCart\|LeadItem\|ProductAttribute\|equipment\|quote cart" -n app database routes resources README.md
+```
+
 ---
 
 ## Notes
 
-- Product images uploaded from the admin panel are stored on the public disk.
+- Vehicle images uploaded from the admin panel are stored on the public disk.
 - Demo images can be served from the public directory or public storage disk.
-- Quote list is session-based and does not require user registration.
+- Vehicle inquiries do not require user registration.
 - Leads are stored in the database and managed from the admin panel.
-- The public Admin button is visible only for authenticated users.
+- The public Admin button should be visible only for authenticated users.
+- The old quote cart workflow is intentionally removed for the auto dealer version.
 
 ---
 
@@ -292,20 +335,18 @@ php artisan route:list
 Before submitting or deploying the project, check the following scenarios:
 
 - Home page opens correctly.
-- Catalog page opens correctly.
-- Category pages open correctly.
-- Catalog filters work.
-- Product detail page opens correctly.
-- Product images are displayed correctly.
-- Product quote form creates a lead.
-- Add to quote list works.
-- Quote list counter works.
-- Quote list submit creates a lead with selected products.
+- Inventory page opens correctly.
+- Inventory filters work.
+- Vehicle detail page opens correctly.
+- Vehicle images are displayed correctly.
+- Vehicle inquiry form creates a lead.
 - Contact form creates a lead.
 - Admin login works.
 - Admin button is hidden for guests.
-- Products are visible in admin.
-- Product images are visible in admin table.
+- Makes are visible in admin.
+- Models are visible in admin.
+- Vehicles are visible in admin.
+- Vehicle images are visible in admin table.
 - Image upload from admin works.
 - Leads are visible in admin.
 - Mobile layout is acceptable.
@@ -316,17 +357,22 @@ Before submitting or deploying the project, check the following scenarios:
 
 Possible next steps:
 
-- Product availability status
-- Dealer location management
+- Google Reviews integration through Google Places API
+- Delivery page
+- Warranty and return policy page
+- Finance payment calculator
+- Trade-in request form
 - Email notifications for new leads
 - Lead status history
 - Advanced inventory search
 - Saved filters
-- Multi-language support
 - SEO meta management
-- Deployment configuration
+- Schema.org markup for AutoDealer and Vehicle
+- Sitemap.xml and robots.txt
+- Google Analytics / Meta Pixel tracking
+- Live chat or WhatsApp widget
 - Automated tests
 
 ---
 
-### [Scroll to Top ↑](#agroTech-catalog)
+### [Scroll to Top ↑](#vehicle-catalog)

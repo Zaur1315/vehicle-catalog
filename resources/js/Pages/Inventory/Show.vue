@@ -1,5 +1,5 @@
 <script setup>
-import {Link, useForm} from '@inertiajs/vue3';
+import {Link, useForm, Head} from '@inertiajs/vue3';
 import {computed, ref} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
@@ -101,6 +101,8 @@ const nextImage = () => {
 </script>
 
 <template>
+    <Head title="Inventory" />
+
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-8">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

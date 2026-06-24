@@ -1,5 +1,5 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import {Link, Head} from '@inertiajs/vue3';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -56,6 +56,8 @@ const returnSteps = [
 </script>
 
 <template>
+    <Head title="Warranty Return"/>
+
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">

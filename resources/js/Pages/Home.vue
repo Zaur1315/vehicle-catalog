@@ -1,5 +1,5 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import {Link, Head} from '@inertiajs/vue3';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -15,6 +15,8 @@ defineProps({
 </script>
 
 <template>
+    <Head title="Home"/>
+
     <section class="relative overflow-hidden border-b border-white/10">
         <div
             class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.16),transparent_34%),linear-gradient(135deg,#0b0f14_0%,#111827_52%,#05070a_100%)]"/>

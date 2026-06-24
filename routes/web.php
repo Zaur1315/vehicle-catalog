@@ -2,39 +2,30 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Front\CatalogController;
-use App\Http\Controllers\Front\ContactController;
-use App\Http\Controllers\Front\HomeController;
-use App\Http\Controllers\Front\VehicleController;
-use App\Http\Controllers\Front\QuoteCartController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\WarrantyReturnController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])
-    ->name('home');
+Route::get('/', HomeController::class)->name('home');
 
-Route::get('/catalog', [CatalogController::class, 'index'])
-    ->name('catalog.index');
+Route::get('/inventory', InventoryController::class)->name('inventory.index');
 
-Route::get('/catalog/{category:slug}', [CatalogController::class, 'category'])
-    ->name('catalog.category');
+Route::get('/inventory/{vehicle:slug}', [VehicleController::class, 'show'])
+    ->name('vehicles.show');
 
-Route::get('/equipment/{product:slug}', [VehicleController::class, 'show'])
-    ->name('products.show');
+Route::post('/inventory/{vehicle:slug}/inquiry', [VehicleController::class, 'inquiry'])
+    ->name('vehicles.inquiry');
 
-Route::post('/equipment/{product:slug}/quote', [VehicleController::class, 'quote'])
-    ->name('products.quote');
+Route::get('/delivery', DeliveryController::class)->name('delivery');
 
-Route::get('/quote', [QuoteCartController::class, 'index'])
-    ->name('quote.index');
+Route::get('/warranty-return', WarrantyReturnController::class)->name('warranty-return');
 
-Route::post('/quote/{product:slug}/add', [QuoteCartController::class, 'add'])
-    ->name('quote.add');
-
-Route::delete('/quote/{product:slug}/remove', [QuoteCartController::class, 'remove'])
-    ->name('quote.remove');
-
-Route::post('/quote/submit', [QuoteCartController::class, 'submit'])
-    ->name('quote.submit');
+Route::get('/about', AboutController::class)->name('about');
 
 Route::get('/contact', [ContactController::class, 'index'])
     ->name('contact.index');

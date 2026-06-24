@@ -311,23 +311,6 @@ Check routes:
 php artisan route:list
 ```
 
-Search for old equipment/product references:
-
-```bash
-grep -R "Product\|Brand\|Category\|QuoteCart\|LeadItem\|ProductAttribute\|equipment\|quote cart" -n app database routes resources README.md
-```
-
----
-
-## Notes
-
-- Vehicle images uploaded from the admin panel are stored on the public disk.
-- Demo images can be served from the public directory or public storage disk.
-- Vehicle inquiries do not require user registration.
-- Leads are stored in the database and managed from the admin panel.
-- The public Admin button should be visible only for authenticated users.
-- The old quote cart workflow is intentionally removed for the auto dealer version.
-
 ---
 
 ## Final Manual Checklist

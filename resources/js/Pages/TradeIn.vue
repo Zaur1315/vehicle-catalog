@@ -1,5 +1,6 @@
 <script setup>
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import {Link, useForm} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -52,8 +53,10 @@ const processSteps = [
 </script>
 
 <template>
-    <Head title="Trade-In"/>
-
+    <SeoHead
+        title="Trade-In"
+        description="Request a trade-in estimate for your current vehicle by submitting make, model, year, mileage, condition, and VIN."
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">

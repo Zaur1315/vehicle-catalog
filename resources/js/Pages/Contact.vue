@@ -1,5 +1,6 @@
 <script setup>
-import {useForm, Head} from '@inertiajs/vue3';
+import {useForm} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -24,8 +25,10 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Contact"/>
-
+    <SeoHead
+        title="Contact"
+        description="Contact our sales team about vehicle availability, pricing, delivery, warranty, finance, trade-in, or general purchase questions."
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">

@@ -4,6 +4,7 @@ import {ref} from 'vue';
 
 const page = usePage();
 const mobileMenuOpen = ref(false);
+const logoUrl = '/images/logo.png';
 
 const navigation = [
     {label: 'Inventory', href: '/inventory'},
@@ -44,11 +45,11 @@ const isActive = (href) => {
         <header class="sticky top-0 z-50 border-b border-white/10 bg-[#0b0f14]/95 backdrop-blur">
             <div class="site-container flex items-center justify-between py-5">
                 <Link href="/" class="group flex items-center gap-4">
-                    <span
-                        class="flex h-11 w-11 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300 font-black text-neutral-950">
-                        AD
-                    </span>
-
+                    <img
+                        :src="logoUrl"
+                        alt="Auto Dealer"
+                        class="h-11 w-auto"
+                    />
                     <span>
                         <span class="block text-sm font-black uppercase tracking-[0.28em]">
                             Auto Dealer

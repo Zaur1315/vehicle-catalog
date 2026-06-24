@@ -1,5 +1,6 @@
 <script setup>
-import {Link, useForm, Head} from '@inertiajs/vue3';
+import {Link, useForm} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import {computed, ref} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
@@ -16,6 +17,58 @@ const props = defineProps({
         type: Array,
         default: () => [],
     },
+});
+
+const numericPrice = computed(() => {
+    if (!props.vehicle.price) {
+        return null;
+    }
+
+    const value = String(props.vehicle.price).replace(/[^\d.]/g, '');
+
+    return value ? Number(value) : null;
+});
+
+const vehicleSchema = computed(() => {
+    const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Vehicle',
+        name: props.vehicle.name,
+        description: props.vehicle.short_description || props.vehicle.description || props.vehicle.name,
+        brand: {
+            '@type': 'Brand',
+            name: props.vehicle.make || 'Vehicle',
+        },
+        model: props.vehicle.model || undefined,
+        vehicleModelDate: props.vehicle.year ? String(props.vehicle.year) : undefined,
+        mileageFromOdometer: props.vehicle.mileage
+            ? {
+                '@type': 'QuantitativeValue',
+                value: String(props.vehicle.mileage).replace(/[^\d]/g, ''),
+                unitCode: 'SMI',
+            }
+            : undefined,
+        vehicleTransmission: props.vehicle.transmission || undefined,
+        fuelType: props.vehicle.fuel_type || undefined,
+        color: props.vehicle.exterior_color || undefined,
+        vehicleIdentificationNumber: props.vehicle.vin || undefined,
+        image: galleryImages.value.map((image) => image.url),
+        offers: {
+            '@type': 'Offer',
+            availability: 'https://schema.org/InStock',
+            priceCurrency: 'USD',
+            price: numericPrice.value || undefined,
+            url: typeof window !== 'undefined' ? window.location.href : undefined,
+        },
+    };
+
+    Object.keys(schema).forEach((key) => {
+        if (schema[key] === undefined || schema[key] === null || schema[key] === '') {
+            delete schema[key];
+        }
+    });
+
+    return schema;
 });
 
 const activeImageIndex = ref(0);
@@ -101,8 +154,13 @@ const nextImage = () => {
 </script>
 
 <template>
-    <Head title="Inventory" />
-
+    <SeoHead
+        :title="vehicle.seo_title || vehicle.name"
+        :description="vehicle.seo_description || vehicle.short_description || `View details, price, mileage, photos, and inquiry options for ${vehicle.name}.`"
+        :image="vehicle.main_image"
+        type="product"
+        :schema="vehicleSchema"
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-8">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

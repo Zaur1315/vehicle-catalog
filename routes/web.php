@@ -8,6 +8,8 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\TermsController;
 use App\Http\Controllers\TradeInController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\WarrantyReturnController;
@@ -46,3 +48,9 @@ Route::get('/trade-in', [TradeInController::class, 'index'])
 
 Route::post('/trade-in', [TradeInController::class, 'store'])
     ->name('trade-in.store');
+
+Route::get('/privacy-policy', PrivacyPolicyController::class)
+    ->name('privacy-policy');
+
+Route::get('terms', TermsController::class)
+    ->name('terms');

@@ -1,5 +1,6 @@
 <script setup>
-import {Link, router, Head} from '@inertiajs/vue3';
+import {Link, router} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import {computed, reactive, watch} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
@@ -83,8 +84,10 @@ watch(
 </script>
 
 <template>
-    <Head title="Inventory"/>
-
+    <SeoHead
+        title="Inventory"
+        description="Browse available vehicles by make, model, year, price, mileage, body type, transmission, drivetrain, and color."
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">

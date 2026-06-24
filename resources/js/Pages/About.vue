@@ -1,5 +1,6 @@
 <script setup>
-import {Head, Link} from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -33,8 +34,10 @@ const process = [
 </script>
 
 <template>
-    <Head title="About"/>
-
+    <SeoHead
+        title="About"
+        description="Learn about our dealership approach, vehicle inventory standards, buyer support, delivery, warranty, finance, and trade-in options."
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">

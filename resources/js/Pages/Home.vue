@@ -1,6 +1,7 @@
 <script setup>
-import {Link, Head} from '@inertiajs/vue3';
+import {Link} from '@inertiajs/vue3';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
+import SeoHead from "@/Components/SeoHead.vue";
 
 defineOptions({
     layout: SiteLayout,
@@ -12,10 +13,38 @@ defineProps({
         default: () => [],
     },
 });
+
+const homeSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'AutoDealer',
+    name: 'Auto Dealer',
+    description: 'Vehicle dealership offering inspected vehicle inventory, delivery, warranty, finance, and trade-in options.',
+    telephone: '+10000000000',
+    email: 'sales@example.com',
+    url: typeof window !== 'undefined' ? window.location.origin : '',
+    openingHoursSpecification: [
+        {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+            ],
+            opens: '09:00',
+            closes: '17:00',
+        },
+    ],
+};
 </script>
 
 <template>
-    <Head title="Home"/>
+    <SeoHead
+        title="Auto Dealer"
+        description="Browse inspected vehicles, request information, and contact our sales team for delivery, warranty, finance, and trade-in options."
+        :schema="homeSchema"
+    />
 
     <section class="relative overflow-hidden border-b border-white/10">
         <div

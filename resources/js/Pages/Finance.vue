@@ -1,5 +1,6 @@
 <script setup>
-import {Head, Link, useForm} from '@inertiajs/vue3';
+import {Link, useForm} from '@inertiajs/vue3';
+import SeoHead from '@/Components/SeoHead.vue';
 import {computed} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
@@ -56,8 +57,10 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Finance"/>
-
+    <SeoHead
+        title="Finance"
+        description="Submit a vehicle finance request and learn about estimated payments, down payment, term options, and next steps."
+    />
     <section class="border-b border-white/10 bg-[#080b0f]">
         <div class="site-container py-10">
             <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">

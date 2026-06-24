@@ -49,4 +49,43 @@ final class Lead extends Model
     {
         return trim($this->first_name . ' ' . ($this->last_name ?? ''));
     }
+
+    public function getPayloadSummaryAttribute(): string
+    {
+        $payload = $this->payload ?? [];
+
+        if ($payload === []) {
+            return '-';
+        }
+
+        return match ($this->type) {
+            self::TYPE_FINANCE => sprintf(
+                'Vehicle: %s | Amount: %s | Down: %s | Term: %s months | Credit: %s',
+                $payload['vehicle_interest'] ?? '-',
+                $payload['amount'] ?? '-',
+                $payload['down_payment'] ?? '-',
+                $payload['term_months'] ?? '-',
+                $payload['credit_score_range'] ?? '-',
+            ),
+
+            self::TYPE_TRADE_IN => sprintf(
+                '%s %s %s | Mileage: %s | Condition: %s | VIN: %s',
+                $payload['year'] ?? '-',
+                $payload['make'] ?? '-',
+                $payload['model'] ?? '-',
+                isset($payload['mileage']) ? number_format((int)$payload['mileage']) . ' mi' : '-',
+                $payload['condition'] ?? '-',
+                $payload['vin'] ?? '-',
+            ),
+
+            self::TYPE_VEHICLE_INQUIRY => sprintf(
+                'Vehicle: %s | Stock: %s | VIN: %s',
+                $payload['vehicle_name'] ?? '-',
+                $payload['stock_number'] ?? '-',
+                $payload['vin'] ?? '-',
+            ),
+
+            default => '-',
+        };
+    }
 }

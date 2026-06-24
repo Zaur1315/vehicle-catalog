@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Leads\Schemas;
 
 use App\Models\Lead;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -83,6 +84,16 @@ final class LeadForm
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
+
+                Section::make('Additional data')
+                    ->schema([
+                        KeyValue::make('payload')
+                            ->label('Payload')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->columnSpanFull(),
+                    ])
+                    ->visible(static fn ($record): bool => $record !== null && filled($record->payload)),
             ]);
     }
 }

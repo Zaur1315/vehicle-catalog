@@ -38,6 +38,12 @@ final class LeadsTable
                     ->searchable()
                     ->sortable()
                     ->placeholder('-'),
+//
+//                TextColumn::make('payload_summary')
+//                    ->label('Details')
+//                    ->wrap()
+//                    ->limit(120)
+//                    ->toggleable(),
 
                 TextColumn::make('type')
                     ->badge()

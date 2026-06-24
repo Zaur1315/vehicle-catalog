@@ -1,6 +1,6 @@
 <template>
-    <main class="min-h-screen bg-neutral-950 px-6 py-12 text-white">
-        <section class="mx-auto max-w-5xl">
+    <section class="site-section">
+        <div class="site-container">
             <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
                 About Us
             </p>
@@ -30,6 +30,14 @@
                     <p class="mt-2 text-neutral-300">Customer satisfaction</p>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 </template>
+
+<script setup>
+import SiteLayout from '@/Layouts/SiteLayout.vue';
+
+defineOptions({
+    layout: SiteLayout,
+});
+</script>

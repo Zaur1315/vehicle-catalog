@@ -15,4 +15,9 @@ export default defineConfig({
         vue(),
         tailwindcss(),
     ],
+    resolve: {
+        alias: {
+            '@': '/resources/js',
+        },
+    },
 });

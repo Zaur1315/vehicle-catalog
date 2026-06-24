@@ -1,5 +1,10 @@
 <script setup>
+import SiteLayout from '@/Layouts/SiteLayout.vue';
 import {useForm} from '@inertiajs/vue3';
+
+defineOptions({
+    layout: SiteLayout,
+});
 
 const form = useForm({
     first_name: '',
@@ -23,8 +28,8 @@ const submit = () => {
 </script>
 
 <template>
-    <main class="min-h-screen bg-neutral-950 px-6 py-12 text-white">
-        <section class="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2">
+    <section class="site-section">
+        <div class="site-container">
             <div>
                 <p class="text-sm font-semibold uppercase tracking-[0.3em] text-amber-300">
                     Finance
@@ -95,6 +100,6 @@ const submit = () => {
                     Submit Finance Request
                 </button>
             </form>
-        </section>
-    </main>
+        </div>
+    </section>
 </template>

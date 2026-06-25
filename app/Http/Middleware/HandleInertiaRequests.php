@@ -37,9 +37,32 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+
             'flash' => [
-                'success' => fn() => $request->session()->get('success'),
-                'error' => fn() => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
+
+            'site' => [
+                'name' => config('site.name'),
+                'tagline' => config('site.tagline'),
+
+                'phone' => config('site.phone'),
+                'phone_tel' => config('site.phone_tel'),
+
+                'email' => config('site.email'),
+
+                'address' => config('site.address'),
+                'maps_url' => config('site.maps_url'),
+
+                'city' => config('site.city'),
+                'state' => config('site.state'),
+                'zip' => config('site.zip'),
+                'country' => config('site.country'),
+
+                'business_hours' => config('site.business_hours'),
+
+                'logo' => config('site.logo'),
             ],
         ];
     }

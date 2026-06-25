@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'google_places' => [
+        'api_key' => env('GOOGLE_PLACES_API_KEY'),
+        'place_id' => env('GOOGLE_PLACES_PLACE_ID'),
+        'min_review_rating' => (int) env('GOOGLE_REVIEWS_MIN_RATING', 4),
+    ],
+
 ];

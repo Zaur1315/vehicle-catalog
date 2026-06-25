@@ -1,11 +1,16 @@
 <script setup>
-import {useForm} from '@inertiajs/vue3';
+import {useForm, usePage} from '@inertiajs/vue3';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
+import {computed} from "vue";
 
 defineOptions({
     layout: SiteLayout,
 });
+
+const page = usePage();
+
+const site = computed(() => page.props.site || {});
 
 const form = useForm({
     first_name: '',
@@ -80,10 +85,10 @@ const submit = () => {
                                 </p>
 
                                 <a
-                                    href="tel:+10000000000"
+                                    :href="`tel:${site.phone_tel}`"
                                     class="mt-2 block text-2xl font-black text-white hover:text-amber-300"
                                 >
-                                    +1 (000) 000-0000
+                                    {{ site.phone }}
                                 </a>
                             </div>
 
@@ -93,10 +98,10 @@ const submit = () => {
                                 </p>
 
                                 <a
-                                    href="mailto:sales@example.com"
+                                    :href="`mailto:${site.email}`"
                                     class="mt-2 block text-lg font-bold text-white hover:text-amber-300"
                                 >
-                                    sales@example.com
+                                    {{site.email}}
                                 </a>
                             </div>
 
@@ -106,7 +111,7 @@ const submit = () => {
                                 </p>
 
                                 <p class="mt-2 text-sm leading-6 text-slate-300">
-                                    Monday – Friday: 9:00 AM – 5:00 PM
+                                    {{site.business_hours}}
                                 </p>
 
                                 <p class="text-sm leading-6 text-slate-400">

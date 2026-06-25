@@ -1,7 +1,12 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import {Link, usePage} from '@inertiajs/vue3';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 import SeoHead from "@/Components/SeoHead.vue";
+import {computed} from "vue";
+
+const page = usePage();
+
+const site = computed(() => page.props.site || {});
 
 defineOptions({
     layout: SiteLayout,
@@ -12,15 +17,19 @@ defineProps({
         type: Array,
         default: () => [],
     },
+    reviews: {
+        type: Array,
+        default: () => [],
+    },
 });
 
 const homeSchema = {
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
-    name: 'Auto Dealer',
+    name: site.name,
     description: 'Vehicle dealership offering inspected vehicle inventory, delivery, warranty, finance, and trade-in options.',
-    telephone: '+10000000000',
-    email: 'sales@example.com',
+    telephone: site.phone_tel,
+    email: site.email,
     url: typeof window !== 'undefined' ? window.location.origin : '',
     openingHoursSpecification: [
         {
@@ -41,7 +50,7 @@ const homeSchema = {
 
 <template>
     <SeoHead
-        title="Auto Dealer"
+        :title=site.name
         description="Browse inspected vehicles, request information, and contact our sales team for delivery, warranty, finance, and trade-in options."
         :schema="homeSchema"
     />
@@ -86,11 +95,27 @@ const homeSchema = {
 
                     <div class="divide-y divide-white/10">
                         <Link
-                            v-for="vehicle in featuredVehicles.slice(0, 4)"
+                            v-for="vehicle in featuredVehicles.slice(0, 3)"
                             :key="vehicle.id"
                             :href="`/inventory/${vehicle.slug}`"
-                            class="grid gap-4 px-6 py-5 transition hover:bg-white/[0.04] sm:grid-cols-[1fr_auto]"
+                            class="grid gap-4 px-6 py-5 transition hover:bg-white/[0.04] sm:grid-cols-[96px_1fr_auto]"
                         >
+                            <div class="overflow-hidden rounded-xl border border-white/10 bg-black/30">
+                                <img
+                                    v-if="vehicle.image_thumb"
+                                    :src="vehicle.image_thumb"
+                                    :alt="vehicle.name"
+                                    class="h-24 w-full object-cover transition duration-500 hover:scale-105"
+                                >
+
+                                <div
+                                    v-else
+                                    class="flex h-24 items-center justify-center bg-white/[0.03] text-xs font-bold uppercase tracking-wide text-slate-600"
+                                >
+                                    No Photo
+                                </div>
+                            </div>
+
                             <div>
                                 <p class="text-sm text-slate-400">
                                     {{ vehicle.year }} · {{ vehicle.make }} {{ vehicle.model }}
@@ -166,41 +191,180 @@ const homeSchema = {
 
             <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                 <article class="dealer-card p-6">
-                    <span class="text-3xl font-black text-amber-300">01</span>
-                    <h3 class="mt-6 text-xl font-black">Inspected inventory</h3>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
+                        ✅
+                    </div>
+
+                    <h3 class="mt-6 text-xl font-black">
+                        Warranty
+                    </h3>
+
                     <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Vehicle details, mileage, VIN, condition, and features are presented clearly.
+                        90 days / 5,000 miles warranty coverage on selected components.
                     </p>
                 </article>
 
                 <article class="dealer-card p-6">
-                    <span class="text-3xl font-black text-amber-300">02</span>
-                    <h3 class="mt-6 text-xl font-black">Enclosed delivery</h3>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
+                        🚚
+                    </div>
+
+                    <h3 class="mt-6 text-xl font-black">
+                        Delivery
+                    </h3>
+
                     <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Cars are transported in an enclosed trailer with insured coverage.
+                        Enclosed trailer delivery with insured transportation options.
                     </p>
                 </article>
 
                 <article class="dealer-card p-6">
-                    <span class="text-3xl font-black text-amber-300">03</span>
-                    <h3 class="mt-6 text-xl font-black">Warranty terms</h3>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
+                        ↪
+                    </div>
+
+                    <h3 class="mt-6 text-xl font-black">
+                        Return Policy
+                    </h3>
+
                     <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Warranty and return rules are explained before the purchase process.
+                        14-day return policy terms explained before purchase confirmation.
                     </p>
                 </article>
 
                 <article class="dealer-card p-6">
-                    <span class="text-3xl font-black text-amber-300">04</span>
-                    <h3 class="mt-6 text-xl font-black">Sales support</h3>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
+                        🎧
+                    </div>
+
+                    <h3 class="mt-6 text-xl font-black">
+                        Support
+                    </h3>
+
                     <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Contact our team for availability, finance, trade-in, and delivery questions.
+                        Sales support for availability, finance, trade-in, warranty, and delivery questions.
                     </p>
                 </article>
             </div>
         </div>
     </section>
-
     <section class="site-section-tight border-y border-white/10 bg-white/[0.025]">
+        <div class="site-container">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">
+                        Google Reviews
+                    </p>
+
+                    <h2 class="mt-3 heading-lg">
+                        What buyers say about us.
+                    </h2>
+                </div>
+
+                <p class="max-w-xl body-muted">
+                    We display Google Business reviews with a rating of 4 stars and higher.
+                </p>
+            </div>
+
+            <div
+                v-if="reviews.length"
+                class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            >
+                <article
+                    v-for="review in reviews"
+                    :key="review.id"
+                    class="dealer-card p-6"
+                >
+                    <div class="flex items-start gap-4">
+                        <a
+                            v-if="review.author_url"
+                            :href="review.author_url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="shrink-0"
+                        >
+                            <img
+                                v-if="review.author_photo_url"
+                                :src="review.author_photo_url"
+                                :alt="review.author_name"
+                                class="h-12 w-12 rounded-full object-cover"
+                            >
+
+                            <div
+                                v-else
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-300 font-black text-neutral-950"
+                            >
+                                {{ review.author_name.charAt(0) }}
+                            </div>
+                        </a>
+
+                        <div v-else class="shrink-0">
+                            <img
+                                v-if="review.author_photo_url"
+                                :src="review.author_photo_url"
+                                :alt="review.author_name"
+                                class="h-12 w-12 rounded-full object-cover"
+                            >
+
+                            <div
+                                v-else
+                                class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-300 font-black text-neutral-950"
+                            >
+                                {{ review.author_name.charAt(0) }}
+                            </div>
+                        </div>
+
+                        <div>
+                            <a
+                                v-if="review.author_url"
+                                :href="review.author_url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="font-black hover:text-amber-300"
+                            >
+                                {{ review.author_name }}
+                            </a>
+
+                            <p v-else class="font-black">
+                                {{ review.author_name }}
+                            </p>
+
+                            <p class="mt-1 text-xs text-slate-500">
+                                {{ review.date }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex gap-1 text-amber-300">
+                    <span
+                        v-for="star in review.rating"
+                        :key="star"
+                    >
+                        ★
+                    </span>
+                    </div>
+
+                    <p class="mt-4 line-clamp-6 text-sm leading-6 text-slate-300">
+                        {{ review.text }}
+                    </p>
+                </article>
+            </div>
+
+            <div
+                v-else
+                class="border border-white/10 bg-white/[0.025] p-8 text-center"
+            >
+                <h3 class="text-2xl font-black">
+                    Google reviews will appear here soon.
+                </h3>
+
+                <p class="mt-3 text-sm leading-6 text-slate-400">
+                    Reviews are imported from Google Business and filtered to show ratings of 4 stars and higher.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section class="site-section">
         <div class="site-container">
             <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
                 <div>

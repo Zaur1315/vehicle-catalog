@@ -1,11 +1,17 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import {Link, usePage} from '@inertiajs/vue3';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
+import {computed} from "vue";
 
 defineOptions({
     layout: SiteLayout,
 });
+
+const page = usePage();
+
+const site = computed(() => page.props.site || {});
+
 </script>
 
 <template>
@@ -26,7 +32,7 @@ defineOptions({
                 </h1>
 
                 <p class="mt-5 body-muted">
-                    This Privacy Policy explains how Auto Dealer collects and uses information submitted through this
+                    This Privacy Policy explains how {{ site.name }} collects and uses information submitted through this
                     website, including inventory inquiries, contact forms, finance requests, trade-in requests,
                     analytics, and advertising tools.
                 </p>
@@ -247,15 +253,15 @@ defineOptions({
                             <div class="border border-white/10 bg-white/[0.025] p-5">
                                 <p>
                                     <span class="font-black text-white">Email:</span>
-                                    <a href="mailto:sales@example.com" class="ml-2 text-amber-300 hover:text-amber-200">
-                                        sales@example.com
+                                    <a :href="`mailto:${site.email}`" class="ml-2 text-amber-300 hover:text-amber-200">
+                                        {{ site.email}}
                                     </a>
                                 </p>
 
                                 <p class="mt-2">
                                     <span class="font-black text-white">Phone:</span>
-                                    <a href="tel:+10000000000" class="ml-2 text-amber-300 hover:text-amber-200">
-                                        +1 (000) 000-0000
+                                    <a :href="`tel:${site.phone_tel}`" class="ml-2 text-amber-300 hover:text-amber-200">
+                                        {{ site.phone}}
                                     </a>
                                 </p>
                             </div>

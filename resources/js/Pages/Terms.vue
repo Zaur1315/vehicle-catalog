@@ -1,11 +1,17 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import {Link, usePage} from '@inertiajs/vue3';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
+import {computed} from "vue";
 
 defineOptions({
     layout: SiteLayout,
 });
+
+const page = usePage();
+
+const site = computed(() => page.props.site || {});
+
 </script>
 
 <template>
@@ -266,7 +272,7 @@ defineOptions({
                             </p>
 
                             <p>
-                                To the maximum extent permitted by applicable law, Auto Dealer is not responsible for
+                                To the maximum extent permitted by applicable law, {{site.name}} is not responsible for
                                 losses resulting from website errors, delays, inaccurate listings, third-party tools,
                                 technical issues, or reliance on information that has not been confirmed in writing.
                             </p>
@@ -291,15 +297,15 @@ defineOptions({
                             <div class="border border-white/10 bg-white/[0.025] p-5">
                                 <p>
                                     <span class="font-black text-white">Email:</span>
-                                    <a href="mailto:sales@example.com" class="ml-2 text-amber-300 hover:text-amber-200">
-                                        sales@example.com
+                                    <a :href="`mailto:${site.email}`" class="ml-2 text-amber-300 hover:text-amber-200">
+                                        {{ site.email}}
                                     </a>
                                 </p>
 
                                 <p class="mt-2">
                                     <span class="font-black text-white">Phone:</span>
-                                    <a href="tel:+10000000000" class="ml-2 text-amber-300 hover:text-amber-200">
-                                        +1 (000) 000-0000
+                                    <a :href="`tel:${site.phone_tel}`" class="ml-2 text-amber-300 hover:text-amber-200">
+                                        {{ site.phone}}
                                     </a>
                                 </p>
                             </div>

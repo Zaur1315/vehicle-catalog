@@ -1,6 +1,6 @@
 <script setup>
 import {Link, usePage} from '@inertiajs/vue3';
-import {ref} from 'vue';
+import {computed, ref} from 'vue';
 
 const page = usePage();
 const mobileMenuOpen = ref(false);
@@ -16,6 +16,8 @@ const navigation = [
     {label: 'Contact', href: '/contact'},
 ];
 
+const site = computed(() => page.props.site || {});
+
 const isActive = (href) => {
     return page.url === href || page.url.startsWith(`${href}/`);
 };
@@ -26,15 +28,15 @@ const isActive = (href) => {
         <div class="border-b border-white/10 bg-[#080b0f]">
             <div
                 class="site-container flex flex-col gap-2 py-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
-                <p>Mon–Fri 9:00 AM – 5:00 PM</p>
+                <p>{{ site.business_hours }}</p>
 
                 <div class="flex flex-wrap gap-x-6 gap-y-2">
-                    <a href="tel:+10000000000" class="hover:text-white">
-                        +1 (000) 000-0000
+                    <a :href="`tel:${site.phone_tel}`" class="hover:text-white">
+                        {{ site.phone }}
                     </a>
 
-                    <a href="mailto:sales@example.com" class="hover:text-white">
-                        sales@example.com
+                    <a :href="`mailto:${site.email}`" class="hover:text-white">
+                        {{ site.email }}
                     </a>
 
                     <span>Enclosed delivery available</span>
@@ -47,12 +49,12 @@ const isActive = (href) => {
                 <Link href="/" class="group flex items-center gap-4">
                     <img
                         :src="logoUrl"
-                        alt="Auto Dealer"
+                        :alt="site.name"
                         class="h-11 w-auto"
                     />
                     <span>
                         <span class="block text-sm font-black uppercase tracking-[0.28em]">
-                            Auto Dealer
+                            {{ site.name }}
                         </span>
                         <span class="block text-xs text-slate-500">
                             Premium vehicle inventory
@@ -142,7 +144,7 @@ const isActive = (href) => {
 
                         <div>
                             <p class="text-sm font-black uppercase tracking-[0.28em]">
-                                Auto Dealer
+                                {{ site.name }}
                             </p>
                             <p class="text-xs text-slate-500">
                                 Premium vehicle inventory
@@ -196,7 +198,7 @@ const isActive = (href) => {
             <div class="border-t border-white/10">
                 <div
                     class="site-container flex flex-col gap-3 py-5 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
-                    <p>© {{ new Date().getFullYear() }} Auto Dealer. All rights reserved.</p>
+                    <p>© {{ new Date().getFullYear() }} {{ site.name }}. All rights reserved.</p>
                     <p>Vehicle availability, pricing, mileage, and terms are subject to confirmation.</p>
                 </div>
             </div>

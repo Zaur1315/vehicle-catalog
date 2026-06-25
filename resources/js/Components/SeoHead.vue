@@ -31,7 +31,9 @@ const props = defineProps({
 
 const page = usePage();
 
-const siteName = 'Auto Dealer';
+const site = computed(() => page.props.site || {})
+
+const siteName = site.name;
 
 const fullTitle = computed(() => {
     return props.title === siteName ? siteName : `${props.title} | ${siteName}`;

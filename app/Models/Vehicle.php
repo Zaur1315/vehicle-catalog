@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 final class Vehicle extends Model
 {
@@ -116,5 +117,20 @@ final class Vehicle extends Model
         }
 
         return asset('storage/' . ltrim($this->main_image, '/'));
+    }
+
+    public function getMainImageThumbUrlAttribute(): ?string
+    {
+        if (! $this->main_image) {
+            return null;
+        }
+
+        $thumbPath = str_replace('/large/', '/thumb/', $this->main_image);
+
+        if (Storage::disk('public')->exists($thumbPath)) {
+            return Storage::url($thumbPath);
+        }
+
+        return Storage::url($this->main_image);
     }
 }

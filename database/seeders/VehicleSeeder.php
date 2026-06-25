@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Vehicle;
+use App\Models\VehicleImage;
 use App\Models\VehicleMake;
 use App\Models\VehicleModel;
 use Illuminate\Database\Seeder;
@@ -31,7 +32,15 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => '4T1G11AK1MU000001',
                 'stock_number' => 'A1001',
-                'features' => ['Backup camera', 'Bluetooth', 'Lane assist', 'Apple CarPlay'],
+                'image_count' => 4,
+                'features' => [
+                    'Backup camera',
+                    'Bluetooth',
+                    'Lane assist',
+                    'Apple CarPlay',
+                    'Sport seats',
+                    'Automatic climate control',
+                ],
             ],
             [
                 'make' => 'Ford',
@@ -49,7 +58,15 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Gray',
                 'vin' => '1FTEW1E45LFA00002',
                 'stock_number' => 'A1002',
-                'features' => ['Tow package', 'Backup camera', 'Bluetooth', 'Running boards'],
+                'image_count' => 4,
+                'features' => [
+                    'Tow package',
+                    'Backup camera',
+                    'Bluetooth',
+                    'Running boards',
+                    'FX4 package',
+                    'Power driver seat',
+                ],
             ],
             [
                 'make' => 'BMW',
@@ -67,7 +84,15 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Cognac',
                 'vin' => '5UXCR6C05N9000003',
                 'stock_number' => 'A1003',
-                'features' => ['Navigation', 'Panoramic roof', 'Heated seats', 'Leather interior'],
+                'image_count' => 3,
+                'features' => [
+                    'Navigation',
+                    'Panoramic roof',
+                    'Heated seats',
+                    'Leather interior',
+                    'Premium package',
+                    'Parking sensors',
+                ],
             ],
             [
                 'make' => 'Mercedes-Benz',
@@ -85,7 +110,15 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => 'W1KWF8DB1MR000004',
                 'stock_number' => 'A1004',
-                'features' => ['Blind spot monitor', 'Sunroof', 'Bluetooth', 'Premium audio'],
+                'image_count' => 3,
+                'features' => [
+                    'Blind spot monitor',
+                    'Sunroof',
+                    'Bluetooth',
+                    'Premium audio',
+                    'Power seats',
+                    'Keyless start',
+                ],
             ],
             [
                 'make' => 'Chevrolet',
@@ -103,7 +136,15 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => '1GNSKBKC9KR000005',
                 'stock_number' => 'A1005',
-                'features' => ['Third row seating', 'Tow package', 'Remote start', 'Backup camera'],
+                'image_count' => 6,
+                'features' => [
+                    'Third row seating',
+                    'Tow package',
+                    'Remote start',
+                    'Backup camera',
+                    'Leather seats',
+                    'Rear climate control',
+                ],
             ],
         ];
 
@@ -133,13 +174,17 @@ final class VehicleSeeder extends Seeder
                 $data['trim'],
             );
 
-            Vehicle::query()->updateOrCreate(
+            $slug = Str::slug($name . '-' . $data['stock_number']);
+            $mainImagePath = $this->imagePath($slug, 'large', 'main');
+
+            /** @var Vehicle $vehicle */
+            $vehicle = Vehicle::query()->updateOrCreate(
                 ['stock_number' => $data['stock_number']],
                 [
                     'vehicle_make_id' => $make->id,
                     'vehicle_model_id' => $model->id,
                     'name' => $name,
-                    'slug' => Str::slug($name . '-' . $data['stock_number']),
+                    'slug' => $slug,
                     'vin' => $data['vin'],
                     'year' => $data['year'],
                     'price' => $data['price'],
@@ -153,21 +198,62 @@ final class VehicleSeeder extends Seeder
                     'fuel_type' => $data['fuel_type'],
                     'exterior_color' => $data['exterior_color'],
                     'interior_color' => $data['interior_color'],
-                    'short_description' => 'Clean used vehicle with verified history and dealer inspection.',
-                    'description' => 'This vehicle has been inspected and prepared for sale. Contact our sales team for details, availability, financing options, and delivery information.',
+                    'short_description' => sprintf(
+                        'Clean used %s with verified inventory details and dealer inspection.',
+                        $name,
+                    ),
+                    'description' => sprintf(
+                        '<p>This %s has been prepared for sale and is available from Marick Auto Sales in Meriden, CT.</p><p>Contact our sales team for current availability, pricing confirmation, delivery options, warranty details, finance questions, and trade-in review.</p>',
+                        e($name),
+                    ),
                     'features' => array_map(
                         static fn(string $label): array => ['label' => $label],
                         $data['features'],
                     ),
-                    'main_image' => null,
+                    'main_image' => $mainImagePath,
                     'status' => Vehicle::STATUS_AVAILABLE,
                     'is_featured' => true,
                     'is_active' => true,
                     'published_at' => now(),
-                    'seo_title' => $name . ' for Sale',
-                    'seo_description' => $name . ' available now. Contact our dealership for pricing, delivery, warranty, and financing details.',
+                    'seo_title' => $name . ' for Sale in Meriden, CT',
+                    'seo_description' => $name . ' available from Marick Auto Sales in Meriden, CT. View price, mileage, photos, delivery, warranty, finance, and trade-in details.',
                 ],
             );
+
+            $this->syncVehicleImages(
+                vehicle: $vehicle,
+                slug: $slug,
+                name: $name,
+                imageCount: (int)$data['image_count'],
+            );
         }
+    }
+
+    private function syncVehicleImages(Vehicle $vehicle, string $slug, string $name, int $imageCount): void
+    {
+        $vehicle->images()->delete();
+
+        VehicleImage::query()->create([
+            'vehicle_id' => $vehicle->id,
+            'path' => $this->imagePath($slug, 'large', 'main'),
+            'alt' => $name . ' main photo',
+            'sort_order' => 0,
+            'is_main' => true,
+        ]);
+
+        for ($index = 1; $index <= $imageCount; $index++) {
+            VehicleImage::query()->create([
+                'vehicle_id' => $vehicle->id,
+                'path' => $this->imagePath($slug, 'large', str_pad((string)$index, 2, '0', STR_PAD_LEFT)),
+                'alt' => sprintf('%s photo %d', $name, $index),
+                'sort_order' => $index,
+                'is_main' => false,
+            ]);
+        }
+    }
+
+    private function imagePath(string $slug, string $size, string $name): string
+    {
+        return sprintf('vehicles/%s/%s/%s.webp', $slug, $size, $name);
     }
 }

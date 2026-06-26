@@ -134,23 +134,23 @@ const isActive = (href) => {
         </main>
 
         <footer class="border-t border-white/10 bg-[#080b0f]">
-            <div class="site-container grid gap-10 py-12 lg:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr]">
+            <div class="site-container padd-top padd-bottom grid gap-10 py-12 lg:grid-cols-[1.9fr_0.5fr_0.5fr_0.5fr]">
                 <div>
-                    <div class="flex items-center gap-4">
-                        <span
-                            class="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-300 font-black text-neutral-950">
-                            AD
+                    <Link href="/" class="group flex items-center gap-4">
+                        <img
+                            :src="logoUrl"
+                            :alt="site.name"
+                            class="h-11 w-auto"
+                        />
+                        <span>
+                        <span class="block text-sm font-black uppercase tracking-[0.28em]">
+                            {{ site.name }}
                         </span>
-
-                        <div>
-                            <p class="text-sm font-black uppercase tracking-[0.28em]">
-                                {{ site.name }}
-                            </p>
-                            <p class="text-xs text-slate-500">
-                                Premium vehicle inventory
-                            </p>
-                        </div>
-                    </div>
+                        <span class="block text-xs text-slate-500">
+                            Premium vehicle inventory
+                        </span>
+                    </span>
+                    </Link>
 
                     <p class="mt-5 max-w-md text-sm leading-6 text-slate-400">
                         Browse inspected vehicles, request information, and contact our sales team for delivery,

@@ -133,4 +133,19 @@ final class Vehicle extends Model
 
         return Storage::url($this->main_image);
     }
+
+    public function getMainImageMediumUrlAttribute(): ?string
+    {
+        if (! $this->main_image) {
+            return null;
+        }
+
+        $mediumPath = str_replace('/large/', '/medium/', $this->main_image);
+
+        if (Storage::disk('public')->exists($mediumPath)) {
+            return Storage::url($mediumPath);
+        }
+
+        return Storage::url($this->main_image);
+    }
 }

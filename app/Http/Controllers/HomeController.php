@@ -32,6 +32,7 @@ final class HomeController extends Controller
                 'image' => $vehicle->main_image_url,
                 'make' => $vehicle->make?->name,
                 'model' => $vehicle->vehicleModel?->name,
+                'image_medium' => $vehicle->main_image_medium_url,
                 'image_thumb' => $vehicle->main_image_thumb_url,
             ])
             ->values();

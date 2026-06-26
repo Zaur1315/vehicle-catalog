@@ -1,8 +1,51 @@
 <script setup>
 import {Link, usePage} from '@inertiajs/vue3';
-import {computed, ref} from 'vue';
+import {computed, ref, watch, onBeforeUnmount} from 'vue';
 
 const page = usePage();
+
+const showSuccessFlash = ref(false);
+const showErrorFlash = ref(false);
+
+let flashTimeout = null;
+
+const successFlash = computed(() => page.props.flash?.success || '');
+const errorFlash = computed(() => page.props.flash?.error || '');
+
+const hideFlashMessages = () => {
+    showSuccessFlash.value = false;
+    showErrorFlash.value = false;
+};
+
+const startFlashTimer = () => {
+    if (flashTimeout) {
+        clearTimeout(flashTimeout);
+    }
+
+    flashTimeout = setTimeout(() => {
+        hideFlashMessages();
+    }, 4500);
+};
+
+watch(
+    () => [successFlash.value, errorFlash.value, page.url],
+    () => {
+        showSuccessFlash.value = Boolean(successFlash.value);
+        showErrorFlash.value = Boolean(errorFlash.value);
+
+        if (showSuccessFlash.value || showErrorFlash.value) {
+            startFlashTimer();
+        }
+    },
+    { immediate: true },
+);
+
+onBeforeUnmount(() => {
+    if (flashTimeout) {
+        clearTimeout(flashTimeout);
+    }
+});
+
 const mobileMenuOpen = ref(false);
 const logoUrl = '/images/logo.png';
 
@@ -111,13 +154,82 @@ const isActive = (href) => {
             </div>
         </header>
 
-        <div
-            v-if="page.props.flash?.success"
-            class="site-container mt-6"
-        >
-            <div class="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-5 py-4 text-sm text-emerald-100">
-                {{ page.props.flash.success }}
-            </div>
+        <div class="pointer-events-none fixed right-5 top-5 z-[90] w-[calc(100%-2.5rem)] max-w-md space-y-3 sm:right-6 sm:top-6">
+            <Transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="translate-x-6 opacity-0"
+                enter-to-class="translate-x-0 opacity-100"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="translate-x-0 opacity-100"
+                leave-to-class="translate-x-6 opacity-0"
+            >
+                <div
+                    v-if="showSuccessFlash && successFlash"
+                    class="pointer-events-auto rounded-2xl border border-emerald-400/40 bg-emerald-950/95 px-5 py-4 text-sm text-emerald-50 shadow-2xl shadow-black/40 backdrop-blur"
+                >
+                    <div class="flex items-start gap-4">
+                        <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-sm font-black text-emerald-950">
+                            ✓
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">
+                                Success
+                            </p>
+
+                            <p class="mt-1 leading-6">
+                                {{ successFlash }}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="shrink-0 text-emerald-200/70 hover:text-white"
+                            @click="showSuccessFlash = false"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </Transition>
+
+            <Transition
+                enter-active-class="transition duration-300 ease-out"
+                enter-from-class="translate-x-6 opacity-0"
+                enter-to-class="translate-x-0 opacity-100"
+                leave-active-class="transition duration-200 ease-in"
+                leave-from-class="translate-x-0 opacity-100"
+                leave-to-class="translate-x-6 opacity-0"
+            >
+                <div
+                    v-if="showErrorFlash && errorFlash"
+                    class="pointer-events-auto rounded-2xl border border-red-400/40 bg-red-950/95 px-5 py-4 text-sm text-red-50 shadow-2xl shadow-black/40 backdrop-blur"
+                >
+                    <div class="flex items-start gap-4">
+                        <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-400 text-sm font-black text-red-950">
+                            !
+                        </div>
+
+                        <div class="min-w-0 flex-1">
+                            <p class="text-xs font-black uppercase tracking-[0.2em] text-red-300">
+                                Error
+                            </p>
+
+                            <p class="mt-1 leading-6">
+                                {{ errorFlash }}
+                            </p>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="shrink-0 text-red-200/70 hover:text-white"
+                            @click="showErrorFlash = false"
+                        >
+                            ×
+                        </button>
+                    </div>
+                </div>
+            </Transition>
         </div>
 
         <div

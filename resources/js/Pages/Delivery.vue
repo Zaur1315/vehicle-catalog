@@ -1,5 +1,6 @@
 <script setup>
-import {Link} from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
@@ -7,33 +8,71 @@ defineOptions({
     layout: SiteLayout,
 });
 
+const selectedGalleryImage = ref(null);
+
 const steps = [
     {
         number: '01',
+        icon: '✓',
         title: 'Vehicle selection',
         text: 'Choose a vehicle from current inventory and confirm availability, price, delivery location, and purchase terms.',
     },
     {
         number: '02',
+        icon: '▣',
         title: 'Documents and payment',
         text: 'Our team prepares the required documents and confirms payment instructions before transportation begins.',
     },
     {
         number: '03',
+        icon: '↥',
         title: 'Enclosed trailer loading',
         text: 'The vehicle is loaded into an enclosed auto transport trailer for additional protection during transit.',
     },
     {
         number: '04',
+        icon: '→',
         title: 'Insured transportation',
         text: 'Transportation is covered by insurance and typically takes 7–14 business days after payment confirmation.',
     },
     {
         number: '05',
+        icon: '★',
         title: 'Customer delivery',
         text: 'The vehicle is delivered to the customer at the agreed destination, subject to route and carrier access.',
     },
 ];
+
+const deliveryGallery = [
+    {
+        src: '/images/delivery/delivery-1.webp',
+        title: 'Vehicle loaded to enclosed trailer',
+        caption: 'Example of an enclosed trailer loading process before long-distance delivery.',
+    },
+    {
+        src: '/images/delivery/delivery-2.webp',
+        title: 'Protected transport setup',
+        caption: 'Vehicles are transported inside an enclosed carrier to reduce exposure during transit.',
+    },
+    {
+        src: '/images/delivery/delivery-3.webp',
+        title: 'Carrier inspection before route',
+        caption: 'Pickup condition and delivery details are confirmed before transportation begins.',
+    },
+    {
+        src: '/images/delivery/delivery-4.webp',
+        title: 'Delivery preparation',
+        caption: 'The delivery process is coordinated after payment confirmation and documentation.',
+    },
+];
+
+const openGalleryImage = (image) => {
+    selectedGalleryImage.value = image;
+};
+
+const closeGalleryImage = () => {
+    selectedGalleryImage.value = null;
+};
 </script>
 
 <template>
@@ -90,37 +129,35 @@ const steps = [
                 </div>
 
                 <p class="max-w-xl body-muted">
-                    The process is designed to give buyers clear expectations before the vehicle leaves the dealership.
+                    A clear step-by-step process helps out-of-state buyers understand what happens before the vehicle leaves the dealership.
                 </p>
             </div>
 
-            <div class="border border-white/10 bg-white/[0.025]">
+            <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
                 <article
-                    v-for="(step, index) in steps"
+                    v-for="step in steps"
                     :key="step.number"
-                    class="grid gap-5 border-b border-white/10 p-6 last:border-b-0 lg:grid-cols-[140px_1fr_280px]"
+                    class="dealer-card relative overflow-hidden p-6"
                 >
-                    <div>
-                        <p class="text-4xl font-black text-amber-300">
-                            {{ step.number }}
-                        </p>
+                    <div class="absolute right-4 top-4 text-5xl font-black text-white/[0.035]">
+                        {{ step.number }}
                     </div>
 
-                    <div>
-                        <h3 class="text-2xl font-black">
-                            {{ step.title }}
-                        </h3>
-
-                        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
-                            {{ step.text }}
-                        </p>
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl font-black text-amber-300">
+                        {{ step.icon }}
                     </div>
 
-                    <div class="flex items-center lg:justify-end">
-                        <p class="border border-white/10 px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-400">
-                            Step {{ index + 1 }} of {{ steps.length }}
-                        </p>
-                    </div>
+                    <p class="mt-6 text-xs font-black uppercase tracking-[0.24em] text-slate-500">
+                        Step {{ step.number }}
+                    </p>
+
+                    <h3 class="mt-3 text-xl font-black">
+                        {{ step.title }}
+                    </h3>
+
+                    <p class="mt-4 text-sm leading-6 text-slate-400">
+                        {{ step.text }}
+                    </p>
                 </article>
             </div>
         </div>
@@ -179,6 +216,81 @@ const steps = [
 
     <section class="site-section">
         <div class="site-container">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">
+                        How It Looks
+                    </p>
+
+                    <h2 class="mt-3 heading-lg">
+                        Enclosed transport photo examples.
+                    </h2>
+                </div>
+
+                <p class="max-w-xl body-muted">
+                    Real delivery photos help buyers understand how vehicles are prepared, loaded, and transported in an enclosed auto carrier.
+                </p>
+            </div>
+
+            <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4" style="align-items: start;">
+                <button
+                    v-for="image in deliveryGallery"
+                    :key="image.src"
+                    type="button"
+                    class="group text-left"
+                    @click="openGalleryImage(image)"
+                >
+                    <div class="overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+                        <img
+                            :src="image.src"
+                            :alt="image.title"
+                            class="h-64 w-full object-cover transition duration-500 group-hover:scale-[1.04]"
+                        >
+                    </div>
+
+                    <div class="mt-4 border-l border-amber-300/50 pl-4">
+                        <h3 class="text-lg font-black group-hover:text-amber-300">
+                            {{ image.title }}
+                        </h3>
+
+                        <p class="mt-2 text-sm leading-6 text-slate-400">
+                            {{ image.caption }}
+                        </p>
+                    </div>
+                </button>
+            </div>
+
+            <div class="mt-8 rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+                <div class="grid gap-5 lg:grid-cols-[280px_1fr] lg:items-center">
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
+                            Photo Confirmation
+                        </p>
+
+                        <h3 class="mt-3 text-2xl font-black">
+                            Visual proof before delivery.
+                        </h3>
+                    </div>
+
+                    <p class="text-sm leading-6 text-slate-400">
+                        Delivery photos may be used to show loading, enclosed carrier preparation, and vehicle condition before transportation. Final delivery documentation and carrier details are confirmed during the purchase process.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="relative overflow-hidden border-t border-white/10">
+
+        <div
+            class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style="background-image: url('/images/visit-bg.webp'); background-size: cover;"
+        />
+
+        <div class="absolute inset-0 bg-[#080b0f]/82" />
+
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.20),transparent_34%),linear-gradient(90deg,rgba(8,11,15,0.98)_0%,rgba(8,11,15,0.90)_42%,rgba(8,11,15,0.74)_100%)]" />
+        <div class="site-container padd-top padd-bottom relative py-20 lg:py-28">
             <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
                 <div>
                     <p class="eyebrow">

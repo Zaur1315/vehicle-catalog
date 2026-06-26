@@ -13,6 +13,30 @@ use Inertia\Response;
 
 final class InventoryController extends Controller
 {
+    private const BODY_TYPES = [
+        'sedan' => 'Sedan',
+        'suv' => 'SUV',
+        'coupe' => 'Coupe',
+        'truck' => 'Truck',
+        'hatchback' => 'Hatchback',
+        'van' => 'Van',
+        'wagon' => 'Wagon',
+        'convertible' => 'Convertible',
+    ];
+
+    private const TRANSMISSIONS = [
+        'automatic' => 'Automatic',
+        'manual' => 'Manual',
+        'cvt' => 'CVT',
+    ];
+
+    private const DRIVETRAINS = [
+        'fwd' => 'FWD',
+        'rwd' => 'RWD',
+        'awd' => 'AWD',
+        '4wd' => '4WD',
+    ];
+
     public function __invoke(Request $request): Response
     {
         $filters = [
@@ -32,7 +56,10 @@ final class InventoryController extends Controller
         ];
 
         $vehicles = Vehicle::query()
-            ->with(['make', 'vehicleModel'])
+            ->with([
+                'make:id,name,slug',
+                'vehicleModel:id,vehicle_make_id,name,slug',
+            ])
             ->where('is_active', true)
             ->where('status', Vehicle::STATUS_AVAILABLE)
             ->when($filters['make'] !== '', function ($query) use ($filters): void {
@@ -45,25 +72,45 @@ final class InventoryController extends Controller
                     $modelQuery->where('slug', $filters['model']);
                 });
             })
-            ->when($filters['year_from'] !== null, static fn($query) => $query->where('year', '>=', $filters['year_from']))
-            ->when($filters['year_to'] !== null, static fn($query) => $query->where('year', '<=', $filters['year_to']))
-            ->when($filters['price_min'] !== null, static fn($query) => $query->where('price', '>=', $filters['price_min']))
-            ->when($filters['price_max'] !== null, static fn($query) => $query->where('price', '<=', $filters['price_max']))
-            ->when($filters['mileage_min'] !== null, static fn($query) => $query->where('mileage', '>=', $filters['mileage_min']))
-            ->when($filters['mileage_max'] !== null, static fn($query) => $query->where('mileage', '<=', $filters['mileage_max']))
-            ->when($filters['body_type'] !== '', static fn($query) => $query->where('body_type', $filters['body_type']))
-            ->when($filters['transmission'] !== '', static fn($query) => $query->where('transmission', $filters['transmission']))
-            ->when($filters['drivetrain'] !== '', static fn($query) => $query->where('drivetrain', $filters['drivetrain']))
-            ->when($filters['color'] !== '', static fn($query) => $query->where('exterior_color', $filters['color']));
+            ->when($filters['year_from'] !== null, static function ($query) use ($filters): void {
+                $query->where('year', '>=', $filters['year_from']);
+            })
+            ->when($filters['year_to'] !== null, static function ($query) use ($filters): void {
+                $query->where('year', '<=', $filters['year_to']);
+            })
+            ->when($filters['price_min'] !== null, static function ($query) use ($filters): void {
+                $query->where('price', '>=', $filters['price_min']);
+            })
+            ->when($filters['price_max'] !== null, static function ($query) use ($filters): void {
+                $query->where('price', '<=', $filters['price_max']);
+            })
+            ->when($filters['mileage_min'] !== null, static function ($query) use ($filters): void {
+                $query->where('mileage', '>=', $filters['mileage_min']);
+            })
+            ->when($filters['mileage_max'] !== null, static function ($query) use ($filters): void {
+                $query->where('mileage', '<=', $filters['mileage_max']);
+            })
+            ->when($filters['body_type'] !== '', static function ($query) use ($filters): void {
+                $query->where('body_type', $filters['body_type']);
+            })
+            ->when($filters['transmission'] !== '', static function ($query) use ($filters): void {
+                $query->where('transmission', $filters['transmission']);
+            })
+            ->when($filters['drivetrain'] !== '', static function ($query) use ($filters): void {
+                $query->where('drivetrain', $filters['drivetrain']);
+            })
+            ->when($filters['color'] !== '', static function ($query) use ($filters): void {
+                $query->where('exterior_color', $filters['color']);
+            });
 
         match ($filters['sort']) {
-            'price_asc' => $vehicles->orderBy('price'),
-            'price_desc' => $vehicles->orderByDesc('price'),
-            'year_desc' => $vehicles->orderByDesc('year'),
-            'year_asc' => $vehicles->orderBy('year'),
-            'mileage_asc' => $vehicles->orderBy('mileage'),
-            'mileage_desc' => $vehicles->orderByDesc('mileage'),
-            default => $vehicles->latest(),
+            'price_asc' => $vehicles->orderBy('price')->orderByDesc('id'),
+            'price_desc' => $vehicles->orderByDesc('price')->orderByDesc('id'),
+            'year_desc' => $vehicles->orderByDesc('year')->orderByDesc('id'),
+            'year_asc' => $vehicles->orderBy('year')->orderByDesc('id'),
+            'mileage_asc' => $vehicles->orderBy('mileage')->orderByDesc('id'),
+            'mileage_desc' => $vehicles->orderByDesc('mileage')->orderByDesc('id'),
+            default => $vehicles->orderByDesc('published_at')->orderByDesc('id'),
         };
 
         $paginatedVehicles = $vehicles
@@ -76,13 +123,14 @@ final class InventoryController extends Controller
                 'year' => $vehicle->year,
                 'price' => $vehicle->formatted_price,
                 'mileage' => $vehicle->formatted_mileage,
-                'image' => $vehicle->main_image_url,
+                'image' => $vehicle->main_image_medium_url ?? $vehicle->main_image_url,
                 'make' => $vehicle->make?->name,
                 'model' => $vehicle->vehicleModel?->name,
-                'body_type' => $vehicle->body_type,
-                'transmission' => $vehicle->transmission,
-                'drivetrain' => $vehicle->drivetrain,
+                'body_type' => self::BODY_TYPES[$vehicle->body_type] ?? $vehicle->body_type,
+                'transmission' => self::TRANSMISSIONS[$vehicle->transmission] ?? $vehicle->transmission,
+                'drivetrain' => self::DRIVETRAINS[$vehicle->drivetrain] ?? $vehicle->drivetrain,
                 'exterior_color' => $vehicle->exterior_color,
+                'stock_number' => $vehicle->stock_number,
             ]);
 
         return Inertia::render('Inventory/Index', [
@@ -96,7 +144,7 @@ final class InventoryController extends Controller
                     ->toArray(),
 
                 'models' => VehicleModel::query()
-                    ->with('make')
+                    ->with('make:id,slug')
                     ->where('is_active', true)
                     ->orderBy('name')
                     ->get()
@@ -108,31 +156,13 @@ final class InventoryController extends Controller
                     ->values()
                     ->toArray(),
 
-                'bodyTypes' => [
-                    'sedan' => 'Sedan',
-                    'suv' => 'SUV',
-                    'coupe' => 'Coupe',
-                    'truck' => 'Truck',
-                    'hatchback' => 'Hatchback',
-                    'van' => 'Van',
-                    'wagon' => 'Wagon',
-                    'convertible' => 'Convertible',
-                ],
-
-                'transmissions' => [
-                    'automatic' => 'Automatic',
-                    'manual' => 'Manual',
-                    'cvt' => 'CVT',
-                ],
-
-                'drivetrains' => [
-                    'fwd' => 'FWD',
-                    'rwd' => 'RWD',
-                    'awd' => 'AWD',
-                    '4wd' => '4WD',
-                ],
+                'bodyTypes' => self::BODY_TYPES,
+                'transmissions' => self::TRANSMISSIONS,
+                'drivetrains' => self::DRIVETRAINS,
 
                 'colors' => Vehicle::query()
+                    ->where('is_active', true)
+                    ->where('status', Vehicle::STATUS_AVAILABLE)
                     ->whereNotNull('exterior_color')
                     ->where('exterior_color', '!=', '')
                     ->distinct()

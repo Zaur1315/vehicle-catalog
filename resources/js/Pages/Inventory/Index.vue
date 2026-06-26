@@ -23,6 +23,41 @@ const props = defineProps({
     },
 });
 
+const activeFilters = computed(() => {
+    const labels = {
+        make: 'Make',
+        model: 'Model',
+        year_from: 'Year from',
+        year_to: 'Year to',
+        price_min: 'Price min',
+        price_max: 'Price max',
+        mileage_min: 'Mileage min',
+        mileage_max: 'Mileage max',
+        body_type: 'Body',
+        transmission: 'Transmission',
+        drivetrain: 'Drive',
+        color: 'Color',
+    };
+
+    return Object.entries(form)
+        .filter(([key, value]) => key !== 'sort' && value !== '' && value !== null && value !== undefined)
+        .map(([key, value]) => ({
+            key,
+            label: labels[key] || key,
+            value,
+        }));
+});
+
+const clearFilter = (key) => {
+    form[key] = '';
+
+    if (key === 'make') {
+        form.model = '';
+    }
+
+    applyFilters();
+};
+
 const form = reactive({
     make: props.filters.make || '',
     model: props.filters.model || '',
@@ -120,7 +155,7 @@ watch(
     <section class="site-section">
         <div class="site-container">
             <div class="grid gap-8 xl:grid-cols-[340px_1fr]">
-                <aside class="h-fit border border-white/10 bg-white/[0.025]">
+                <aside class="h-fit rounded-2xl border border-white/10 bg-white/[0.025] xl:sticky xl:top-28">
                     <div class="border-b border-white/10 px-5 py-4">
                         <h2 class="text-sm font-black uppercase tracking-[0.24em]">
                             Refine Search
@@ -167,14 +202,14 @@ watch(
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Year from
                                 </label>
-                                <input v-model="form.year_from" type="number" class="form-input-dark">
+                                <input v-model="form.year_from" type="number" placeholder="2000" class="form-input-dark">
                             </div>
 
                             <div>
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Year to
                                 </label>
-                                <input v-model="form.year_to" type="number" class="form-input-dark">
+                                <input v-model="form.year_to" type="number" placeholder="2026" class="form-input-dark">
                             </div>
                         </div>
 
@@ -183,14 +218,14 @@ watch(
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Price min
                                 </label>
-                                <input v-model="form.price_min" type="number" class="form-input-dark">
+                                <input v-model="form.price_min" type="number" placeholder="20,000" class="form-input-dark">
                             </div>
 
                             <div>
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Price max
                                 </label>
-                                <input v-model="form.price_max" type="number" class="form-input-dark">
+                                <input v-model="form.price_max" type="number" placeholder="50,000" class="form-input-dark">
                             </div>
                         </div>
 
@@ -199,14 +234,14 @@ watch(
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Mileage min
                                 </label>
-                                <input v-model="form.mileage_min" type="number" class="form-input-dark">
+                                <input v-model="form.mileage_min" type="number" placeholder="10" class="form-input-dark">
                             </div>
 
                             <div>
                                 <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
                                     Mileage max
                                 </label>
-                                <input v-model="form.mileage_max" type="number" class="form-input-dark">
+                                <input v-model="form.mileage_max" type="number" placeholder="100,000" class="form-input-dark">
                             </div>
                         </div>
 
@@ -312,6 +347,29 @@ watch(
                                 <option value="mileage_desc">Mileage: High to Low</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div
+                        v-if="activeFilters.length"
+                        class="mb-6 flex flex-wrap gap-2"
+                    >
+                        <button
+                            v-for="filter in activeFilters"
+                            :key="filter.key"
+                            type="button"
+                            class="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-300 hover:border-amber-300/50 hover:text-white"
+                            @click="clearFilter(filter.key)"
+                        >
+                            {{ filter.label }}: {{ filter.value }} ×
+                        </button>
+
+                        <button
+                            type="button"
+                            class="rounded-full bg-amber-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-neutral-950"
+                            @click="resetFilters"
+                        >
+                            Reset all
+                        </button>
                     </div>
 
                     <div class="space-y-5">

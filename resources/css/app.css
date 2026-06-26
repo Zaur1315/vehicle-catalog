@@ -72,7 +72,13 @@
     }
 
     .form-select-dark {
-        @apply w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white focus:border-amber-300 focus:outline-none focus:ring-0;
+        @apply w-full rounded-xl border border-white/10 bg-[#111827] px-4 py-3 text-white focus:border-amber-300 focus:outline-none focus:ring-0;
+        color-scheme: dark;
+    }
+
+    .form-select-dark option {
+        background-color: #111827;
+        color: #ffffff;
     }
 
     .padd-top{

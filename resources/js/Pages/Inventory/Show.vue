@@ -1,5 +1,5 @@
 <script setup>
-import {Link, useForm} from '@inertiajs/vue3';
+import {Link, useForm, usePage} from '@inertiajs/vue3';
 import SeoHead from '@/Components/SeoHead.vue';
 import {computed, ref} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
@@ -18,6 +18,10 @@ const props = defineProps({
         default: () => [],
     },
 });
+
+const page = usePage();
+
+const site = computed(() => page.props.site || {});
 
 const numericPrice = computed(() => {
     if (!props.vehicle.price) {
@@ -465,7 +469,7 @@ const nextImage = () => {
 
                         <div class="p-6">
                             <a
-                                href="tel:+10000000000"
+                                :href="`tel:${site.phone_tel}`"
                                 class="btn-secondary w-full"
                             >
                                 Call Now

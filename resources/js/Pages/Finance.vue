@@ -9,6 +9,7 @@ defineOptions({
 });
 
 const form = useForm({
+    form_type: 'finance',
     first_name: '',
     last_name: '',
     email: '',

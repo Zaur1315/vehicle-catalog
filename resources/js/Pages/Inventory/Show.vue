@@ -117,6 +117,9 @@ const normalizedFeatures = computed(() => {
 });
 
 const form = useForm({
+    form_type: 'vehicle_inquiry',
+    vehicle_id: vehicle.id,
+    stock_number: vehicle.stock_number,
     first_name: '',
     last_name: '',
     email: '',
@@ -202,7 +205,7 @@ const nextImage = () => {
                     </p>
                 </div>
 
-                <div class="grid grid-cols-2 border border-white/10 bg-white/[0.035] sm:grid-cols-4">
+                <div class="grid grid-cols-2 border border-white/10 bg-white/[0.035] sm:grid-cols-4" style="width: 600px;">
                     <div class="stat-tile">
                         <p class="text-xs uppercase tracking-wide text-slate-500">
                             Year

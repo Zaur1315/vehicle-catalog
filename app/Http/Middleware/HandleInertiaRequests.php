@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
 
                 'address' => config('site.address'),
                 'maps_url' => config('site.maps_url'),
+                'maps_embed_url' => config('site.maps_embed_url'),
 
                 'city' => config('site.city'),
                 'state' => config('site.state'),

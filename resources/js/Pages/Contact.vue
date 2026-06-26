@@ -13,6 +13,7 @@ const page = usePage();
 const site = computed(() => page.props.site || {});
 
 const form = useForm({
+    form_type: 'contact',
     first_name: '',
     last_name: '',
     email: '',
@@ -27,6 +28,16 @@ const submit = () => {
         onSuccess: () => form.reset(),
     });
 };
+
+const mapsEmbedUrl = computed(() => {
+    if (site.value.maps_embed_url) {
+        return site.value.maps_embed_url;
+    }
+
+    const address = site.value.address || '197 Pratt St, Meriden, CT 06450, USA';
+
+    return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
+});
 </script>
 
 <template>
@@ -105,28 +116,19 @@ const submit = () => {
                                 </a>
                             </div>
 
-                            <div class="py-4">
-                                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                    Business Hours
-                                </p>
-
-                                <p class="mt-2 text-sm leading-6 text-slate-300">
-                                    {{site.business_hours}}
-                                </p>
-
-                                <p class="text-sm leading-6 text-slate-400">
-                                    Weekend appointments may be available by request.
-                                </p>
-                            </div>
-
                             <div class="py-4 last:pb-0">
                                 <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
                                     Location
                                 </p>
 
-                                <p class="mt-2 text-sm leading-6 text-slate-300">
-                                    Dealer address will be added before production launch.
-                                </p>
+                                <a
+                                    :href="site.maps_url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="mt-2 block text-sm leading-6 text-slate-300 hover:text-amber-300"
+                                >
+                                    {{ site.address }}
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -315,6 +317,94 @@ const submit = () => {
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="site-section-tight border-y border-white/10 bg-white/[0.025]">
+        <div class="site-container">
+            <div class="section-header">
+                <div>
+                    <p class="eyebrow">
+                        Find Us
+                    </p>
+
+                    <h2 class="mt-3 heading-lg">
+                        Visit our dealership in {{ site.city }}, {{ site.state }}.
+                    </h2>
+                </div>
+
+                <p class="max-w-xl body-muted">
+                    Use the map below for directions, then contact our sales team to confirm vehicle availability before visiting.
+                </p>
+            </div>
+
+            <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
+                <div class="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/30">
+                    <iframe
+                        :src="mapsEmbedUrl"
+                        class="h-[420px] w-full border-0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Marick Auto Sales Google Map"
+                    />
+                </div>
+
+                <div class="dealer-panel rounded-2xl p-6">
+                    <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
+                        Dealership Location
+                    </p>
+
+                    <h3 class="mt-3 text-2xl font-black">
+                        {{ site.name }}
+                    </h3>
+
+                    <div class="mt-6 space-y-5">
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                                Address
+                            </p>
+
+                            <a
+                                :href="site.maps_url"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="mt-2 block text-sm leading-6 text-slate-300 hover:text-amber-300"
+                            >
+                                {{ site.address }}
+                            </a>
+                        </div>
+
+                        <div>
+                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                                Hours
+                            </p>
+
+                            <p class="mt-2 text-sm leading-6 text-slate-300">
+                                {{ site.business_hours }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex flex-col gap-3">
+                        <a
+                            :href="site.maps_url"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="btn-primary w-full"
+                        >
+                            Open in Google Maps
+                        </a>
+
+                        <a
+                            :href="`tel:${site.phone_tel}`"
+                            class="btn-secondary w-full"
+                        >
+                            Call Now
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

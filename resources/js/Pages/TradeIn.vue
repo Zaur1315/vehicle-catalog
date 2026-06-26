@@ -8,6 +8,7 @@ defineOptions({
 });
 
 const form = useForm({
+    form_type: 'trade_in',
     first_name: '',
     last_name: '',
     email: '',

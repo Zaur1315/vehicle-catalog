@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreFinanceLeadRequest;
 use App\Services\Lead\FinanceLeadService;
+use App\Services\Lead\LeadNotificationService;
 use App\Services\Lead\LeadTrackingService;
 use App\Support\LeadFormType;
 use Illuminate\Http\RedirectResponse;
@@ -23,6 +24,7 @@ final class FinanceController extends Controller
         StoreFinanceLeadRequest $request,
         FinanceLeadService      $financeLeadService,
         LeadTrackingService     $leadTrackingService,
+        LeadNotificationService $leadNotificationService,
     ): RedirectResponse
     {
         $validated = $request->validated();
@@ -34,6 +36,8 @@ final class FinanceController extends Controller
             'phone' => $validated['phone'] ?? null,
             'content_name' => 'Finance Request',
         ]);
+
+        $leadNotificationService->send('Finance', $validated);
 
         return back()->with([
             'success' => 'Your finance request has been sent. Our team will contact you soon.',

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreTradeInLeadRequest;
+use App\Services\Lead\LeadNotificationService;
 use App\Services\Lead\LeadTrackingService;
 use App\Services\Lead\TradeInLeadService;
 use App\Support\LeadFormType;
@@ -23,6 +24,7 @@ final class TradeInController extends Controller
         StoreTradeInLeadRequest $request,
         TradeInLeadService      $tradeInLeadService,
         LeadTrackingService     $leadTrackingService,
+        LeadNotificationService $leadNotificationService,
     ): RedirectResponse
     {
         $validated = $request->validated();
@@ -34,6 +36,8 @@ final class TradeInController extends Controller
             'phone' => $validated['phone'] ?? null,
             'content_name' => 'Trade-In Request',
         ]);
+
+        $leadNotificationService->send('Trade-In', $validated);
 
         return back()->with([
             'success' => 'Your trade-in request has been sent. Our team will contact you soon.',

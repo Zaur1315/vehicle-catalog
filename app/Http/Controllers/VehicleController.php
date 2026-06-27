@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreVehicleInquiryRequest;
 use App\Models\Vehicle;
+use App\Services\Lead\LeadNotificationService;
 use App\Services\Lead\LeadTrackingService;
 use App\Services\Lead\VehicleLeadService;
 use App\Support\LeadFormType;
@@ -82,6 +83,7 @@ final class VehicleController extends Controller
         Vehicle $vehicle,
         VehicleLeadService $vehicleLeadService,
         LeadTrackingService $leadTrackingService,
+        LeadNotificationService $leadNotificationService,
     ): RedirectResponse {
         abort_unless($vehicle->is_active, 404);
         abort_unless($vehicle->status === Vehicle::STATUS_AVAILABLE, 404);
@@ -89,6 +91,15 @@ final class VehicleController extends Controller
         $validated = $request->validated();
 
         $vehicleLeadService->createFromVehicle($vehicle, $validated);
+
+        $leadNotificationService->send('Vehicle Inquiry', [
+            ...$validated,
+            'vehicle' => $vehicle->name,
+            'stock_number' => $vehicle->stock_number,
+            'vin' => $vehicle->vin,
+            'price' => $vehicle->formatted_price,
+            'url' => url('/inventory/' . $vehicle->slug),
+        ]);
 
         $metaEvent = $leadTrackingService->track($request, LeadFormType::VEHICLE_INQUIRY, [
             'email' => $validated['email'] ?? null,

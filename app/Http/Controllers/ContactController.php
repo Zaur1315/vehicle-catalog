@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Lead\StoreContactLeadRequest;
 use App\Services\Lead\ContactLeadFormTypeResolver;
 use App\Services\Lead\ContactLeadService;
+use App\Services\Lead\LeadNotificationService;
 use App\Services\Lead\LeadTrackingService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -24,6 +25,7 @@ final class ContactController extends Controller
         ContactLeadService          $contactLeadService,
         ContactLeadFormTypeResolver $formTypeResolver,
         LeadTrackingService         $leadTrackingService,
+        LeadNotificationService     $leadNotificationService
     ): RedirectResponse
     {
         $validated = $request->validated();
@@ -37,6 +39,8 @@ final class ContactController extends Controller
             'phone' => $validated['phone'] ?? null,
             'subject' => $validated['subject'] ?? null,
         ]);
+
+        $leadNotificationService->send('Contact', $validated);
 
         return back()->with([
             'success' => 'Your message has been sent. Our team will contact you soon.',

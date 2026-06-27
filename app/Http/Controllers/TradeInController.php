@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreTradeInLeadRequest;
+use App\Services\Lead\LeadTrackingService;
 use App\Services\Lead\TradeInLeadService;
+use App\Support\LeadFormType;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,10 +22,22 @@ final class TradeInController extends Controller
     public function store(
         StoreTradeInLeadRequest $request,
         TradeInLeadService      $tradeInLeadService,
+        LeadTrackingService     $leadTrackingService,
     ): RedirectResponse
     {
-        $tradeInLeadService->create($request->validated());
+        $validated = $request->validated();
 
-        return back()->with('success', 'Your trade-in request has been sent. Our team will contact you soon.');
+        $tradeInLeadService->create($validated);
+
+        $metaEvent = $leadTrackingService->track($request, LeadFormType::TRADE_IN, [
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'content_name' => 'Trade-In Request',
+        ]);
+
+        return back()->with([
+            'success' => 'Your trade-in request has been sent. Our team will contact you soon.',
+            'meta_event' => $metaEvent,
+        ]);
     }
 }

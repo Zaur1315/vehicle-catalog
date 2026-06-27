@@ -1,6 +1,7 @@
 <script setup>
 import {Link, usePage} from '@inertiajs/vue3';
 import {computed, ref, watch, onBeforeUnmount} from 'vue';
+import CookieConsentBanner from "../Components/CookieConsentBanner.vue";
 
 const page = usePage();
 
@@ -37,7 +38,7 @@ watch(
             startFlashTimer();
         }
     },
-    { immediate: true },
+    {immediate: true},
 );
 
 onBeforeUnmount(() => {
@@ -64,6 +65,49 @@ const site = computed(() => page.props.site || {});
 const isActive = (href) => {
     return page.url === href || page.url.startsWith(`${href}/`);
 };
+
+const hasMarketingConsent = () => {
+    if (typeof window === 'undefined') {
+        return false;
+    }
+
+    return document.cookie
+        .split('; ')
+        .some((item) => item === 'cookie_marketing_consent=1');
+};
+
+watch(
+    () => page.props.flash?.meta_event,
+    (event) => {
+        if (
+            !event
+            || typeof window === 'undefined'
+            || typeof window.fbq !== 'function'
+            || !hasMarketingConsent()
+        ) {
+            return;
+        }
+
+        if (event.event_name !== 'Lead') {
+            return;
+        }
+
+        window.fbq(
+            'track',
+            'Lead',
+            {
+                form_type: event.form_type,
+                lead_type: event.form_type,
+                content_category: event.form_type,
+            },
+            {
+                eventID: event.event_id,
+            },
+        );
+    },
+    { immediate: true },
+);
+
 </script>
 
 <template>
@@ -154,7 +198,8 @@ const isActive = (href) => {
             </div>
         </header>
 
-        <div class="pointer-events-none fixed right-5 top-5 z-[90] w-[calc(100%-2.5rem)] max-w-md space-y-3 sm:right-6 sm:top-6">
+        <div
+            class="pointer-events-none fixed right-5 top-5 z-[90] w-[calc(100%-2.5rem)] max-w-md space-y-3 sm:right-6 sm:top-6">
             <Transition
                 enter-active-class="transition duration-300 ease-out"
                 enter-from-class="translate-x-6 opacity-0"
@@ -168,7 +213,8 @@ const isActive = (href) => {
                     class="pointer-events-auto rounded-2xl border border-emerald-400/40 bg-emerald-950/95 px-5 py-4 text-sm text-emerald-50 shadow-2xl shadow-black/40 backdrop-blur"
                 >
                     <div class="flex items-start gap-4">
-                        <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-sm font-black text-emerald-950">
+                        <div
+                            class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-sm font-black text-emerald-950">
                             ✓
                         </div>
 
@@ -206,7 +252,8 @@ const isActive = (href) => {
                     class="pointer-events-auto rounded-2xl border border-red-400/40 bg-red-950/95 px-5 py-4 text-sm text-red-50 shadow-2xl shadow-black/40 backdrop-blur"
                 >
                     <div class="flex items-start gap-4">
-                        <div class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-400 text-sm font-black text-red-950">
+                        <div
+                            class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-400 text-sm font-black text-red-950">
                             !
                         </div>
 
@@ -315,5 +362,6 @@ const isActive = (href) => {
                 </div>
             </div>
         </footer>
+        <CookieConsentBanner />
     </div>
 </template>

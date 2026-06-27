@@ -13,7 +13,6 @@ const page = usePage();
 const site = computed(() => page.props.site || {});
 
 const form = useForm({
-    form_type: 'contact',
     first_name: '',
     last_name: '',
     email: '',

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreContactLeadRequest;
+use App\Services\Lead\ContactLeadFormTypeResolver;
 use App\Services\Lead\ContactLeadService;
+use App\Services\Lead\LeadTrackingService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,12 +20,27 @@ final class ContactController extends Controller
     }
 
     public function store(
-        StoreContactLeadRequest $request,
-        ContactLeadService      $contactLeadService,
+        StoreContactLeadRequest     $request,
+        ContactLeadService          $contactLeadService,
+        ContactLeadFormTypeResolver $formTypeResolver,
+        LeadTrackingService         $leadTrackingService,
     ): RedirectResponse
     {
-        $contactLeadService->create($request->validated());
+        $validated = $request->validated();
 
-        return back()->with('success', 'Your message has been sent. Our team will contact you soon.');
+        $contactLeadService->create($validated);
+
+        $formType = $formTypeResolver->resolve($validated['subject'] ?? null);
+
+        $metaEvent = $leadTrackingService->track($request, $formType, [
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'subject' => $validated['subject'] ?? null,
+        ]);
+
+        return back()->with([
+            'success' => 'Your message has been sent. Our team will contact you soon.',
+            'meta_event' => $metaEvent,
+        ]);
     }
 }

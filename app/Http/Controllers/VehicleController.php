@@ -6,7 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Lead\StoreVehicleInquiryRequest;
 use App\Models\Vehicle;
+use App\Services\Lead\LeadTrackingService;
 use App\Services\Lead\VehicleLeadService;
+use App\Support\LeadFormType;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -77,15 +79,28 @@ final class VehicleController extends Controller
 
     public function inquiry(
         StoreVehicleInquiryRequest $request,
-        Vehicle                    $vehicle,
-        VehicleLeadService         $vehicleLeadService,
-    ): RedirectResponse
-    {
+        Vehicle $vehicle,
+        VehicleLeadService $vehicleLeadService,
+        LeadTrackingService $leadTrackingService,
+    ): RedirectResponse {
         abort_unless($vehicle->is_active, 404);
         abort_unless($vehicle->status === Vehicle::STATUS_AVAILABLE, 404);
 
-        $vehicleLeadService->createFromVehicle($vehicle, $request->validated());
+        $validated = $request->validated();
 
-        return back()->with('success', 'Your request has been sent. Our sales team will contact you soon.');
+        $vehicleLeadService->createFromVehicle($vehicle, $validated);
+
+        $metaEvent = $leadTrackingService->track($request, LeadFormType::VEHICLE_INQUIRY, [
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'vehicle_id' => $vehicle->id,
+            'stock_number' => $vehicle->stock_number,
+            'content_name' => $vehicle->name,
+        ]);
+
+        return back()->with([
+            'success' => 'Your request has been sent. Our sales team will contact you soon.',
+            'meta_event' => $metaEvent,
+        ]);
     }
 }

@@ -13,25 +13,15 @@ final class LeadFormType
     public const DELIVERY = 'delivery';
     public const WARRANTY = 'warranty';
 
-    public static function labels(): array
+    public static function label(string $type): string
     {
-        return [
-            self::CONTACT => 'Contact Form',
+        return match ($type) {
             self::VEHICLE_INQUIRY => 'Vehicle Inquiry',
             self::FINANCE => 'Finance Request',
             self::TRADE_IN => 'Trade-In Request',
             self::DELIVERY => 'Delivery Question',
             self::WARRANTY => 'Warranty Question',
-        ];
-    }
-
-    public static function label(string $type): string
-    {
-        return self::labels()[$type] ?? 'Lead Form';
-    }
-
-    public static function allowed(): array
-    {
-        return array_keys(self::labels());
+            default => 'Contact Form',
+        };
     }
 }

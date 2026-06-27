@@ -7,14 +7,25 @@ namespace App\Services\Meta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 final readonly class MetaCapiService
 {
-    public function sendLead(Request $request, string $formType, array $leadData = []): ?string
+    public function sendLead(
+        Request $request,
+        string  $eventId,
+        string  $formType,
+        array   $leadData = [],
+    ): void
     {
+
+        if ($request->cookie('cookie_marketing_consent') !== '1') {
+            Log::info('Meta CAPI skipped: marketing consent was not granted.');
+
+            return;
+        }
+
         if (!config('services.meta.capi_enabled')) {
-            return null;
+            return;
         }
 
         $pixelId = config('services.meta.pixel_id');
@@ -24,14 +35,14 @@ final readonly class MetaCapiService
         if (!is_string($pixelId) || $pixelId === '' || !is_string($accessToken) || $accessToken === '') {
             Log::warning('Meta CAPI skipped: pixel id or access token is missing.');
 
-            return null;
+            return;
         }
-
-        $eventId = (string)Str::uuid();
 
         $userData = array_filter([
             'client_ip_address' => $request->ip(),
             'client_user_agent' => $request->userAgent(),
+            'em' => $this->hashEmail($leadData['email'] ?? null),
+            'ph' => $this->hashPhone($leadData['phone'] ?? null),
         ]);
 
         $customData = array_filter([
@@ -41,6 +52,7 @@ final readonly class MetaCapiService
             'content_category' => $formType,
             'vehicle_id' => $leadData['vehicle_id'] ?? null,
             'stock_number' => $leadData['stock_number'] ?? null,
+            'subject' => $leadData['subject'] ?? null,
         ]);
 
         $payload = [
@@ -77,7 +89,8 @@ final readonly class MetaCapiService
             Log::info('Meta CAPI Lead response', [
                 'status' => $response->status(),
                 'body' => $response->json(),
-                'payload' => $payload,
+                'form_type' => $formType,
+                'event_id' => $eventId,
             ]);
         }
 
@@ -87,7 +100,33 @@ final readonly class MetaCapiService
                 'body' => $response->body(),
             ]);
         }
+    }
 
-        return $eventId;
+    private function hashEmail(mixed $email): ?array
+    {
+        if (!is_string($email) || trim($email) === '') {
+            return null;
+        }
+
+        return [
+            hash('sha256', strtolower(trim($email))),
+        ];
+    }
+
+    private function hashPhone(mixed $phone): ?array
+    {
+        if (!is_string($phone) || trim($phone) === '') {
+            return null;
+        }
+
+        $normalized = preg_replace('/\D+/', '', $phone);
+
+        if (!is_string($normalized) || $normalized === '') {
+            return null;
+        }
+
+        return [
+            hash('sha256', $normalized),
+        ];
     }
 }

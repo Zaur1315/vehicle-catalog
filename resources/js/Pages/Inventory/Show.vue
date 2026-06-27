@@ -117,9 +117,6 @@ const normalizedFeatures = computed(() => {
 });
 
 const form = useForm({
-    form_type: 'vehicle_inquiry',
-    vehicle_id: vehicle.id,
-    stock_number: vehicle.stock_number,
     first_name: '',
     last_name: '',
     email: '',

@@ -41,29 +41,29 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                'meta_event' => fn () => $request->session()->get('meta_event'),
             ],
 
             'site' => [
                 'name' => config('site.name'),
                 'tagline' => config('site.tagline'),
-
                 'phone' => config('site.phone'),
                 'phone_tel' => config('site.phone_tel'),
-
                 'email' => config('site.email'),
-
                 'address' => config('site.address'),
                 'maps_url' => config('site.maps_url'),
                 'maps_embed_url' => config('site.maps_embed_url'),
-
                 'city' => config('site.city'),
                 'state' => config('site.state'),
                 'zip' => config('site.zip'),
                 'country' => config('site.country'),
-
                 'business_hours' => config('site.business_hours'),
-
                 'logo' => config('site.logo'),
+            ],
+
+            'tracking' => [
+                'meta_pixel_id' => config('services.meta.pixel_id'),
+                'meta_pixel_enabled' => config('services.meta.pixel_enabled'),
             ],
         ];
     }

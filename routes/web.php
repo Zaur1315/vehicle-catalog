@@ -9,6 +9,8 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PrivacyPolicyController;
+use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TermsController;
 use App\Http\Controllers\TradeInController;
 use App\Http\Controllers\VehicleController;
@@ -54,3 +56,9 @@ Route::get('/privacy-policy', PrivacyPolicyController::class)
 
 Route::get('terms', TermsController::class)
     ->name('terms');
+
+Route::get('/sitemap.xml', SitemapController::class)
+    ->name('sitemap');
+
+Route::get('/robots.txt', RobotsController::class)
+    ->name('robots');

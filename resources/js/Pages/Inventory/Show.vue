@@ -1,7 +1,7 @@
 <script setup>
 import {Link, useForm, usePage} from '@inertiajs/vue3';
 import SeoHead from '@/Components/SeoHead.vue';
-import {computed, ref} from 'vue';
+import {computed, nextTick, onBeforeUnmount, onMounted, ref} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({
@@ -22,6 +22,17 @@ const props = defineProps({
 const page = usePage();
 
 const site = computed(() => page.props.site || {});
+
+const dealerPhoneLabel = computed(() => {
+    return site.value.phone || site.value.phone_display || site.value.phone_tel || '';
+});
+
+const dealerPhoneHref = computed(() => {
+    const phone = site.value.phone_tel || dealerPhoneLabel.value;
+    const normalizedPhone = String(phone || '').replace(/[^\d+]/g, '');
+
+    return normalizedPhone ? `tel:${normalizedPhone}` : null;
+});
 
 const numericPrice = computed(() => {
     if (!props.vehicle.price) {
@@ -76,6 +87,15 @@ const vehicleSchema = computed(() => {
 });
 
 const activeImageIndex = ref(0);
+const isLightboxOpen = ref(false);
+const touchStartX = ref(0);
+const touchStartY = ref(0);
+const touchDeltaX = ref(0);
+const touchDeltaY = ref(0);
+const didSwipe = ref(false);
+const isInquiryFormVisible = ref(false);
+
+const SWIPE_THRESHOLD = 50;
 
 const galleryImages = computed(() => {
     const images = [];
@@ -132,8 +152,36 @@ const submit = () => {
     });
 };
 
-const setActiveImage = (index) => {
+const showInquiryForm = async () => {
+    isInquiryFormVisible.value = true;
+
+    await nextTick();
+
+    document.getElementById('vehicle-inquiry-form')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+    });
+};
+
+const openLightbox = (index = activeImageIndex.value) => {
+    if (galleryImages.value.length === 0) {
+        return;
+    }
+
     activeImageIndex.value = index;
+    isLightboxOpen.value = true;
+};
+
+const closeLightbox = () => {
+    isLightboxOpen.value = false;
+};
+
+const handleMainImageClick = () => {
+    if (didSwipe.value) {
+        return;
+    }
+
+    openLightbox();
 };
 
 const previousImage = () => {
@@ -155,6 +203,93 @@ const nextImage = () => {
         ? 0
         : activeImageIndex.value + 1;
 };
+
+const resetTouchState = () => {
+    touchStartX.value = 0;
+    touchStartY.value = 0;
+    touchDeltaX.value = 0;
+    touchDeltaY.value = 0;
+};
+
+const handleGalleryTouchStart = (event) => {
+    if (galleryImages.value.length < 2) {
+        return;
+    }
+
+    const touch = event.changedTouches[0];
+
+    touchStartX.value = touch.clientX;
+    touchStartY.value = touch.clientY;
+    touchDeltaX.value = 0;
+    touchDeltaY.value = 0;
+};
+
+const handleGalleryTouchMove = (event) => {
+    if (galleryImages.value.length < 2 || touchStartX.value === 0) {
+        return;
+    }
+
+    const touch = event.changedTouches[0];
+
+    touchDeltaX.value = touch.clientX - touchStartX.value;
+    touchDeltaY.value = touch.clientY - touchStartY.value;
+};
+
+const handleGalleryTouchEnd = () => {
+    if (galleryImages.value.length < 2) {
+        return;
+    }
+
+    const horizontalMove = Math.abs(touchDeltaX.value);
+    const verticalMove = Math.abs(touchDeltaY.value);
+    const isHorizontalSwipe = horizontalMove >= SWIPE_THRESHOLD && horizontalMove > verticalMove;
+
+    if (!isHorizontalSwipe) {
+        resetTouchState();
+
+        return;
+    }
+
+    didSwipe.value = true;
+
+    if (touchDeltaX.value < 0) {
+        nextImage();
+    } else {
+        previousImage();
+    }
+
+    resetTouchState();
+
+    window.setTimeout(() => {
+        didSwipe.value = false;
+    }, 250);
+};
+
+const handleGalleryKeydown = (event) => {
+    if (!isLightboxOpen.value) {
+        return;
+    }
+
+    if (event.key === 'Escape') {
+        closeLightbox();
+    }
+
+    if (event.key === 'ArrowLeft') {
+        previousImage();
+    }
+
+    if (event.key === 'ArrowRight') {
+        nextImage();
+    }
+};
+
+onMounted(() => {
+    window.addEventListener('keydown', handleGalleryKeydown);
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('keydown', handleGalleryKeydown);
+});
 </script>
 
 <template>
@@ -202,8 +337,8 @@ const nextImage = () => {
                     </p>
                 </div>
 
-                <div class="grid grid-cols-2 border border-white/10 bg-white/[0.035] sm:grid-cols-4" style="width: 600px;">
-                    <div class="stat-tile">
+                <div class="grid grid-cols-2 border border-white/10 bg-white/[0.035] sm:grid-cols-4" style="max-width: 600px;">
+                    <div class="stat-tile border-b border-white/10 sm:border-b-0">
                         <p class="text-xs uppercase tracking-wide text-slate-500">
                             Year
                         </p>
@@ -212,7 +347,7 @@ const nextImage = () => {
                         </p>
                     </div>
 
-                    <div class="stat-tile">
+                    <div class="stat-tile border-b border-white/10 sm:border-b-0">
                         <p class="text-xs uppercase tracking-wide text-slate-500">
                             Mileage
                         </p>
@@ -221,7 +356,7 @@ const nextImage = () => {
                         </p>
                     </div>
 
-                    <div class="stat-tile">
+                    <div class="stat-tile !border-l-0 sm:!border-l">
                         <p class="text-xs uppercase tracking-wide text-slate-500">
                             VIN
                         </p>
@@ -239,11 +374,18 @@ const nextImage = () => {
             <div class="grid gap-8 xl:grid-cols-[1fr_420px]">
                 <div>
                     <div class="dealer-panel overflow-hidden rounded-2xl">
-                        <div class="relative bg-black">
+                        <div
+                            class="relative touch-pan-y select-none bg-black"
+                            @touchstart.passive="handleGalleryTouchStart"
+                            @touchmove.passive="handleGalleryTouchMove"
+                            @touchend="handleGalleryTouchEnd"
+                        >
                             <img
                                 :src="activeImage.url"
                                 :alt="activeImage.alt"
-                                class="h-[360px] w-full object-cover sm:h-[520px] lg:h-[640px]"
+                                class="h-[360px] w-full cursor-zoom-in object-cover sm:h-[520px] lg:h-[640px]"
+                                draggable="false"
+                                @click="handleMainImageClick"
                             >
 
                             <div
@@ -257,16 +399,18 @@ const nextImage = () => {
                             >
                                 <button
                                     type="button"
+                                    aria-label="Previous image"
                                     class="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-black"
-                                    @click="previousImage"
+                                    @click.stop="previousImage"
                                 >
                                     ‹
                                 </button>
 
                                 <button
                                     type="button"
+                                    aria-label="Next image"
                                     class="flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-black/60 text-xl font-black text-white backdrop-blur transition hover:bg-black"
-                                    @click="nextImage"
+                                    @click.stop="nextImage"
                                 >
                                     ›
                                 </button>
@@ -283,7 +427,8 @@ const nextImage = () => {
                                 type="button"
                                 class="overflow-hidden rounded-xl border transition"
                                 :class="activeImageIndex === index ? 'border-amber-300' : 'border-white/10 opacity-70 hover:opacity-100'"
-                                @click="setActiveImage(index)"
+                                :aria-label="`View image ${index + 1}`"
+                                @click="openLightbox(index)"
                             >
                                 <img
                                     :src="image.url"
@@ -293,6 +438,124 @@ const nextImage = () => {
                             </button>
                         </div>
                     </div>
+
+                    <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                        <button
+                            type="button"
+                            class="btn-primary w-full"
+                            @click="showInquiryForm"
+                        >
+                            Request more information
+                        </button>
+
+                        <a
+                            v-if="dealerPhoneHref"
+                            :href="dealerPhoneHref"
+                            class="btn-secondary w-full"
+                        >
+                            Call us now: {{ dealerPhoneLabel }}
+                        </a>
+                    </div>
+
+                    <Transition
+                        enter-active-class="transition duration-200 ease-out"
+                        enter-from-class="opacity-0 translate-y-2"
+                        enter-to-class="opacity-100 translate-y-0"
+                    >
+                        <form
+                            v-if="isInquiryFormVisible"
+                            id="vehicle-inquiry-form"
+                            class="dealer-panel mt-5 space-y-4 rounded-2xl p-6"
+                            @submit.prevent="submit"
+                        >
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    First Name
+                                </label>
+                                <input
+                                    v-model="form.first_name"
+                                    required
+                                    class="form-input-dark"
+                                    placeholder="John"
+                                >
+                                <p v-if="form.errors.first_name" class="mt-2 text-sm text-red-300">
+                                    {{ form.errors.first_name }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    Last Name
+                                </label>
+                                <input
+                                    v-model="form.last_name"
+                                    class="form-input-dark"
+                                    placeholder="Smith"
+                                >
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    Phone
+                                </label>
+                                <input
+                                    v-model="form.phone"
+                                    required
+                                    class="form-input-dark"
+                                    placeholder="+1 (000) 000-0000"
+                                >
+                                <p v-if="form.errors.phone" class="mt-2 text-sm text-red-300">
+                                    {{ form.errors.phone }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    Email
+                                </label>
+                                <input
+                                    v-model="form.email"
+                                    type="email"
+                                    class="form-input-dark"
+                                    placeholder="john@example.com"
+                                >
+                                <p v-if="form.errors.email" class="mt-2 text-sm text-red-300">
+                                    {{ form.errors.email }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    Preferred Contact Time
+                                </label>
+                                <input
+                                    v-model="form.preferred_contact_time"
+                                    class="form-input-dark"
+                                    placeholder="Morning, afternoon, evening..."
+                                >
+                            </div>
+
+                            <div>
+                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
+                                    Message
+                                </label>
+                                <textarea
+                                    v-model="form.message"
+                                    rows="4"
+                                    class="form-input-dark"
+                                    :placeholder="`I am interested in the ${vehicle.name}.`"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                :disabled="form.processing"
+                                class="btn-primary w-full disabled:opacity-60"
+                            >
+                                Request Information
+                            </button>
+                        </form>
+                    </Transition>
 
                     <div class="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
                         <section class="dealer-panel rounded-2xl p-6">
@@ -467,103 +730,6 @@ const nextImage = () => {
                             </div>
                         </div>
 
-                        <div class="p-6">
-                            <a
-                                :href="`tel:${site.phone_tel}`"
-                                class="btn-secondary w-full"
-                            >
-                                Call Now
-                            </a>
-
-                            <form class="mt-6 space-y-4" @submit.prevent="submit">
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        First Name
-                                    </label>
-                                    <input
-                                        v-model="form.first_name"
-                                        required
-                                        class="form-input-dark"
-                                        placeholder="John"
-                                    >
-                                    <p v-if="form.errors.first_name" class="mt-2 text-sm text-red-300">
-                                        {{ form.errors.first_name }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        Last Name
-                                    </label>
-                                    <input
-                                        v-model="form.last_name"
-                                        class="form-input-dark"
-                                        placeholder="Smith"
-                                    >
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        Phone
-                                    </label>
-                                    <input
-                                        v-model="form.phone"
-                                        required
-                                        class="form-input-dark"
-                                        placeholder="+1 (000) 000-0000"
-                                    >
-                                    <p v-if="form.errors.phone" class="mt-2 text-sm text-red-300">
-                                        {{ form.errors.phone }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        Email
-                                    </label>
-                                    <input
-                                        v-model="form.email"
-                                        type="email"
-                                        class="form-input-dark"
-                                        placeholder="john@example.com"
-                                    >
-                                    <p v-if="form.errors.email" class="mt-2 text-sm text-red-300">
-                                        {{ form.errors.email }}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        Preferred Contact Time
-                                    </label>
-                                    <input
-                                        v-model="form.preferred_contact_time"
-                                        class="form-input-dark"
-                                        placeholder="Morning, afternoon, evening..."
-                                    >
-                                </div>
-
-                                <div>
-                                    <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                        Message
-                                    </label>
-                                    <textarea
-                                        v-model="form.message"
-                                        rows="4"
-                                        class="form-input-dark"
-                                        :placeholder="`I am interested in the ${vehicle.name}.`"
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    :disabled="form.processing"
-                                    class="btn-primary w-full disabled:opacity-60"
-                                >
-                                    Request Information
-                                </button>
-                            </form>
-                        </div>
                     </div>
 
                     <div class="mt-5 border border-white/10 bg-white/[0.025] p-5">
@@ -581,6 +747,51 @@ const nextImage = () => {
             </div>
         </div>
     </section>
+
+    <div
+        v-if="isLightboxOpen"
+        class="fixed inset-0 z-50 flex touch-pan-y select-none items-center justify-center bg-black/90 p-4"
+        @click.self="closeLightbox"
+        @touchstart.passive="handleGalleryTouchStart"
+        @touchmove.passive="handleGalleryTouchMove"
+        @touchend="handleGalleryTouchEnd"
+    >
+        <button
+            type="button"
+            aria-label="Close gallery"
+            class="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-black/60 text-3xl font-black leading-none text-white backdrop-blur transition hover:bg-black"
+            @click="closeLightbox"
+        >
+            ×
+        </button>
+
+        <button
+            v-if="galleryImages.length > 1"
+            type="button"
+            aria-label="Previous image"
+            class="absolute left-5 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-xl border border-white/20 bg-black/60 text-3xl font-black text-white backdrop-blur transition hover:bg-black"
+            @click="previousImage"
+        >
+            ‹
+        </button>
+
+        <img
+            :src="activeImage.url"
+            :alt="activeImage.alt"
+            class="max-h-[90vh] max-w-full rounded-2xl object-contain"
+            draggable="false"
+        >
+
+        <button
+            v-if="galleryImages.length > 1"
+            type="button"
+            aria-label="Next image"
+            class="absolute right-5 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-xl border border-white/20 bg-black/60 text-3xl font-black text-white backdrop-blur transition hover:bg-black"
+            @click="nextImage"
+        >
+            ›
+        </button>
+    </div>
 
     <section v-if="relatedVehicles.length" class="site-section-tight border-t border-white/10 bg-white/[0.025]">
         <div class="site-container">

@@ -124,12 +124,12 @@ const buyingSteps = [
                 </p>
 
                 <div class="mt-10 flex flex-wrap gap-4">
-                    <Link href="/inventory" class="btn-primary">
-                        Browse Inventory
-                    </Link>
+                    <a href="tel:+12036302886" class="btn-primary">
+                        Call us now
+                    </a>
 
-                    <Link href="/finance" class="btn-secondary">
-                        Finance Options
+                    <Link href="/inventory" class="btn-secondary">
+                        Browse Inventory
                     </Link>
                 </div>
             </div>

@@ -64,7 +64,12 @@
     }
 
     .stat-tile {
-        @apply border-l border-white/10 px-6 py-5 first:border-l-0;
+        @apply border-white/10 px-6 py-5;
+
+        @apply border-l first:border-l-0;
+        @apply first:border-b nth-[2]:border-b nth-[3]:border-l-0;
+
+        @apply md:border-b-0 md:border-l md:first:border-l-0 md:nth-[3]:border-l;
     }
 
     .form-input-dark {

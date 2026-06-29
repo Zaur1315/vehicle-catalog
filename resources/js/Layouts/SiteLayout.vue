@@ -166,9 +166,9 @@ watch(
                         View Inventory
                     </Link>
 
-                    <Link href="/contact" class="btn-primary">
+                    <a href="tel:+12036302886" class="btn-primary">
                         Contact Sales
-                    </Link>
+                    </a>
                 </div>
 
                 <button

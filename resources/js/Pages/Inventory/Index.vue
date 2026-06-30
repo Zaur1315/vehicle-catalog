@@ -434,7 +434,7 @@ watch(
                                         Internet Price
                                     </p>
 
-                                    <p class="mt-2 text-3xl font-black text-amber-300">
+                                    <p class="mt-2 text-xl font-black text-amber-300">
                                         {{ vehicle.price }}
                                     </p>
                                 </div>

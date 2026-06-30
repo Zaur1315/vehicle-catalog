@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\Exceptions\DriverException;
+use Intervention\Image\Exceptions\ImageDecoderException;
+use Intervention\Image\Exceptions\InvalidArgumentException;
 use Intervention\Image\ImageManager;
 use RuntimeException;
 
@@ -203,9 +206,23 @@ final class ImportRealVehicleInventoryCommand extends Command
             'exterior_color' => $this->requiredField($text, 'Exterior Color'),
             'interior_color' => $this->requiredField($text, 'Interior Color'),
             'short_description' => $this->firstParagraph($overview),
-            'description' => (string)Str::markdown($this->stripMetadataBlock($text)),
+            'description' => $this->markdownToHtml($this->stripMetadataBlock($text)),
             'features' => $this->extractFeatures($text),
         ];
+    }
+
+    private function markdownToHtml(string $markdown): string
+    {
+        $markdown = trim($markdown);
+
+        if ($markdown === '') {
+            return '';
+        }
+
+        return (string) Str::markdown($markdown, [
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]);
     }
 
     private function extractTitle(string $text): string
@@ -230,7 +247,13 @@ final class ImportRealVehicleInventoryCommand extends Command
 
     private function stripMetadataBlock(string $text): string
     {
-        $text = preg_replace('/^\*\*(Make|Model|Engine|Drivetrain|Mileage|Transmission|VIN|Body Style|Title Status|Exterior Color|Interior Color|Seller Type):\*\*.*\R?/mu', '', $text) ?? $text;
+        $text = preg_replace('/^\*\*(.+?)\*\*\s*\R+/u', '', $text, 1) ?? $text;
+
+        $text = preg_replace(
+            '/^\*\*(Make|Model|Engine|Drivetrain|Mileage|Transmission|VIN|Body Style|Title Status|Exterior Color|Interior Color|Seller Type):\*\*.*\R?/mu',
+            '',
+            $text,
+        ) ?? $text;
 
         return trim($text);
     }
@@ -258,6 +281,7 @@ final class ImportRealVehicleInventoryCommand extends Command
     {
         $sections = [
             'Factory Equipment',
+            'Equipment',
             'Harley-Davidson / Tuscany Upgrades',
             'Modifications',
         ];
@@ -271,12 +295,18 @@ final class ImportRealVehicleInventoryCommand extends Command
                 continue;
             }
 
-            if (preg_match_all('/^\s*\*\s+(.+)$/mu', $content, $matches) !== 1) {
+            $matched = preg_match_all('/^\s*\*\s+(.+)$/mu', $content, $matches);
+
+            if ($matched === false || $matched === 0) {
                 continue;
             }
 
             foreach ($matches[1] as $feature) {
-                $features[] = $this->stripMarkdown($feature);
+                $feature = $this->stripMarkdown($feature);
+
+                if ($feature !== '') {
+                    $features[] = $feature;
+                }
             }
         }
 
@@ -349,6 +379,11 @@ final class ImportRealVehicleInventoryCommand extends Command
         }
     }
 
+    /**
+     * @throws ImageDecoderException
+     * @throws DriverException
+     * @throws InvalidArgumentException
+     */
     private function generateWebp(
         string $sourcePath,
         string $targetRelativePath,

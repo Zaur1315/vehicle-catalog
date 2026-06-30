@@ -650,7 +650,7 @@ onBeforeUnmount(() => {
 
                         <div
                             v-if="vehicle.description"
-                            class="prose prose-invert mt-6 max-w-none text-slate-300"
+                            class="vehicle-description mt-6"
                             v-html="vehicle.description"
                         />
 

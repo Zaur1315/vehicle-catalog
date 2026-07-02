@@ -134,7 +134,7 @@ final class ImportRealVehicleInventoryCommand extends Command
                     'vehicle_model_id' => $model->id,
                     'name' => $vehicle['title'],
                     'slug' => $slug,
-                    'vin' => $this->normalizeVin($vehicle['vin']),
+                    'vin' => $vehicle['vin'],
                     'year' => $vehicle['year'],
                     'price' => $defaultPrice,
                     'price_on_request' => $defaultPrice <= 0,
@@ -346,6 +346,11 @@ final class ImportRealVehicleInventoryCommand extends Command
         return null;
     }
 
+    /**
+     * @throws DriverException
+     * @throws ImageDecoderException
+     * @throws InvalidArgumentException
+     */
     private function syncImages(Vehicle $vehicle, string $slug, string $name, string $imageDirectory, int $quality): void
     {
         $vehicle->images()->delete();
@@ -450,23 +455,5 @@ final class ImportRealVehicleInventoryCommand extends Command
             str_contains($engine, 'electric') => 'electric',
             default => 'gasoline',
         };
-    }
-
-    private function normalizeVin(string $vin): string
-    {
-        return strtr(Str::upper($vin), [
-            'А' => 'A',
-            'В' => 'B',
-            'Е' => 'E',
-            'К' => 'K',
-            'М' => 'M',
-            'Н' => 'H',
-            'О' => 'O',
-            'Р' => 'P',
-            'С' => 'C',
-            'Т' => 'T',
-            'Х' => 'X',
-            'У' => 'Y',
-        ]);
     }
 }

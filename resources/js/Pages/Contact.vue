@@ -1,8 +1,8 @@
 <script setup>
-import {useForm, usePage} from '@inertiajs/vue3';
+import {Link, useForm, usePage} from '@inertiajs/vue3';
+import {computed} from 'vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
-import {computed} from "vue";
 
 defineOptions({
     layout: SiteLayout,
@@ -11,6 +11,8 @@ defineOptions({
 const page = usePage();
 
 const site = computed(() => page.props.site || {});
+
+const contactImage = '/images/visit-bg.webp';
 
 const form = useForm({
     first_name: '',
@@ -21,368 +23,234 @@ const form = useForm({
     message: '',
 });
 
-const submit = () => {
-    form.post('/contact', {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-    });
-};
-
 const mapsEmbedUrl = computed(() => {
     if (site.value.maps_embed_url) {
         return site.value.maps_embed_url;
     }
 
-    const address = site.value.address || '108a Rainbow Rd, East Granby, CT 06026, USA';
+    const address =
+        site.value.address
+        || '108a Rainbow Rd, East Granby, CT 06026, USA';
 
     return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
 });
+
+const submit = () => {
+    form.post('/contact', {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset();
+        },
+    });
+};
+
+const contactOptions = [
+    {
+        number: '01',
+        title: 'Vehicle sales',
+        description:
+            'Ask about availability, condition, mileage, price, stock number, or arranging a visit.',
+        subject: 'Vehicle availability',
+    },
+    {
+        number: '02',
+        title: 'Financing',
+        description:
+            'Ask about the preliminary financing request and available next steps.',
+        subject: 'Finance question',
+    },
+    {
+        number: '03',
+        title: 'Sell or trade',
+        description:
+            'Contact us about submitting your current vehicle for an initial review.',
+        subject: 'Trade-in question',
+    },
+    {
+        number: '04',
+        title: 'General assistance',
+        description:
+            'Send a general question about the dealership, service availability, or your recent purchase.',
+        subject: 'General question',
+    },
+];
+
+const selectSubject = (subject) => {
+    form.subject = subject;
+
+    document
+        .getElementById('contact-form')
+        ?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+};
 </script>
 
 <template>
     <SeoHead
-        title="Contact"
-        description="Contact our sales team about vehicle availability, pricing, delivery, warranty, finance, trade-in, or general purchase questions."
+        title="Contact Cars For Less"
+        description="Contact Cars For Less Sales & Service in East Granby, CT about vehicle availability, financing, trade-ins, service availability, delivery, or general questions."
     />
-    <section class="border-b border-white/10 bg-[#080b0f]">
-        <div class="site-container py-10">
-            <div class="grid gap-8 lg:grid-cols-[1fr_460px] lg:items-end">
+
+    <!-- Light banner -->
+    <section class="border-b border-black/10 bg-[#f5f3ee]">
+        <div
+            class="site-container pb-12 pt-12 lg:pb-16 lg:pt-16"
+        >
+            <div
+                class="grid gap-8 lg:grid-cols-[1fr_380px] lg:items-end"
+            >
                 <div>
                     <p class="eyebrow">
-                        Contact
+                        Contact Cars For Less
                     </p>
 
-                    <h1 class="mt-3 heading-lg">
-                        Speak with our sales team.
+                    <h1
+                        class="mt-5 max-w-5xl text-5xl font-black leading-[0.9] tracking-[-0.065em] sm:text-6xl lg:text-7xl"
+                    >
+                        Let’s talk about<br>
+
+                        <span class="text-[#ff4f38]">
+                            what you need.
+                        </span>
                     </h1>
 
-                    <p class="mt-5 max-w-3xl body-muted">
-                        Contact us about vehicle availability, pricing, delivery, warranty, finance, trade-in,
-                        or general purchase questions.
+                    <p
+                        class="mt-6 max-w-3xl text-base leading-7 text-stone-600"
+                    >
+                        Contact our East Granby team about current inventory,
+                        financing, your vehicle, service availability, or
+                        general dealership questions.
                     </p>
                 </div>
 
-                <div class="border border-white/10 bg-white/[0.035] p-5">
-                    <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
-                        Sales Hours
+                <div class="border-l border-black/15 pl-6">
+                    <p
+                        class="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400"
+                    >
+                        Call the dealership
                     </p>
 
-                    <p class="mt-2 text-2xl font-black text-white">
-                        Mon–Fri
+                    <a
+                        :href="`tel:${site.phone_tel}`"
+                        class="mt-3 block text-2xl font-black tracking-[-0.03em] transition hover:text-[#e9422c]"
+                    >
+                        {{ site.phone }}
+                    </a>
+
+                    <p class="mt-2 text-sm leading-6 text-stone-500">
+                        {{ site.business_hours }}
                     </p>
-
-                    <p class="mt-1 text-sm text-slate-400">
-                        9:00 AM – 5:00 PM
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="site-section">
-        <div class="site-container">
-            <div class="grid gap-8 xl:grid-cols-[0.85fr_1.15fr]">
-                <aside class="space-y-5">
-                    <div class="dealer-panel rounded-2xl p-6">
-                        <p class="eyebrow">
-                            Dealer Contact
-                        </p>
-
-                        <div class="mt-6 divide-y divide-white/10">
-                            <div class="py-4 first:pt-0">
-                                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                    Phone
-                                </p>
-
-                                <a
-                                    :href="`tel:${site.phone_tel}`"
-                                    class="mt-2 block text-2xl font-black text-white hover:text-amber-300"
-                                >
-                                    {{ site.phone }}
-                                </a>
-                            </div>
-
-                            <div class="py-4">
-                                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                    Email
-                                </p>
-
-                                <a
-                                    :href="`mailto:${site.email}`"
-                                    class="mt-2 block text-lg font-bold text-white hover:text-amber-300"
-                                >
-                                    {{ site.email }}
-                                </a>
-                            </div>
-
-                            <div class="py-4 last:pb-0">
-                                <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                    Location
-                                </p>
-
-                                <a
-                                    :href="site.maps_url"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="mt-2 block text-sm leading-6 text-slate-300 hover:text-amber-300"
-                                >
-                                    {{ site.address }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid gap-5 sm:grid-cols-3 xl:grid-cols-1">
-                        <article class="dealer-card p-5">
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                Sales
-                            </p>
-
-                            <h3 class="mt-3 text-xl font-black">
-                                Availability & pricing
-                            </h3>
-
-                            <p class="mt-3 text-sm leading-6 text-slate-400">
-                                Confirm vehicle status, stock number, price, mileage, and purchase terms.
-                            </p>
-                        </article>
-
-                        <article class="dealer-card p-5">
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                Delivery
-                            </p>
-
-                            <h3 class="mt-3 text-xl font-black">
-                                Enclosed transport
-                            </h3>
-
-                            <p class="mt-3 text-sm leading-6 text-slate-400">
-                                Ask about insured enclosed delivery and estimated transport timing.
-                            </p>
-                        </article>
-
-                        <article class="dealer-card p-5">
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                Warranty
-                            </p>
-
-                            <h3 class="mt-3 text-xl font-black">
-                                Coverage questions
-                            </h3>
-
-                            <p class="mt-3 text-sm leading-6 text-slate-400">
-                                Review warranty, return terms, exclusions, and eligibility before purchase.
-                            </p>
-                        </article>
-                    </div>
-                </aside>
-
-                <div class="dealer-panel rounded-2xl">
-                    <div class="border-b border-white/10 px-6 py-5">
-                        <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
-                            Send Message
-                        </p>
-
-                        <h2 class="mt-2 text-3xl font-black">
-                            Request more information
-                        </h2>
-                    </div>
-
-                    <form class="p-6" @submit.prevent="submit">
-                        <div class="grid gap-5 md:grid-cols-2">
-                            <div>
-                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                    First Name
-                                </label>
-
-                                <input
-                                    v-model="form.first_name"
-                                    required
-                                    class="form-input-dark"
-                                    placeholder="John"
-                                >
-
-                                <p v-if="form.errors.first_name" class="mt-2 text-sm text-red-300">
-                                    {{ form.errors.first_name }}
-                                </p>
-                            </div>
-
-                            <div>
-                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                    Last Name
-                                </label>
-
-                                <input
-                                    v-model="form.last_name"
-                                    class="form-input-dark"
-                                    placeholder="Smith"
-                                >
-
-                                <p v-if="form.errors.last_name" class="mt-2 text-sm text-red-300">
-                                    {{ form.errors.last_name }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="mt-5 grid gap-5 md:grid-cols-2">
-                            <div>
-                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                    Phone
-                                </label>
-
-                                <input
-                                    v-model="form.phone"
-                                    required
-                                    class="form-input-dark"
-                                    placeholder="+1 (000) 000-0000"
-                                >
-
-                                <p v-if="form.errors.phone" class="mt-2 text-sm text-red-300">
-                                    {{ form.errors.phone }}
-                                </p>
-                            </div>
-
-                            <div>
-                                <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                    Email
-                                </label>
-
-                                <input
-                                    v-model="form.email"
-                                    type="email"
-                                    class="form-input-dark"
-                                    placeholder="john@example.com"
-                                >
-
-                                <p v-if="form.errors.email" class="mt-2 text-sm text-red-300">
-                                    {{ form.errors.email }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="mt-5">
-                            <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                Subject
-                            </label>
-
-                            <select
-                                v-model="form.subject"
-                                class="form-select-dark"
-                            >
-                                <option value="">Select topic</option>
-                                <option value="Vehicle availability">Vehicle availability</option>
-                                <option value="Delivery question">Delivery question</option>
-                                <option value="Warranty or return question">Warranty or return question</option>
-                                <option value="Finance question">Finance question</option>
-                                <option value="Trade-in question">Trade-in question</option>
-                                <option value="General question">General question</option>
-                            </select>
-
-                            <p v-if="form.errors.subject" class="mt-2 text-sm text-red-300">
-                                {{ form.errors.subject }}
-                            </p>
-                        </div>
-
-                        <div class="mt-5">
-                            <label class="mb-2 block text-xs font-bold uppercase tracking-wide text-slate-400">
-                                Message
-                            </label>
-
-                            <textarea
-                                v-model="form.message"
-                                rows="7"
-                                class="form-input-dark"
-                                placeholder="Tell us what vehicle or service you are interested in..."
-                            />
-
-                            <p v-if="form.errors.message" class="mt-2 text-sm text-red-300">
-                                {{ form.errors.message }}
-                            </p>
-                        </div>
-
-                        <div
-                            class="mt-6 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
-                            <p class="max-w-xl text-xs leading-5 text-slate-500">
-                                By submitting this form, you agree to be contacted about your request. Vehicle pricing,
-                                availability, mileage, and terms are subject to confirmation.
-                            </p>
-
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                class="btn-primary md:min-w-52 disabled:opacity-60"
-                            >
-                                Send Message
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="site-section-tight border-y border-white/10 bg-white/[0.025]">
-        <div class="site-container">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">
-                        Find Us
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        Visit our dealership in {{ site.city }}, {{ site.state }}.
+    <!-- Contact options -->
+    <section class="bg-[#171717] text-white">
+        <div
+            class="site-container grid divide-y divide-white/10 md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4"
+        >
+            <button
+                v-for="item in contactOptions"
+                :key="item.number"
+                type="button"
+                class="group p-6 text-left transition hover:bg-white/5 lg:p-7"
+                @click="selectSubject(item.subject)"
+            >
+                <div class="flex items-start justify-between gap-4">
+                    <h2 class="text-lg font-black">
+                        {{ item.title }}
                     </h2>
+
+                    <span
+                        class="text-[10px] font-black text-[#ff5a45]"
+                    >
+                        {{ item.number }}
+                    </span>
                 </div>
 
-                <p class="max-w-xl body-muted">
-                    Use the map below for directions, then contact our sales team to confirm vehicle availability before
-                    visiting.
+                <p class="mt-3 text-xs leading-5 text-stone-500">
+                    {{ item.description }}
                 </p>
-            </div>
 
-            <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
-                <div class="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/30">
-                    <iframe
-                        :src="mapsEmbedUrl"
-                        class="h-[420px] w-full border-0"
-                        loading="lazy"
-                        allowfullscreen
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="Cars For Less Google Map"
-                    />
-                </div>
+                <span
+                    class="mt-5 inline-flex text-[10px] font-black uppercase tracking-wider text-white underline decoration-[#ff4f38] decoration-2 underline-offset-8"
+                >
+                    Send a message
+                </span>
+            </button>
+        </div>
+    </section>
 
-                <div class="dealer-panel rounded-2xl p-6">
-                    <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
-                        Dealership Location
+    <!-- Contact information and form -->
+    <section class="site-section bg-white">
+        <div
+            class="site-container grid gap-10 xl:grid-cols-[0.72fr_1.28fr]"
+        >
+            <aside class="space-y-6">
+                <div class="border border-black/10 bg-[#f5f3ee] p-6 sm:p-8">
+                    <p class="eyebrow">
+                        Contact information
                     </p>
 
-                    <h3 class="mt-3 text-2xl font-black">
-                        {{ site.name }}
-                    </h3>
+                    <div class="mt-7 divide-y divide-black/10">
+                        <div class="pb-6">
+                            <p
+                                class="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400"
+                            >
+                                Phone
+                            </p>
 
-                    <div class="mt-6 space-y-5">
-                        <div>
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
+                            <a
+                                :href="`tel:${site.phone_tel}`"
+                                class="mt-3 block text-2xl font-black tracking-[-0.03em] transition hover:text-[#e9422c]"
+                            >
+                                {{ site.phone }}
+                            </a>
+                        </div>
+
+                        <div class="py-6">
+                            <p
+                                class="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400"
+                            >
+                                Email
+                            </p>
+
+                            <a
+                                :href="`mailto:${site.email}`"
+                                class="mt-3 block break-all text-lg font-black transition hover:text-[#e9422c]"
+                            >
+                                {{ site.email }}
+                            </a>
+                        </div>
+
+                        <div class="py-6">
+                            <p
+                                class="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400"
+                            >
                                 Address
                             </p>
 
                             <a
                                 :href="site.maps_url"
                                 target="_blank"
-                                rel="noopener noreferrer"
-                                class="mt-2 block text-sm leading-6 text-slate-300 hover:text-amber-300"
+                                rel="noopener"
+                                class="mt-3 block max-w-sm text-base font-black leading-7 transition hover:text-[#e9422c]"
                             >
                                 {{ site.address }}
                             </a>
                         </div>
 
-                        <div>
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
-                                Hours
+                        <div class="pt-6">
+                            <p
+                                class="text-[9px] font-black uppercase tracking-[0.2em] text-stone-400"
+                            >
+                                Business hours
                             </p>
 
-                            <p class="mt-2 text-sm leading-6 text-slate-300">
+                            <p class="mt-3 text-base font-black">
                                 {{ site.business_hours }}
                             </p>
                         </div>
@@ -390,53 +258,366 @@ const mapsEmbedUrl = computed(() => {
 
                     <div class="mt-8 flex flex-col gap-3">
                         <a
-                            :href="site.maps_url"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            :href="`tel:${site.phone_tel}`"
                             class="btn-primary w-full"
                         >
-                            Open in Google Maps
+                            Call now
                         </a>
 
                         <a
-                            :href="`tel:${site.phone_tel}`"
+                            :href="site.maps_url"
+                            target="_blank"
+                            rel="noopener"
                             class="btn-secondary w-full"
                         >
-                            Call Now
+                            Get directions
                         </a>
                     </div>
                 </div>
+
+                <div class="relative min-h-[340px] overflow-hidden">
+                    <img
+                        :src="contactImage"
+                        alt="Visit Cars For Less in East Granby"
+                        class="absolute inset-0 h-full w-full object-cover"
+                    >
+
+                    <div
+                        class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent"
+                    ></div>
+
+                    <div class="absolute inset-x-0 bottom-0 p-7 text-white">
+                        <p
+                            class="text-[9px] font-black uppercase tracking-[0.2em] text-[#ff6b57]"
+                        >
+                            Visit the dealership
+                        </p>
+
+                        <p
+                            class="mt-3 text-2xl font-black leading-7 tracking-[-0.035em]"
+                        >
+                            See the vehicle and speak directly with our team.
+                        </p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Contact form -->
+            <div
+                id="contact-form"
+                class="scroll-mt-32 border border-black/10 bg-[#f5f3ee]"
+            >
+                <div class="border-b border-black/10 p-6 sm:p-8">
+                    <p
+                        class="text-[10px] font-black uppercase tracking-[0.2em] text-[#e9422c]"
+                    >
+                        Send a message
+                    </p>
+
+                    <h2
+                        class="mt-3 text-3xl font-black tracking-[-0.045em] sm:text-4xl"
+                    >
+                        How can we help?
+                    </h2>
+
+                    <p class="mt-4 max-w-2xl text-sm leading-6 text-stone-600">
+                        Fields marked with an asterisk are required. Include a
+                        vehicle name or stock number when asking about
+                        inventory.
+                    </p>
+                </div>
+
+                <form
+                    class="p-6 sm:p-8"
+                    @submit.prevent="submit"
+                >
+                    <fieldset>
+                        <legend
+                            class="text-xs font-black uppercase tracking-[0.16em]"
+                        >
+                            Contact information
+                        </legend>
+
+                        <div class="mt-5 grid gap-5 md:grid-cols-2">
+                            <div>
+                                <label
+                                    class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                                >
+                                    First name *
+                                </label>
+
+                                <input
+                                    v-model="form.first_name"
+                                    required
+                                    autocomplete="given-name"
+                                    class="form-input-dark"
+                                    placeholder="John"
+                                >
+
+                                <p
+                                    v-if="form.errors.first_name"
+                                    class="mt-2 text-xs font-bold text-red-600"
+                                >
+                                    {{ form.errors.first_name }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                                >
+                                    Last name
+                                </label>
+
+                                <input
+                                    v-model="form.last_name"
+                                    autocomplete="family-name"
+                                    class="form-input-dark"
+                                    placeholder="Smith"
+                                >
+
+                                <p
+                                    v-if="form.errors.last_name"
+                                    class="mt-2 text-xs font-bold text-red-600"
+                                >
+                                    {{ form.errors.last_name }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                                >
+                                    Phone *
+                                </label>
+
+                                <input
+                                    v-model="form.phone"
+                                    required
+                                    type="tel"
+                                    autocomplete="tel"
+                                    class="form-input-dark"
+                                    placeholder="+1 (000) 000-0000"
+                                >
+
+                                <p
+                                    v-if="form.errors.phone"
+                                    class="mt-2 text-xs font-bold text-red-600"
+                                >
+                                    {{ form.errors.phone }}
+                                </p>
+                            </div>
+
+                            <div>
+                                <label
+                                    class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                                >
+                                    Email
+                                </label>
+
+                                <input
+                                    v-model="form.email"
+                                    type="email"
+                                    autocomplete="email"
+                                    class="form-input-dark"
+                                    placeholder="john@example.com"
+                                >
+
+                                <p
+                                    v-if="form.errors.email"
+                                    class="mt-2 text-xs font-bold text-red-600"
+                                >
+                                    {{ form.errors.email }}
+                                </p>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="mt-9 border-t border-black/10 pt-8">
+                        <legend
+                            class="text-xs font-black uppercase tracking-[0.16em]"
+                        >
+                            Your request
+                        </legend>
+
+                        <div class="mt-5">
+                            <label
+                                class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                            >
+                                Topic
+                            </label>
+
+                            <select
+                                v-model="form.subject"
+                                class="form-select-dark"
+                            >
+                                <option value="">
+                                    Select a topic
+                                </option>
+
+                                <option value="Vehicle availability">
+                                    Vehicle availability
+                                </option>
+
+                                <option value="Finance question">
+                                    Financing question
+                                </option>
+
+                                <option value="Trade-in question">
+                                    Sell or trade question
+                                </option>
+
+                                <option value="Delivery question">
+                                    Delivery question
+                                </option>
+
+                                <option value="Warranty or return question">
+                                    Warranty question
+                                </option>
+
+                                <option value="General question">
+                                    Service or general question
+                                </option>
+                            </select>
+
+                            <p
+                                v-if="form.errors.subject"
+                                class="mt-2 text-xs font-bold text-red-600"
+                            >
+                                {{ form.errors.subject }}
+                            </p>
+                        </div>
+
+                        <div class="mt-5">
+                            <label
+                                class="mb-2 block text-[10px] font-black uppercase tracking-wider text-stone-500"
+                            >
+                                Message
+                            </label>
+
+                            <textarea
+                                v-model="form.message"
+                                rows="7"
+                                class="form-input-dark resize-y"
+                                placeholder="Tell us which vehicle or service you are interested in and how we can help."
+                            ></textarea>
+
+                            <p
+                                v-if="form.errors.message"
+                                class="mt-2 text-xs font-bold text-red-600"
+                            >
+                                {{ form.errors.message }}
+                            </p>
+                        </div>
+                    </fieldset>
+
+                    <div
+                        class="mt-8 flex flex-col gap-5 border-t border-black/10 pt-7 md:flex-row md:items-center md:justify-between"
+                    >
+                        <p class="max-w-xl text-xs leading-5 text-stone-500">
+                            By submitting this form, you agree to be contacted
+                            about your request. Vehicle availability, price,
+                            mileage, specifications, and other details remain
+                            subject to confirmation.
+                        </p>
+
+                        <button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="btn-primary shrink-0 md:min-w-52 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {{
+                                form.processing
+                                    ? 'Sending…'
+                                    : 'Send message'
+                            }}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
 
-    <section class="site-section-tight border-y border-white/10 bg-white/[0.025]">
-        <div class="site-container">
-            <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                    <p class="eyebrow">
-                        Need a specific vehicle?
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        Browse inventory before contacting sales.
-                    </h2>
-
-                    <p class="mt-5 max-w-3xl body-muted">
-                        You can open a vehicle page and send a request directly for that stock number.
-                    </p>
-                </div>
-
-                <div class="flex flex-col gap-3 sm:flex-row">
-                    <a href="/inventory" class="btn-primary">
-                        View Inventory
-                    </a>
-
-                    <a href="/finance" class="btn-secondary">
-                        Finance Options
-                    </a>
-                </div>
+    <!-- Map -->
+    <section class="overflow-hidden border-y border-black/10 bg-[#f5f3ee]">
+        <div
+            class="site-container grid lg:grid-cols-[1.2fr_0.8fr]"
+        >
+            <div class="min-h-[460px] bg-stone-200">
+                <iframe
+                    :src="mapsEmbedUrl"
+                    class="h-full min-h-[460px] w-full border-0 grayscale"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Cars For Less dealership location"
+                ></iframe>
             </div>
+
+            <div
+                class="flex flex-col justify-center py-14 lg:py-20 lg:pl-14"
+            >
+                <p class="eyebrow">
+                    Find us
+                </p>
+
+                <h2
+                    class="mt-5 text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-5xl"
+                >
+                    Visit us in<br>
+                    {{ site.city }}.
+                </h2>
+
+                <a
+                    :href="site.maps_url"
+                    target="_blank"
+                    rel="noopener"
+                    class="mt-7 max-w-sm text-lg font-black leading-7 transition hover:text-[#e9422c]"
+                >
+                    {{ site.address }}
+                </a>
+
+                <p class="mt-4 text-sm text-stone-500">
+                    {{ site.business_hours }}
+                </p>
+
+                <a
+                    :href="site.maps_url"
+                    target="_blank"
+                    rel="noopener"
+                    class="btn-primary mt-8 self-start"
+                >
+                    Open in Google Maps
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Inventory CTA -->
+    <section class="bg-[#ff4f38] py-14 text-white">
+        <div
+            class="site-container flex flex-col gap-7 md:flex-row md:items-center md:justify-between"
+        >
+            <div>
+                <p
+                    class="text-[10px] font-black uppercase tracking-[0.22em] text-white/60"
+                >
+                    Looking for a vehicle?
+                </p>
+
+                <h2
+                    class="mt-3 text-3xl font-black tracking-[-0.04em]"
+                >
+                    Browse inventory before contacting sales.
+                </h2>
+            </div>
+
+            <Link
+                href="/inventory"
+                class="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-[#171717] px-7 py-3 text-xs font-black uppercase tracking-wide text-white transition hover:bg-white hover:text-black"
+            >
+                View inventory
+            </Link>
         </div>
     </section>
 </template>

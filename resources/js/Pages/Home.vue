@@ -1,662 +1,241 @@
 <script setup>
 import {Link, usePage} from '@inertiajs/vue3';
+import {computed} from 'vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
-import SeoHead from "@/Components/SeoHead.vue";
-import {computed} from "vue";
+import SeoHead from '@/Components/SeoHead.vue';
 
-const page = usePage();
-
-const site = computed(() => page.props.site || {});
-
-defineOptions({
-    layout: SiteLayout,
-});
+defineOptions({layout: SiteLayout});
 
 const props = defineProps({
-    featuredVehicles: {
-        type: Array,
-        default: () => [],
-    },
-    reviews: {
-        type: Array,
-        default: () => [],
-    },
+    featuredVehicles: {type: Array, default: () => []},
+    reviews: {type: Array, default: () => []},
 });
 
+const page = usePage();
+const site = computed(() => page.props.site || {});
 const heroVehicle = computed(() => props.featuredVehicles[0] || null);
 
 const homeSchema = computed(() => ({
     '@context': 'https://schema.org',
     '@type': 'AutoDealer',
-    name: site.value.name || 'Marick Auto Sales',
-    description: 'Vehicle dealership offering inspected vehicle inventory, delivery, warranty, finance, and trade-in options.',
-    telephone: site.value.phone_tel || '+12036302886',
-    email: site.value.email || 'sales@marickautosales.com',
+    name: site.value.name || 'Cars For Less',
+    description: 'Used vehicle sales and automotive service in East Granby, Connecticut.',
+    telephone: site.value.phone_tel || '+18604219675',
+    email: site.value.email || 'carsforlesseric@gmail.com',
     url: typeof window !== 'undefined' ? window.location.origin : '',
     address: {
         '@type': 'PostalAddress',
-        streetAddress: '197 Pratt St',
-        addressLocality: site.value.city || 'Meriden',
+        streetAddress: '108a Rainbow Rd',
+        addressLocality: site.value.city || 'East Granby',
         addressRegion: site.value.state || 'CT',
-        postalCode: site.value.zip || '06450',
+        postalCode: site.value.zip || '06026',
         addressCountry: site.value.country || 'USA',
     },
-    openingHoursSpecification: [
-        {
-            '@type': 'OpeningHoursSpecification',
-            dayOfWeek: [
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-            ],
-            opens: '09:00',
-            closes: '17:00',
-        },
-    ],
 }));
 
-const uspItems = [
-    {
-        title: 'Inspected vehicle inventory',
-        text: 'Review mileage, VIN, stock number, photos, pricing, and vehicle details before contacting sales.',
-    },
-    {
-        title: 'Remote buyer support',
-        text: 'Ask about delivery, warranty, return terms, finance, and trade-in options before moving forward.',
-    },
-    {
-        title: 'Meriden, CT dealership',
-        text: 'Marick Auto Sales helps local and out-of-state buyers compare vehicles with clear next steps.',
-    },
+const shoppingPaths = [
+    {label: 'Cars & Sedans', query: 'body_type=sedan', mark: '01'},
+    {label: 'SUVs & Crossovers', query: 'body_type=suv', mark: '02'},
+    {label: 'Trucks', query: 'body_type=truck', mark: '03'},
+    {label: 'View Everything', query: '', mark: '04'},
 ];
 
-const buyingSteps = [
-    {
-        number: '01',
-        title: 'Choose a vehicle',
-        text: 'Browse inventory and open a vehicle page to review photos, specs, mileage, price, and features.',
-    },
-    {
-        number: '02',
-        title: 'Send an inquiry',
-        text: 'Contact sales from the vehicle page or use the contact form for availability and purchase questions.',
-    },
-    {
-        number: '03',
-        title: 'Confirm the terms',
-        text: 'Review pricing, warranty, delivery, return, finance, and trade-in details before purchase.',
-    },
-    {
-        number: '04',
-        title: 'Pickup or delivery',
-        text: 'Coordinate local pickup or ask about enclosed delivery options for out-of-state buyers.',
-    },
+const process = [
+    {number: '01', title: 'Explore the lot', text: 'Browse current vehicles online, then narrow the list by price, mileage, make, model, and body style.'},
+    {number: '02', title: 'Talk to a real person', text: 'Call or send an inquiry. We will answer questions about availability, condition, financing, and your trade.'},
+    {number: '03', title: 'Take the next step', text: 'Visit us in East Granby, arrange a test drive, and review the vehicle and purchase details in person.'},
 ];
-
 </script>
 
 <template>
     <SeoHead
-        :title=site.name
-        description="Browse inspected vehicles, request information, and contact our sales team for delivery, warranty, finance, and trade-in options."
+        :title="site.name"
+        description="Shop used vehicles from Cars For Less Sales & Service in East Granby, CT. Browse inventory, ask about financing, or value your trade."
         :schema="homeSchema"
     />
 
-    <section class="relative overflow-hidden  border-white/10">
-        <div
-            class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.16),transparent_34%),linear-gradient(135deg,#0b0f14_0%,#111827_52%,#05070a_100%)]"/>
-
-        <div class="site-container relative grid padd-top padd-bottom min-h-[720px] items-center gap-12 py-16 lg:grid-cols-[0.95fr_1.05fr]">
-            <div>
-                <p class="eyebrow">
-                    Trusted Auto Dealer
+    <section class="overflow-hidden border-b border-black/10 bg-[#f5f3ee]">
+        <div class="site-container grid min-h-[720px] items-stretch lg:grid-cols-[0.88fr_1.12fr]">
+            <div class="flex flex-col justify-center py-16 pr-0 lg:py-24 lg:pr-14">
+                <p class="flex items-center gap-3 text-[11px] font-black uppercase tracking-[0.26em] text-[#e9422c]">
+                    <span class="h-px w-9 bg-[#e9422c]"></span>
+                    Used cars in East Granby, CT
                 </p>
-
-                <h1 class="mt-5 heading-xl">
-                    Inspected vehicles. Clear terms. Straightforward delivery.
+                <h1 class="mt-7 max-w-3xl text-[clamp(3.7rem,7vw,7.4rem)] font-black leading-[0.82] tracking-[-0.075em] text-[#171717]">
+                    More car.<br><span class="text-[#ff4f38]">Less runaround.</span>
                 </h1>
-
-                <p class="mt-7 max-w-2xl text-lg leading-8 text-slate-300">
-                    Browse available vehicles, request information, review warranty coverage, and get help with
-                    enclosed delivery, financing, and trade-in options.
+                <p class="mt-8 max-w-xl text-lg leading-8 text-stone-600">
+                    Straightforward used vehicle shopping from a local sales and service team. Find a car, ask about financing, or bring us your trade.
                 </p>
-
-                <div class="mt-10 flex flex-wrap gap-4">
-                    <a href="tel:+12036302886" class="btn-primary">
-                        Call us now
-                    </a>
-
-                    <Link href="/inventory" class="btn-secondary">
-                        Browse Inventory
+                <div class="mt-9 flex flex-wrap items-center gap-4">
+                    <Link href="/inventory" class="rounded-full bg-[#171717] px-7 py-4 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#ff4f38]">
+                        Shop available cars
                     </Link>
+                    <a :href="`tel:${site.phone_tel}`" class="group flex items-center gap-3 text-sm font-black">
+                        <span class="flex h-12 w-12 items-center justify-center rounded-full border border-black/20 transition group-hover:border-[#ff4f38] group-hover:text-[#ff4f38]">↗</span>
+                        {{ site.phone }}
+                    </a>
                 </div>
             </div>
 
-            <div class="lg:pl-8">
-                <div class="dealer-panel overflow-hidden rounded-2xl">
-                    <div class="relative bg-black">
-                        <img
-                            v-if="heroVehicle?.image_medium"
-                            :src="heroVehicle.image_medium"
-                            :alt="heroVehicle.name"
-                            class="h-[320px] w-full object-cover lg:h-[360px]"
-                        >
+            <div class="relative min-h-[480px] bg-[#d9d5cc] lg:min-h-full">
+                <img
+                    v-if="heroVehicle?.image_medium"
+                    :src="heroVehicle.image_medium"
+                    :alt="heroVehicle.name"
+                    class="absolute inset-0 h-full w-full object-cover"
+                >
+                <div v-else class="absolute inset-0 bg-[linear-gradient(135deg,#cbc5b9,#eeeae1)]"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent"></div>
 
-                        <div
-                            v-else
-                            class="flex h-[320px] items-center justify-center bg-gradient-to-br from-slate-900 to-black text-slate-600 lg:h-[360px]"
-                        >
-                            Vehicle photo will appear here
-                        </div>
+                <div class="absolute left-0 top-0 bg-[#ff4f38] px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white lg:left-auto lg:right-0">
+                    Local dealer · East Granby
+                </div>
 
-                        <div
-                            class="absolute left-5 top-5 rounded-xl bg-black/70 px-4 py-2 text-xs font-black uppercase tracking-wide text-white backdrop-blur">
-                            hot offer
-                        </div>
-                    </div>
-
-                    <div
-                        v-if="heroVehicle"
-                        class="grid gap-4 border-t border-white/10 bg-[#080b0f] p-5 sm:grid-cols-[1fr_auto]"
-                    >
+                <div v-if="heroVehicle" class="absolute inset-x-0 bottom-0 p-7 text-white sm:p-10">
+                    <p class="text-[10px] font-black uppercase tracking-[0.24em] text-white/65">Featured on the lot</p>
+                    <div class="mt-3 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                         <div>
-                            <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
-                                Featured vehicle
-                            </p>
-
-                            <h3 class="mt-2 text-2xl font-black">
-                                {{ heroVehicle.name }}
-                            </h3>
-
-                            <p class="mt-2 text-sm text-slate-400">
-                                {{ heroVehicle.year }} · {{ heroVehicle.make }} {{ heroVehicle.model }} ·
-                                {{ heroVehicle.mileage }}
-                            </p>
+                            <h2 class="text-3xl font-black tracking-[-0.04em] sm:text-4xl">{{ heroVehicle.name }}</h2>
+                            <p class="mt-2 text-sm text-white/70">{{ heroVehicle.mileage }} · {{ heroVehicle.price }}</p>
                         </div>
-
-                        <div class="sm:text-right">
-                            <p class="text-2xl font-black text-amber-300">
-                                {{ heroVehicle.price }}
-                            </p>
-
-                            <Link
-                                :href="`/inventory/${heroVehicle.slug}`"
-                                class="btn-ghost mt-3"
-                            >
-                                View Details →
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-5 grid grid-cols-3 border border-white/10 bg-black/20">
-                    <div class="stat-tile">
-                        <p class="text-3xl font-black text-white">90</p>
-                        <p class="mt-1 text-xs uppercase tracking-wide text-slate-500">Day warranty</p>
-                    </div>
-
-                    <div class="stat-tile">
-                        <p class="text-3xl font-black text-white">14</p>
-                        <p class="mt-1 text-xs uppercase tracking-wide text-slate-500">Day return</p>
-                    </div>
-
-                    <div class="stat-tile">
-                        <p class="text-3xl font-black text-white">7–14</p>
-                        <p class="mt-1 text-xs uppercase tracking-wide text-slate-500">Delivery days</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="site-section-tight border-y border-white/10 bg-white/[0.025]">
-        <div class="site-container">
-            <div class="grid gap-5 lg:grid-cols-3">
-                <article
-                    v-for="item in uspItems"
-                    :key="item.title"
-                    class="border-l border-amber-300/50 bg-white/[0.025] p-6"
-                >
-                    <h2 class="text-2xl font-black">
-                        {{ item.title }}
-                    </h2>
-
-                    <p class="mt-4 text-sm leading-6 text-slate-400">
-                        {{ item.text }}
-                    </p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="site-section">
-        <div class="site-container">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">
-                        Featured Inventory
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        Vehicles selected for quick review.
-                    </h2>
-                </div>
-
-                <Link href="/inventory" class="btn-secondary">
-                    View All Vehicles
-                </Link>
-            </div>
-
-            <div
-                v-if="featuredVehicles.length"
-                class="grid gap-5 lg:grid-cols-2"
-            >
-                <Link
-                    v-for="vehicle in featuredVehicles.slice(0, 4)"
-                    :key="vehicle.id"
-                    :href="`/inventory/${vehicle.slug}`"
-                    class="group grid overflow-hidden border border-white/10 bg-white/[0.025] transition hover:border-amber-300/40 hover:bg-white/[0.045] sm:grid-cols-[180px_1fr]"
-                >
-                    <div class="bg-black/30">
-                        <img
-                            v-if="vehicle.image_thumb"
-                            :src="vehicle.image_thumb"
-                            :alt="vehicle.name"
-                            class="h-48 w-full object-cover transition duration-500 group-hover:scale-[1.04] sm:h-full"
-                        >
-
-                        <div
-                            v-else
-                            class="flex h-48 items-center justify-center bg-white/[0.03] text-xs font-bold uppercase tracking-wide text-slate-600 sm:h-full"
-                        >
-                            No Photo
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col justify-between p-5">
-                        <div>
-                            <p class="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">
-                                {{ vehicle.year }} · {{ vehicle.make }} {{ vehicle.model }}
-                            </p>
-
-                            <h3 class="mt-2 text-2xl font-black group-hover:text-amber-300">
-                                {{ vehicle.name }}
-                            </h3>
-
-                            <p class="mt-3 text-sm text-slate-400">
-                                {{ vehicle.mileage }}
-                            </p>
-                        </div>
-
-                        <div class="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
-                            <p class="text-2xl font-black text-amber-300">
-                                {{ vehicle.price }}
-                            </p>
-
-                            <p class="text-xs font-black uppercase tracking-wide text-slate-500">
-                                Details →
-                            </p>
-                        </div>
-                    </div>
-                </Link>
-            </div>
-
-            <div
-                v-else
-                class="border border-white/10 bg-white/[0.025] p-8 text-center"
-            >
-                <h3 class="text-2xl font-black">
-                    Featured vehicles will appear here soon.
-                </h3>
-
-                <p class="mt-3 text-sm text-slate-400">
-                    Add vehicles in the admin panel and mark them as featured.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section class="site-section border-y border-white/10 bg-white/[0.025]">
-        <div class="site-container">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">
-                        Buying Process
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        A simple path from inventory to keys.
-                    </h2>
-                </div>
-
-                <p class="max-w-xl body-muted">
-                    Our process is built to help buyers understand vehicle details, confirm terms, and coordinate the next step with sales.
-                </p>
-            </div>
-
-            <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-                <article
-                    v-for="step in buyingSteps"
-                    :key="step.number"
-                    class="dealer-card p-6"
-                >
-                    <p class="text-4xl font-black text-amber-300">
-                        {{ step.number }}
-                    </p>
-
-                    <h3 class="mt-6 text-xl font-black">
-                        {{ step.title }}
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-400">
-                        {{ step.text }}
-                    </p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section class="site-section">
-        <div class="site-container">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">
-                        Buyer Confidence
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        Support before and after purchase.
-                    </h2>
-                </div>
-
-                <p class="max-w-xl body-muted">
-                    From warranty questions to delivery coordination, our team helps buyers understand the full purchase path.
-                </p>
-            </div>
-            <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-                <article class="dealer-card p-6">
-                    <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
-                        ✅
-                    </div>
-
-                    <h3 class="mt-6 text-xl font-black">
-                        Warranty
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-400">
-                        90 days / 5,000 miles warranty coverage on selected components.
-                    </p>
-                </article>
-
-                <article class="dealer-card p-6">
-                    <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
-                        🚚
-                    </div>
-
-                    <h3 class="mt-6 text-xl font-black">
-                        Delivery
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Enclosed trailer delivery with insured transportation options.
-                    </p>
-                </article>
-
-                <article class="dealer-card p-6">
-                    <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
-                        ↪
-                    </div>
-
-                    <h3 class="mt-6 text-xl font-black">
-                        Return Policy
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-400">
-                        14-day return policy terms explained before purchase confirmation.
-                    </p>
-                </article>
-
-                <article class="dealer-card p-6">
-                    <div
-                        class="flex h-12 w-12 items-center justify-center rounded-xl border border-amber-300/40 bg-amber-300/10 text-xl text-amber-300">
-                        🎧
-                    </div>
-
-                    <h3 class="mt-6 text-xl font-black">
-                        Support
-                    </h3>
-
-                    <p class="mt-3 text-sm leading-6 text-slate-400">
-                        Sales support for availability, finance, trade-in, warranty, and delivery questions.
-                    </p>
-                </article>
-            </div>
-        </div>
-    </section>
-    <section class="site-section-tight border-y padd-top padd-bottom border-white/10 bg-white/[0.025]">
-        <div class="site-container">
-            <div class="section-header">
-                <div>
-                    <p class="eyebrow">
-                        Google Reviews
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        What buyers say about us.
-                    </h2>
-                </div>
-
-                <p class="max-w-xl body-muted">
-                    Recent customer feedback from Google Business.
-                </p>
-            </div>
-
-            <div
-                v-if="reviews.length"
-                class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
-            >
-                <article
-                    v-for="review in reviews"
-                    :key="review.id"
-                    class="dealer-card p-6"
-                >
-                    <div class="flex items-start gap-4">
-                        <a
-                            v-if="review.author_url"
-                            :href="review.author_url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="shrink-0"
-                        >
-                            <img
-                                v-if="review.author_photo_url"
-                                :src="review.author_photo_url"
-                                :alt="review.author_name"
-                                class="h-12 w-12 rounded-full object-cover"
-                            >
-
-                            <div
-                                v-else
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-300 font-black text-neutral-950"
-                            >
-                                {{ review.author_name.charAt(0) }}
-                            </div>
-                        </a>
-
-                        <div v-else class="shrink-0">
-                            <img
-                                v-if="review.author_photo_url"
-                                :src="review.author_photo_url"
-                                :alt="review.author_name"
-                                class="h-12 w-12 rounded-full object-cover"
-                            >
-
-                            <div
-                                v-else
-                                class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-300 font-black text-neutral-950"
-                            >
-                                {{ review.author_name.charAt(0) }}
-                            </div>
-                        </div>
-
-                        <div>
-                            <a
-                                v-if="review.author_url"
-                                :href="review.author_url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="font-black hover:text-amber-300"
-                            >
-                                {{ review.author_name }}
-                            </a>
-
-                            <p v-else class="font-black">
-                                {{ review.author_name }}
-                            </p>
-
-                            <p class="mt-1 text-xs text-slate-500">
-                                {{ review.date }}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 flex gap-1 text-amber-300">
-                    <span
-                        v-for="star in review.rating"
-                        :key="star"
-                    >
-                        ★
-                    </span>
-                    </div>
-
-                    <p class="mt-4 line-clamp-6 text-sm leading-6 text-slate-300">
-                        {{ review.text }}
-                    </p>
-                </article>
-            </div>
-
-            <div
-                v-else
-                class="border border-white/10 bg-white/[0.025] p-8 text-center"
-            >
-                <h3 class="text-2xl font-black">
-                    Google reviews will appear here soon.
-                </h3>
-
-                <p class="mt-3 text-sm leading-6 text-slate-400">
-                    Reviews are imported from Google Business and filtered to show ratings of 4 stars and higher.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section class="relative overflow-hidden border-white/10">
-        <div
-            class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style="background-image: url('/images/visit-bg.webp'); background-size: cover;"
-        />
-
-        <div class="absolute inset-0 bg-[#080b0f]/82" />
-
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.20),transparent_34%),linear-gradient(90deg,rgba(8,11,15,0.98)_0%,rgba(8,11,15,0.90)_42%,rgba(8,11,15,0.74)_100%)]" />
-
-        <div class="site-container padd-top padd-bottom relative py-20 lg:py-28">
-            <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-                <div>
-                    <p class="eyebrow">
-                        Visit Marick Auto Sales
-                    </p>
-
-                    <h2 class="mt-3 heading-lg">
-                        Located in {{ site.city }}, {{ site.state }}.
-                    </h2>
-
-                    <p class="mt-5 max-w-2xl text-base leading-7 text-slate-300">
-                        Contact our team before visiting to confirm vehicle availability, current pricing, and appointment options.
-                        We are located at {{ site.address }}.
-                    </p>
-
-                    <div class="mt-8 flex flex-wrap gap-4">
-                        <a
-                            :href="site.maps_url"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="btn-primary"
-                        >
-                            Open Google Maps
-                        </a>
-
-                        <Link href="/contact" class="btn-secondary">
-                            Contact Us
+                        <Link :href="`/inventory/${heroVehicle.slug}`" class="shrink-0 rounded-full bg-white px-6 py-3 text-xs font-black uppercase tracking-wide text-black transition hover:bg-[#ff4f38] hover:text-white">
+                            View vehicle
                         </Link>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <div class="rounded-2xl border border-white/10 bg-[#080b0f]/80 shadow-2xl shadow-black/30 backdrop-blur-md">
-                    <div class="border-b border-white/10 px-6 py-5">
-                        <p class="text-xs font-black uppercase tracking-[0.24em] text-slate-500">
-                            Dealer Information
-                        </p>
-                    </div>
+    <section class="bg-[#171717] py-8 text-white">
+        <div class="site-container grid gap-6 lg:grid-cols-[0.6fr_2.4fr] lg:items-center">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-[#ff5a45]">Start your search</p>
+                <p class="mt-1 text-sm text-stone-400">Shop the way you want.</p>
+            </div>
+            <div class="grid border-l border-white/10 sm:grid-cols-2 lg:grid-cols-4">
+                <Link
+                    v-for="item in shoppingPaths"
+                    :key="item.label"
+                    :href="item.query ? `/inventory?${item.query}` : '/inventory'"
+                    class="group flex items-center justify-between border-b border-r border-white/10 px-5 py-4 transition hover:bg-white/5 sm:border-b-0"
+                >
+                    <span class="text-sm font-black">{{ item.label }}</span>
+                    <span class="text-[10px] text-stone-600 transition group-hover:text-[#ff5a45]">{{ item.mark }}</span>
+                </Link>
+            </div>
+        </div>
+    </section>
 
-                    <div class="divide-y divide-white/10">
-                        <div class="grid gap-3 px-6 py-5 md:grid-cols-[160px_1fr]">
-                            <p class="font-black">
-                                Address
-                            </p>
-
-                            <a
-                                :href="site.maps_url"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                class="text-sm leading-6 text-slate-300 hover:text-amber-300"
-                            >
-                                {{ site.address }}
-                            </a>
-                        </div>
-
-                        <div class="grid gap-3 px-6 py-5 md:grid-cols-[160px_1fr]">
-                            <p class="font-black">
-                                Phone
-                            </p>
-
-                            <a
-                                :href="`tel:${site.phone_tel}`"
-                                class="text-sm leading-6 text-slate-300 hover:text-amber-300"
-                            >
-                                {{ site.phone }}
-                            </a>
-                        </div>
-
-                        <div class="grid gap-3 px-6 py-5 md:grid-cols-[160px_1fr]">
-                            <p class="font-black">
-                                Email
-                            </p>
-
-                            <a
-                                :href="`mailto:${site.email}`"
-                                class="text-sm leading-6 text-slate-300 hover:text-amber-300"
-                            >
-                                {{ site.email }}
-                            </a>
-                        </div>
-
-                        <div class="grid gap-3 px-6 py-5 md:grid-cols-[160px_1fr]">
-                            <p class="font-black">
-                                Hours
-                            </p>
-
-                            <p class="text-sm leading-6 text-slate-300">
-                                {{ site.business_hours }}
-                            </p>
-                        </div>
-                    </div>
+    <section class="bg-white py-20 lg:py-28">
+        <div class="site-container">
+            <div class="flex flex-col gap-6 border-b border-black/10 pb-8 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-[#e9422c]">Fresh on the lot</p>
+                    <h2 class="mt-4 text-4xl font-black tracking-[-0.055em] sm:text-6xl">Cars worth a closer look.</h2>
                 </div>
+                <Link href="/inventory" class="text-xs font-black uppercase tracking-[0.12em] underline decoration-[#ff4f38] decoration-2 underline-offset-8">View full inventory</Link>
+            </div>
+
+            <div v-if="featuredVehicles.length" class="mt-10 grid gap-x-6 gap-y-10 md:grid-cols-2 xl:grid-cols-3">
+                <Link
+                    v-for="(vehicle, index) in featuredVehicles.slice(0, 6)"
+                    :key="vehicle.id"
+                    :href="`/inventory/${vehicle.slug}`"
+                    class="group"
+                >
+                    <div class="relative aspect-[4/3] overflow-hidden bg-[#e5e1d8]">
+                        <img v-if="vehicle.image_medium || vehicle.image_thumb" :src="vehicle.image_medium || vehicle.image_thumb" :alt="vehicle.name" class="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]">
+                        <div v-else class="flex h-full items-center justify-center text-xs font-black uppercase tracking-widest text-stone-400">Photo coming soon</div>
+                        <span class="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.14em] text-black">{{ index === 0 ? 'Featured' : 'Available' }}</span>
+                    </div>
+                    <div class="flex items-start justify-between gap-5 border-b border-black/10 py-5">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-stone-500">{{ vehicle.year }} · {{ vehicle.make }}</p>
+                            <h3 class="mt-2 text-xl font-black tracking-[-0.03em] transition group-hover:text-[#e9422c]">{{ vehicle.name }}</h3>
+                            <p class="mt-2 text-sm text-stone-500">{{ vehicle.mileage }}</p>
+                        </div>
+                        <p class="shrink-0 text-lg font-black">{{ vehicle.price }}</p>
+                    </div>
+                </Link>
+            </div>
+
+            <div v-else class="mt-10 border border-dashed border-black/20 p-12 text-center">
+                <h3 class="text-2xl font-black">Inventory is being updated.</h3>
+                <p class="mt-3 text-stone-500">Call us for the latest vehicles available on the lot.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="overflow-hidden bg-[#ff4f38] text-white">
+        <div class="site-container grid lg:grid-cols-2">
+            <div class="border-white/20 py-20 lg:border-r lg:py-28 lg:pr-16">
+                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-white/65">Financing</p>
+                <h2 class="mt-5 max-w-xl text-5xl font-black leading-[0.92] tracking-[-0.06em] sm:text-6xl">A better car can start with one simple form.</h2>
+                <p class="mt-7 max-w-lg text-base leading-7 text-white/80">Tell us what you are looking for and share the basics. Our team will follow up to discuss available financing paths.</p>
+                <Link href="/finance" class="mt-9 inline-flex rounded-full bg-[#171717] px-7 py-4 text-xs font-black uppercase tracking-wide text-white">Start financing request</Link>
+            </div>
+
+            <div class="py-20 lg:py-28 lg:pl-16">
+                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-white/65">Have a vehicle?</p>
+                <h2 class="mt-5 max-w-xl text-5xl font-black leading-[0.92] tracking-[-0.06em] sm:text-6xl">Trade it in. Move forward.</h2>
+                <p class="mt-7 max-w-lg text-base leading-7 text-white/80">Send us your current vehicle details, mileage, and condition. We will review the information and get back to you.</p>
+                <Link href="/trade-in" class="mt-9 inline-flex rounded-full border border-white/50 px-7 py-4 text-xs font-black uppercase tracking-wide text-white transition hover:bg-white hover:text-black">Tell us about your trade</Link>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-[#f5f3ee] py-20 lg:py-28">
+        <div class="site-container grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-[#e9422c]">How it works</p>
+                <h2 class="mt-5 text-5xl font-black leading-[0.92] tracking-[-0.06em] sm:text-6xl">No maze.<br>No mystery.</h2>
+                <p class="mt-7 max-w-md text-base leading-7 text-stone-600">A clear path from browsing online to seeing the vehicle in person.</p>
+            </div>
+            <div class="divide-y divide-black/15 border-y border-black/15">
+                <article v-for="item in process" :key="item.number" class="grid gap-4 py-8 sm:grid-cols-[70px_1fr]">
+                    <p class="text-xs font-black text-[#e9422c]">{{ item.number }}</p>
+                    <div>
+                        <h3 class="text-2xl font-black tracking-[-0.035em]">{{ item.title }}</h3>
+                        <p class="mt-3 max-w-xl text-sm leading-6 text-stone-600">{{ item.text }}</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section v-if="reviews.length" class="bg-white py-20 lg:py-24">
+        <div class="site-container">
+            <div class="grid gap-8 lg:grid-cols-[0.65fr_1.35fr]">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-[#e9422c]">Customer feedback</p>
+                    <h2 class="mt-4 text-4xl font-black tracking-[-0.05em]">From people who stopped by.</h2>
+                </div>
+                <div class="grid gap-5 md:grid-cols-2">
+                    <article v-for="review in reviews.slice(0, 4)" :key="review.id" class="border border-black/10 p-7">
+                        <p class="text-sm tracking-[0.2em] text-[#ff4f38]">★★★★★</p>
+                        <p class="mt-5 text-base leading-7 text-stone-700">“{{ review.text }}”</p>
+                        <p class="mt-6 text-xs font-black uppercase tracking-[0.15em]">{{ review.author_name }}</p>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-[#252525] text-white">
+        <div class="site-container grid lg:grid-cols-[1fr_1fr]">
+            <div class="py-20 lg:py-24 lg:pr-16">
+                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-[#ff5a45]">Come see us</p>
+                <h2 class="mt-5 text-5xl font-black leading-[0.95] tracking-[-0.06em]">Right here in<br>East Granby.</h2>
+                <a :href="site.maps_url" target="_blank" rel="noopener" class="mt-8 block max-w-sm text-lg font-bold leading-7">{{ site.address }}</a>
+                <div class="mt-8 flex flex-wrap gap-3">
+                    <a :href="site.maps_url" target="_blank" rel="noopener" class="rounded-full bg-white px-6 py-3 text-xs font-black uppercase tracking-wide text-black">Get directions</a>
+                    <a :href="`tel:${site.phone_tel}`" class="rounded-full border border-white/25 px-6 py-3 text-xs font-black uppercase tracking-wide">Call first</a>
+                </div>
+            </div>
+            <div class="min-h-[420px] bg-stone-800">
+                <iframe :src="site.maps_embed_url" title="Cars For Less location" class="h-full min-h-[420px] w-full border-0 grayscale" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
     </section>

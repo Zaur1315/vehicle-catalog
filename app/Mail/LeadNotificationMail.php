@@ -31,7 +31,7 @@ final class LeadNotificationMail extends Mailable
                 config('mail.from.name'),
             ),
             replyTo: $this->replyToAddress(),
-            subject: sprintf('[Marick Auto Sales] New %s lead', $this->type),
+            subject: sprintf('[%s] New %s lead', config('site.name'), $this->type),
         );
     }
 

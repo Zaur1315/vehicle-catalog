@@ -1,22 +1,46 @@
 @import 'tailwindcss';
 
+@theme {
+    --color-cfl-ink: #171717;
+    --color-cfl-paper: #f5f3ee;
+    --color-cfl-red: #ff4f38;
+    --color-cfl-red-dark: #e53e29;
+    --color-cfl-line: #d9d5cc;
+}
+
 @layer base {
     html {
         scroll-behavior: smooth;
     }
 
     body {
-        @apply bg-[#0b0f14] text-white antialiased;
+        margin: 0;
+        background: #f5f3ee;
+        color: #171717;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        @apply antialiased;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    ::selection {
+        background: #ff4f38;
+        color: #ffffff;
     }
 }
 
 @layer components {
     .site-container {
-        @apply mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-12;
+        @apply mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 xl:px-16;
     }
 
     .site-section {
-        @apply py-14 sm:py-18 lg:py-24;
+        @apply py-16 sm:py-20 lg:py-28;
     }
 
     .site-section-tight {
@@ -24,94 +48,96 @@
     }
 
     .section-header {
-        @apply mb-10 flex flex-col gap-4 border-b border-white/10 pb-6 md:flex-row md:items-end md:justify-between;
+        @apply mb-10 flex flex-col gap-5 border-b border-black/10 pb-7 md:flex-row md:items-end md:justify-between;
     }
 
     .eyebrow {
-        @apply text-xs font-bold uppercase tracking-[0.34em] text-amber-300;
+        @apply flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#e9422c];
+    }
+
+    .eyebrow::before {
+        content: '';
+        @apply h-px w-8 bg-[#e9422c];
     }
 
     .heading-xl {
-        @apply text-5xl font-black tracking-tight sm:text-6xl lg:text-7xl;
+        @apply text-5xl font-black leading-[0.9] tracking-[-0.065em] sm:text-6xl lg:text-7xl;
     }
 
     .heading-lg {
-        @apply text-3xl font-black tracking-tight sm:text-4xl lg:text-5xl;
+        @apply text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-5xl lg:text-6xl;
     }
 
     .body-muted {
-        @apply text-base leading-7 text-slate-300;
+        @apply text-base leading-7 text-stone-600;
     }
 
     .btn-primary {
-        @apply inline-flex items-center justify-center rounded-xl bg-amber-300 px-6 py-3 text-sm font-black uppercase tracking-wide text-neutral-950 transition hover:bg-amber-200;
+        @apply inline-flex min-h-12 items-center justify-center rounded-full bg-[#ff4f38] px-7 py-3 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#e53e29] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4f38];
     }
 
     .btn-secondary {
-        @apply inline-flex items-center justify-center rounded-xl border border-white/15 px-6 py-3 text-sm font-black uppercase tracking-wide text-white transition hover:border-amber-300/60 hover:bg-white/5;
+        @apply inline-flex min-h-12 items-center justify-center rounded-full border border-black/20 bg-transparent px-7 py-3 text-xs font-black uppercase tracking-[0.08em] text-[#171717] transition hover:border-black hover:bg-[#171717] hover:text-white;
     }
 
     .btn-ghost {
-        @apply inline-flex items-center justify-center text-sm font-bold uppercase tracking-wide text-slate-300 transition hover:text-white;
+        @apply inline-flex items-center justify-center text-xs font-black uppercase tracking-[0.1em] text-[#171717] underline decoration-[#ff4f38] decoration-2 underline-offset-8 transition hover:text-[#e9422c];
     }
 
-    .dealer-panel {
-        @apply border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/20;
+    .dealer-panel,
+    .dealer-card {
+        @apply border border-black/10 bg-white shadow-[0_18px_60px_rgba(23,23,23,0.08)];
     }
 
     .dealer-card {
-        @apply rounded-2xl border border-white/10 bg-white/[0.035] transition hover:border-amber-300/40 hover:bg-white/[0.055];
+        @apply transition duration-300 hover:-translate-y-1 hover:border-black/25 hover:shadow-[0_24px_70px_rgba(23,23,23,0.13)];
     }
 
     .stat-tile {
-        @apply border-white/10 px-6 py-5;
-
+        @apply border-black/10 px-6 py-5;
         @apply border-l first:border-l-0;
-        @apply first:border-b nth-[2]:border-b nth-[3]:border-l-0;
-
-        @apply md:border-b-0 md:border-l md:first:border-l-0 md:nth-[3]:border-l;
     }
 
-    .form-input-dark {
-        @apply w-full rounded-xl border border-white/10 bg-white/[0.06] px-4 py-3 text-white placeholder:text-slate-500 focus:border-amber-300 focus:outline-none focus:ring-0;
+    .form-input-dark,
+    .form-select-dark {
+        @apply w-full rounded-none border border-black/15 bg-white px-4 py-3.5 text-sm text-[#171717] outline-none transition placeholder:text-stone-400 focus:border-[#ff4f38] focus:ring-1 focus:ring-[#ff4f38];
     }
 
     .form-select-dark {
-        @apply w-full rounded-xl border border-white/10 bg-[#111827] px-4 py-3 text-white focus:border-amber-300 focus:outline-none focus:ring-0;
-        color-scheme: dark;
+        color-scheme: light;
     }
 
     .form-select-dark option {
-        background-color: #111827;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #171717;
     }
 
-    .padd-top{
+    .padd-top {
         padding-top: 96px !important;
     }
 
-    .padd-bottom{
+    .padd-bottom {
         padding-bottom: 96px !important;
     }
 
     .vehicle-description {
-        @apply max-w-none text-slate-300;
+        @apply max-w-none text-stone-700;
     }
 
     .vehicle-description h2 {
-        @apply mt-10 border-t border-white/10 pt-8 text-2xl font-black text-white first:mt-0 first:border-t-0 first:pt-0;
+        @apply mt-10 border-t border-black/10 pt-8 text-2xl font-black tracking-[-0.03em] text-[#171717] first:mt-0 first:border-t-0 first:pt-0;
     }
 
     .vehicle-description h3 {
-        @apply mt-7 text-xl font-black text-white;
+        @apply mt-7 text-xl font-black text-[#171717];
     }
 
     .vehicle-description p {
-        @apply mt-4 text-base leading-8 text-slate-300;
+        @apply mt-4 text-base leading-8 text-stone-600;
     }
 
     .vehicle-description strong {
-        @apply font-black text-white;
+        @apply font-black text-[#171717];
     }
 
     .vehicle-description ul {
@@ -119,15 +145,15 @@
     }
 
     .vehicle-description li {
-        @apply relative pl-5 text-base leading-7 text-slate-300;
+        @apply relative pl-5 text-base leading-7 text-stone-600;
     }
 
     .vehicle-description li::before {
         content: '';
-        @apply absolute left-0 top-3 h-1.5 w-1.5 rounded-full bg-amber-300;
+        @apply absolute left-0 top-3 h-1.5 w-1.5 rounded-full bg-[#ff4f38];
     }
 
     .vehicle-description a {
-        @apply text-amber-300 underline underline-offset-4 hover:text-amber-200;
+        @apply font-bold text-[#e9422c] underline underline-offset-4 hover:text-[#171717];
     }
 }

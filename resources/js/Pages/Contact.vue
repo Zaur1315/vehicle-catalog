@@ -33,7 +33,7 @@ const mapsEmbedUrl = computed(() => {
         return site.value.maps_embed_url;
     }
 
-    const address = site.value.address || '197 Pratt St, Meriden, CT 06450, USA';
+    const address = site.value.address || '108a Rainbow Rd, East Granby, CT 06026, USA';
 
     return `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
 });
@@ -111,7 +111,7 @@ const mapsEmbedUrl = computed(() => {
                                     :href="`mailto:${site.email}`"
                                     class="mt-2 block text-lg font-bold text-white hover:text-amber-300"
                                 >
-                                    {{site.email}}
+                                    {{ site.email }}
                                 </a>
                             </div>
 
@@ -335,7 +335,8 @@ const mapsEmbedUrl = computed(() => {
                 </div>
 
                 <p class="max-w-xl body-muted">
-                    Use the map below for directions, then contact our sales team to confirm vehicle availability before visiting.
+                    Use the map below for directions, then contact our sales team to confirm vehicle availability before
+                    visiting.
                 </p>
             </div>
 
@@ -347,7 +348,7 @@ const mapsEmbedUrl = computed(() => {
                         loading="lazy"
                         allowfullscreen
                         referrerpolicy="no-referrer-when-downgrade"
-                        title="Marick Auto Sales Google Map"
+                        title="Cars For Less Google Map"
                     />
                 </div>
 

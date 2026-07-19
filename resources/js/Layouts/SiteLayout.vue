@@ -1,367 +1,299 @@
 <script setup>
 import {Link, usePage} from '@inertiajs/vue3';
-import {computed, ref, watch, onBeforeUnmount} from 'vue';
-import CookieConsentBanner from "../Components/CookieConsentBanner.vue";
+import {computed, onBeforeUnmount, ref, watch} from 'vue';
+import CookieConsentBanner from '@/Components/CookieConsentBanner.vue';
 
 const page = usePage();
+const site = computed(() => page.props.site || {});
 
+const mobileMenuOpen = ref(false);
+const resourcesOpen = ref(false);
 const showSuccessFlash = ref(false);
 const showErrorFlash = ref(false);
-
 let flashTimeout = null;
 
 const successFlash = computed(() => page.props.flash?.success || '');
 const errorFlash = computed(() => page.props.flash?.error || '');
 
-const hideFlashMessages = () => {
-    showSuccessFlash.value = false;
-    showErrorFlash.value = false;
-};
+const navigation = [
+    {label: 'Inventory', href: '/inventory'},
+    {label: 'Financing', href: '/finance'},
+    {label: 'Sell Your Car', href: '/trade-in'},
+    {label: 'Service', href: '/service'},
+    {label: 'Our Dealership', href: '/about'},
+    {label: 'Contact', href: '/contact'},
+];
 
-const startFlashTimer = () => {
-    if (flashTimeout) {
-        clearTimeout(flashTimeout);
-    }
+const buyerResources = [
+    {label: 'Vehicle Delivery', href: '/delivery', text: 'Ask about pickup and delivery options.'},
+    {label: 'Warranty Information', href: '/warranty-return', text: 'Understand coverage before you buy.'},
+];
 
-    flashTimeout = setTimeout(() => {
-        hideFlashMessages();
-    }, 4500);
+const isActive = (href) => page.url === href || page.url.startsWith(`${href}/`);
+const resourcesActive = computed(() => buyerResources.some((item) => isActive(item.href)));
+
+const closeMenus = () => {
+    mobileMenuOpen.value = false;
+    resourcesOpen.value = false;
 };
 
 watch(
     () => [successFlash.value, errorFlash.value, page.url],
     () => {
+        closeMenus();
         showSuccessFlash.value = Boolean(successFlash.value);
         showErrorFlash.value = Boolean(errorFlash.value);
 
+        if (flashTimeout) clearTimeout(flashTimeout);
         if (showSuccessFlash.value || showErrorFlash.value) {
-            startFlashTimer();
+            flashTimeout = setTimeout(() => {
+                showSuccessFlash.value = false;
+                showErrorFlash.value = false;
+            }, 4500);
         }
     },
     {immediate: true},
 );
 
 onBeforeUnmount(() => {
-    if (flashTimeout) {
-        clearTimeout(flashTimeout);
-    }
+    if (flashTimeout) clearTimeout(flashTimeout);
 });
 
-const mobileMenuOpen = ref(false);
-const logoUrl = '/images/logo.png';
-
-const navigation = [
-    {label: 'Inventory', href: '/inventory'},
-    {label: 'Finance', href: '/finance'},
-    {label: 'Trade-In', href: '/trade-in'},
-    {label: 'Delivery', href: '/delivery'},
-    {label: 'Warranty', href: '/warranty-return'},
-    {label: 'About', href: '/about'},
-    {label: 'Contact', href: '/contact'},
-];
-
-const site = computed(() => page.props.site || {});
-
-const isActive = (href) => {
-    return page.url === href || page.url.startsWith(`${href}/`);
-};
-
 const hasMarketingConsent = () => {
-    if (typeof window === 'undefined') {
-        return false;
-    }
-
-    return document.cookie
-        .split('; ')
-        .some((item) => item === 'cookie_marketing_consent=1');
+    if (typeof window === 'undefined') return false;
+    return document.cookie.split('; ').some((item) => item === 'cookie_marketing_consent=1');
 };
 
 watch(
     () => page.props.flash?.meta_event,
     (event) => {
-        if (
-            !event
-            || typeof window === 'undefined'
-            || typeof window.fbq !== 'function'
-            || !hasMarketingConsent()
-        ) {
-            return;
-        }
+        if (!event || typeof window === 'undefined' || typeof window.fbq !== 'function' || !hasMarketingConsent()) return;
+        if (event.event_name !== 'Lead') return;
 
-        if (event.event_name !== 'Lead') {
-            return;
-        }
-
-        window.fbq(
-            'track',
-            'Lead',
-            {
-                form_type: event.form_type,
-                lead_type: event.form_type,
-                content_category: event.form_type,
-            },
-            {
-                eventID: event.event_id,
-            },
-        );
+        window.fbq('track', 'Lead', {
+            form_type: event.form_type,
+            lead_type: event.form_type,
+            content_category: event.form_type,
+        }, {eventID: event.event_id});
     },
-    { immediate: true },
+    {immediate: true},
 );
+
+const logoUrl = '/images/logo.png';
 
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#0b0f14] text-white">
-        <div class="border-b border-white/10 bg-[#080b0f]">
+    <div class="min-h-screen bg-[#f5f3ee] text-[#171717]">
+        <div class="bg-[#171717] text-white">
             <div
-                class="site-container flex flex-col gap-2 py-3 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
-                <p>{{ site.business_hours }}</p>
+                class="site-container flex min-h-10 items-center justify-between gap-5 py-2 text-[11px] font-semibold uppercase tracking-[0.12em]">
+                <a :href="site.maps_url" target="_blank" rel="noopener"
+                   class="hidden text-stone-300 transition hover:text-white md:block">
+                    {{ site.address }}
+                </a>
+                <p class="text-stone-300 md:hidden">East Granby, Connecticut</p>
 
-                <div class="flex flex-wrap gap-x-6 gap-y-2">
-                    <a :href="`tel:${site.phone_tel}`" class="hover:text-white">
+                <div class="flex items-center gap-5">
+                    <span class="hidden text-stone-400 sm:inline">{{ site.business_hours }}</span>
+                    <a :href="`tel:${site.phone_tel}`" class="text-[#ff5a45] transition hover:text-white">
                         {{ site.phone }}
                     </a>
-
-                    <a :href="`mailto:${site.email}`" class="hover:text-white">
-                        {{ site.email }}
-                    </a>
-
-                    <span>Enclosed delivery available</span>
                 </div>
             </div>
         </div>
 
-        <header class="sticky top-0 z-50 border-b border-white/10 bg-[#0b0f14]/95 backdrop-blur">
-            <div class="site-container flex items-center justify-between py-5">
-                <Link href="/" class="group flex items-center gap-4">
+        <header class="relative z-50 border-b border-black/10 bg-[#f5f3ee]/95 backdrop-blur-xl">
+            <div class="site-container flex min-h-[82px] items-center justify-between gap-8">
+                <Link href="/" class="group flex shrink-0 items-center gap-3" aria-label="Cars For Less home">
                     <img
                         :src="logoUrl"
                         :alt="site.name"
-                        class="h-11 w-auto"
+                        class="w-30 logo"
                     />
-                    <span>
-                        <span class="block text-sm font-black uppercase tracking-[0.28em]">
-                            {{ site.name }}
-                        </span>
-                        <span class="block text-xs text-slate-500">
-                            Premium vehicle inventory
-                        </span>
-                    </span>
                 </Link>
 
-                <nav class="hidden items-center gap-1 xl:flex">
+                <nav class="hidden items-center gap-1 xl:flex" aria-label="Main navigation">
                     <Link
                         v-for="item in navigation"
                         :key="item.href"
                         :href="item.href"
-                        class="rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wide transition"
-                        :class="isActive(item.href) ? 'bg-white/10 text-amber-300' : 'text-slate-300 hover:bg-white/5 hover:text-white'"
+                        class="rounded-full px-4 py-2.5 text-[12px] font-bold transition"
+                        :class="isActive(item.href) ? 'bg-[#171717] text-white' : 'text-stone-700 hover:bg-black/5 hover:text-black'"
                     >
                         {{ item.label }}
                     </Link>
+
+                    <div class="relative">
+                        <button
+                            type="button"
+                            class="flex items-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-bold transition"
+                            :class="resourcesActive || resourcesOpen ? 'bg-[#171717] text-white' : 'text-stone-700 hover:bg-black/5 hover:text-black'"
+                            :aria-expanded="resourcesOpen"
+                            @click="resourcesOpen = !resourcesOpen"
+                        >
+                            More
+                            <svg class="h-3 w-3 transition" :class="{'rotate-180': resourcesOpen}" viewBox="0 0 12 12"
+                                 fill="none" aria-hidden="true">
+                                <path d="m2 4 4 4 4-4" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+
+                        <div v-if="resourcesOpen"
+                             class="absolute right-0 top-[calc(100%+14px)] w-80 rounded-2xl border border-black/10 bg-white p-2 shadow-2xl shadow-black/15">
+                            <Link
+                                v-for="item in buyerResources"
+                                :key="item.href"
+                                :href="item.href"
+                                class="block rounded-xl px-4 py-3 transition hover:bg-[#f5f3ee]"
+                                @click="closeMenus"
+                            >
+                                <span class="block text-sm font-black">{{ item.label }}</span>
+                                <span class="mt-1 block text-xs leading-5 text-stone-500">{{ item.text }}</span>
+                            </Link>
+                        </div>
+                    </div>
                 </nav>
 
-                <div class="hidden items-center gap-3 xl:flex">
-                    <Link href="/inventory" class="btn-secondary">
-                        View Inventory
+                <div class="hidden shrink-0 items-center gap-3 xl:flex">
+                    <a :href="`tel:${site.phone_tel}`" class="text-sm font-black">Call Sales</a>
+                    <Link href="/inventory"
+                          class="inline-flex items-center rounded-full bg-[#ff4f38] px-5 py-3 text-xs font-black uppercase tracking-wide text-white transition hover:bg-[#e93d29]">
+                        Find a Car
                     </Link>
-
-                    <a href="tel:+12036302886" class="btn-primary">
-                        Contact Sales
-                    </a>
                 </div>
 
                 <button
                     type="button"
-                    class="rounded-xl border border-white/10 px-4 py-2 text-sm font-bold xl:hidden"
+                    class="flex h-11 w-11 items-center justify-center rounded-full border border-black/15 xl:hidden"
+                    :aria-expanded="mobileMenuOpen"
+                    aria-label="Toggle menu"
                     @click="mobileMenuOpen = !mobileMenuOpen"
                 >
-                    Menu
+                    <svg v-if="!mobileMenuOpen" class="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M2 5h16M2 10h16M2 15h16" stroke="currentColor" stroke-width="1.8"/>
+                    </svg>
+                    <svg v-else class="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="m4 4 12 12M16 4 4 16" stroke="currentColor" stroke-width="1.8"/>
+                    </svg>
                 </button>
             </div>
 
-            <div v-if="mobileMenuOpen" class="border-t border-white/10 xl:hidden">
-                <div class="site-container py-4">
-                    <nav class="grid gap-2 sm:grid-cols-2">
+            <div v-if="mobileMenuOpen" class="border-t border-black/10 bg-[#f5f3ee] xl:hidden">
+                <div class="site-container py-5">
+                    <nav class="grid gap-1" aria-label="Mobile navigation">
                         <Link
                             v-for="item in navigation"
                             :key="item.href"
                             :href="item.href"
-                            class="rounded-xl border border-white/10 px-4 py-3 text-sm font-bold"
-                            :class="isActive(item.href) ? 'bg-white/10 text-amber-300' : 'text-slate-300'"
-                            @click="mobileMenuOpen = false"
+                            class="flex items-center justify-between border-b border-black/10 py-4 text-lg font-black"
+                            @click="closeMenus"
+                        >
+                            {{ item.label }} <span class="text-[#ff4f38]">↗</span>
+                        </Link>
+                        <p class="pb-1 pt-6 text-[10px] font-black uppercase tracking-[0.25em] text-stone-500">More</p>
+                        <Link
+                            v-for="item in buyerResources.slice(0, 2)"
+                            :key="item.href"
+                            :href="item.href"
+                            class="py-2 text-sm font-bold text-stone-700"
+                            @click="closeMenus"
                         >
                             {{ item.label }}
                         </Link>
                     </nav>
+                    <a :href="`tel:${site.phone_tel}`"
+                       class="mt-6 flex items-center justify-center rounded-full bg-[#ff4f38] px-6 py-4 text-sm font-black uppercase tracking-wide text-white">
+                        Call {{ site.phone }}
+                    </a>
                 </div>
             </div>
         </header>
 
-        <div
-            class="pointer-events-none fixed right-5 top-5 z-[90] w-[calc(100%-2.5rem)] max-w-md space-y-3 sm:right-6 sm:top-6">
-            <Transition
-                enter-active-class="transition duration-300 ease-out"
-                enter-from-class="translate-x-6 opacity-0"
-                enter-to-class="translate-x-0 opacity-100"
-                leave-active-class="transition duration-200 ease-in"
-                leave-from-class="translate-x-0 opacity-100"
-                leave-to-class="translate-x-6 opacity-0"
-            >
-                <div
-                    v-if="showSuccessFlash && successFlash"
-                    class="pointer-events-auto rounded-2xl border border-emerald-400/40 bg-emerald-950/95 px-5 py-4 text-sm text-emerald-50 shadow-2xl shadow-black/40 backdrop-blur"
-                >
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400 text-sm font-black text-emerald-950">
-                            ✓
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">
-                                Success
-                            </p>
-
-                            <p class="mt-1 leading-6">
-                                {{ successFlash }}
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="shrink-0 text-emerald-200/70 hover:text-white"
-                            @click="showSuccessFlash = false"
-                        >
-                            ×
-                        </button>
+        <div class="pointer-events-none fixed right-5 top-5 z-[90] w-[calc(100%-2.5rem)] max-w-md space-y-3">
+            <Transition enter-active-class="transition duration-300" enter-from-class="translate-x-6 opacity-0"
+                        leave-active-class="transition duration-200" leave-to-class="translate-x-6 opacity-0">
+                <div v-if="showSuccessFlash && successFlash"
+                     class="pointer-events-auto rounded-2xl bg-[#173d2b] px-5 py-4 text-sm text-white shadow-2xl">
+                    <div class="flex items-start gap-3"><span class="font-black text-[#77d7a4]">✓</span>
+                        <p class="flex-1">{{ successFlash }}</p>
+                        <button @click="showSuccessFlash = false">×</button>
                     </div>
                 </div>
             </Transition>
-
-            <Transition
-                enter-active-class="transition duration-300 ease-out"
-                enter-from-class="translate-x-6 opacity-0"
-                enter-to-class="translate-x-0 opacity-100"
-                leave-active-class="transition duration-200 ease-in"
-                leave-from-class="translate-x-0 opacity-100"
-                leave-to-class="translate-x-6 opacity-0"
-            >
-                <div
-                    v-if="showErrorFlash && errorFlash"
-                    class="pointer-events-auto rounded-2xl border border-red-400/40 bg-red-950/95 px-5 py-4 text-sm text-red-50 shadow-2xl shadow-black/40 backdrop-blur"
-                >
-                    <div class="flex items-start gap-4">
-                        <div
-                            class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-400 text-sm font-black text-red-950">
-                            !
-                        </div>
-
-                        <div class="min-w-0 flex-1">
-                            <p class="text-xs font-black uppercase tracking-[0.2em] text-red-300">
-                                Error
-                            </p>
-
-                            <p class="mt-1 leading-6">
-                                {{ errorFlash }}
-                            </p>
-                        </div>
-
-                        <button
-                            type="button"
-                            class="shrink-0 text-red-200/70 hover:text-white"
-                            @click="showErrorFlash = false"
-                        >
-                            ×
-                        </button>
+            <Transition enter-active-class="transition duration-300" enter-from-class="translate-x-6 opacity-0"
+                        leave-active-class="transition duration-200" leave-to-class="translate-x-6 opacity-0">
+                <div v-if="showErrorFlash && errorFlash"
+                     class="pointer-events-auto rounded-2xl bg-[#7d2118] px-5 py-4 text-sm text-white shadow-2xl">
+                    <div class="flex items-start gap-3"><span class="font-black">!</span>
+                        <p class="flex-1">{{ errorFlash }}</p>
+                        <button @click="showErrorFlash = false">×</button>
                     </div>
                 </div>
             </Transition>
-        </div>
-
-        <div
-            v-if="page.props.flash?.error"
-            class="site-container mt-6"
-        >
-            <div class="rounded-xl border border-red-400/30 bg-red-400/10 px-5 py-4 text-sm text-red-100">
-                {{ page.props.flash.error }}
-            </div>
         </div>
 
         <main>
             <slot/>
         </main>
 
-        <footer class="border-t border-white/10 bg-[#080b0f]">
-            <div class="site-container padd-top padd-bottom grid gap-10 py-12 lg:grid-cols-[1.9fr_0.5fr_0.5fr_0.5fr]">
-                <div>
-                    <Link href="/" class="group flex items-center gap-4">
-                        <img
-                            :src="logoUrl"
-                            :alt="site.name"
-                            class="h-11 w-auto"
-                        />
-                        <span>
-                        <span class="block text-sm font-black uppercase tracking-[0.28em]">
-                            {{ site.name }}
-                        </span>
-                        <span class="block text-xs text-slate-500">
-                            Premium vehicle inventory
-                        </span>
-                    </span>
-                    </Link>
+        <footer class="bg-[#171717] text-white">
+            <div class="site-container py-16 lg:py-20">
+                <div class="grid gap-12 border-b border-white/15 pb-14 lg:grid-cols-[1.5fr_0.8fr_0.8fr]">
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-[0.28em] text-[#ff5a45]">Your next car
+                            starts here</p>
+                        <h2 class="mt-5 max-w-xl text-4xl font-black tracking-[-0.05em] sm:text-5xl">Simple car
+                            shopping. Local people. Real answers.</h2>
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <Link href="/inventory"
+                                  class="rounded-full bg-[#ff4f38] px-6 py-3 text-xs font-black uppercase tracking-wide">
+                                Browse Inventory
+                            </Link>
+                            <a :href="`tel:${site.phone_tel}`"
+                               class="rounded-full border border-white/25 px-6 py-3 text-xs font-black uppercase tracking-wide">{{
+                                    site.phone
+                                }}</a>
+                        </div>
+                    </div>
 
-                    <p class="mt-5 max-w-md text-sm leading-6 text-slate-400">
-                        Browse inspected vehicles, request information, and contact our sales team for delivery,
-                        warranty, finance, and trade-in options.
-                    </p>
-                </div>
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-[0.2em] text-stone-500">Explore</p>
+                        <nav class="mt-5 grid gap-3 text-sm font-bold">
+                            <Link href="/inventory">Inventory</Link>
+                            <Link href="/finance">Financing</Link>
+                            <Link href="/trade-in">Sell Your Car</Link>
+                            <Link href="/service">Service</Link>
+                            <Link href="/about">Our Dealership</Link>
+                            <Link href="/contact">Contact</Link>
+                        </nav>
+                    </div>
 
-                <div>
-                    <h3 class="text-sm font-black uppercase tracking-wide">
-                        Inventory
-                    </h3>
-
-                    <div class="mt-4 flex flex-col gap-2 text-sm text-slate-400">
-                        <Link href="/inventory" class="hover:text-white">Vehicles</Link>
-                        <Link href="/finance" class="hover:text-white">Finance</Link>
-                        <Link href="/trade-in" class="hover:text-white">Trade-In</Link>
+                    <div>
+                        <p class="text-xs font-black uppercase tracking-[0.2em] text-stone-500">Visit us</p>
+                        <a :href="site.maps_url" target="_blank" rel="noopener"
+                           class="mt-5 block text-sm font-bold leading-6">{{ site.address }}</a>
+                        <a :href="`mailto:${site.email}`" class="mt-4 block text-sm text-stone-400">{{ site.email }}</a>
+                        <p class="mt-2 text-sm text-stone-400">{{ site.business_hours }}</p>
                     </div>
                 </div>
 
-                <div>
-                    <h3 class="text-sm font-black uppercase tracking-wide">
-                        Company
-                    </h3>
-
-                    <div class="mt-4 flex flex-col gap-2 text-sm text-slate-400">
-                        <Link href="/about" class="hover:text-white">About</Link>
-                        <Link href="/delivery" class="hover:text-white">Delivery</Link>
-                        <Link href="/warranty-return" class="hover:text-white">Warranty</Link>
-                        <Link href="/contact" class="hover:text-white">Contact</Link>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-sm font-black uppercase tracking-wide">
-                        Legal
-                    </h3>
-
-                    <div class="mt-4 flex flex-col gap-2 text-sm text-slate-400">
-                        <Link href="/privacy-policy" class="hover:text-white">Privacy Policy</Link>
-                        <Link href="/terms" class="hover:text-white">Terms</Link>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-white/10">
                 <div
-                    class="site-container flex flex-col gap-3 py-5 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
-                    <p>© {{ new Date().getFullYear() }} {{ site.name }}. All rights reserved.</p>
-                    <p>Vehicle availability, pricing, mileage, and terms are subject to confirmation.</p>
+                    class="flex flex-col gap-4 pt-7 text-[11px] text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+                    <p>© {{ new Date().getFullYear() }} Cars For Less Sales &amp; Service. All rights reserved.</p>
+                    <div class="flex gap-5">
+                        <Link href="/privacy-policy">Privacy</Link>
+                        <Link href="/terms">Terms</Link>
+                    </div>
                 </div>
             </div>
         </footer>
-        <CookieConsentBanner />
+
+        <CookieConsentBanner/>
     </div>
 </template>
+<style scoped>
+.logo{
+    margin-bottom: -40px;
+}
+</style>

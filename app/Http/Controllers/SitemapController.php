@@ -37,6 +37,12 @@ final class SitemapController extends Controller
                 'lastmod' => now()->toDateString(),
             ],
             [
+                'loc' => url('/service'),
+                'priority' => '0.7',
+                'changefreq' => 'monthly',
+                'lastmod' => now()->toDateString(),
+            ],
+            [
                 'loc' => url('/delivery'),
                 'priority' => '0.6',
                 'changefreq' => 'monthly',

@@ -10,6 +10,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\RobotsController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\TermsController;
 use App\Http\Controllers\TradeInController;
@@ -32,6 +33,8 @@ Route::get('/delivery', DeliveryController::class)->name('delivery');
 Route::get('/warranty-return', WarrantyReturnController::class)->name('warranty-return');
 
 Route::get('/about', AboutController::class)->name('about');
+
+Route::get('/service', ServiceController::class)->name('service');
 
 Route::get('/contact', [ContactController::class, 'index'])
     ->name('contact.index');

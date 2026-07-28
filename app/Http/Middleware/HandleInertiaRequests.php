@@ -46,7 +46,9 @@ class HandleInertiaRequests extends Middleware
 
             'site' => [
                 'name' => config('site.name'),
+                'short_name' => config('site.short_name'),
                 'tagline' => config('site.tagline'),
+                'domain' => config('site.domain'),
                 'phone' => config('site.phone'),
                 'phone_tel' => config('site.phone_tel'),
                 'email' => config('site.email'),

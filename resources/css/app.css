@@ -1,159 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import 'tailwindcss';
 
 @theme {
-    --color-cfl-ink: #171717;
-    --color-cfl-paper: #f5f3ee;
-    --color-cfl-red: #ff4f38;
-    --color-cfl-red-dark: #e53e29;
-    --color-cfl-line: #d9d5cc;
+    --color-kohl-ink: #102a56;
+    --color-kohl-blue: #1455a0;
+    --color-kohl-mid: #347bc3;
+    --color-kohl-sky: #ddecfb;
+    --color-kohl-paper: #f7fbff;
+    --color-kohl-yellow: #f2c230;
+    --color-kohl-yellow-soft: #ffd95a;
+    --color-kohl-yellow-deep: #a87400;
+    --color-kohl-white: #ffffff;
+    --color-kohl-muted: #5f748d;
+    --color-kohl-muted-light: #7c92aa;
+    --color-kohl-line: #bfd2ea;
+    --color-kohl-card-shadow: #c7def5;
+    --color-kohl-hover: #9fc6ed;
+    --font-display: 'Space Grotesk', ui-sans-serif, sans-serif;
+    --font-body: 'DM Sans', ui-sans-serif, sans-serif;
 }
 
 @layer base {
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        margin: 0;
-        background: #f5f3ee;
-        color: #171717;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        @apply antialiased;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-        font: inherit;
-    }
-
-    ::selection {
-        background: #ff4f38;
-        color: #ffffff;
-    }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--color-kohl-paper); color: var(--color-kohl-ink); font-family: var(--font-body); @apply antialiased; }
+    h1, h2, h3, h4 { font-family: var(--font-display); }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea { @apply focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kohl-yellow; }
+    ::selection { background: var(--color-kohl-yellow); color: var(--color-kohl-ink); }
+    @media (prefers-reduced-motion: reduce) { *, ::before, ::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
 }
 
 @layer components {
-    .site-container {
-        @apply mx-auto w-full max-w-[1480px] px-5 sm:px-8 lg:px-12 xl:px-16;
-    }
-
-    .site-section {
-        @apply py-16 sm:py-20 lg:py-28;
-    }
-
-    .site-section-tight {
-        @apply py-10 sm:py-14 lg:py-16;
-    }
-
-    .section-header {
-        @apply mb-10 flex flex-col gap-5 border-b border-black/10 pb-7 md:flex-row md:items-end md:justify-between;
-    }
-
-    .eyebrow {
-        @apply flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.25em] text-[#e9422c];
-    }
-
-    .eyebrow::before {
-        content: '';
-        @apply h-px w-8 bg-[#e9422c];
-    }
-
-    .heading-xl {
-        @apply text-5xl font-black leading-[0.9] tracking-[-0.065em] sm:text-6xl lg:text-7xl;
-    }
-
-    .heading-lg {
-        @apply text-4xl font-black leading-[0.95] tracking-[-0.055em] sm:text-5xl lg:text-6xl;
-    }
-
-    .body-muted {
-        @apply text-base leading-7 text-stone-600;
-    }
-
-    .btn-primary {
-        @apply inline-flex min-h-12 items-center justify-center rounded-full bg-[#ff4f38] px-7 py-3 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#e53e29] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff4f38];
-    }
-
-    .btn-secondary {
-        @apply inline-flex min-h-12 items-center justify-center rounded-full border border-black/20 bg-transparent px-7 py-3 text-xs font-black uppercase tracking-[0.08em] text-[#171717] transition hover:border-black hover:bg-[#171717] hover:text-white;
-    }
-
-    .btn-ghost {
-        @apply inline-flex items-center justify-center text-xs font-black uppercase tracking-[0.1em] text-[#171717] underline decoration-[#ff4f38] decoration-2 underline-offset-8 transition hover:text-[#e9422c];
-    }
-
-    .dealer-panel,
-    .dealer-card {
-        @apply border border-black/10 bg-white shadow-[0_18px_60px_rgba(23,23,23,0.08)];
-    }
-
-    .dealer-card {
-        @apply transition duration-300 hover:-translate-y-1 hover:border-black/25 hover:shadow-[0_24px_70px_rgba(23,23,23,0.13)];
-    }
-
-    .stat-tile {
-        @apply border-black/10 px-6 py-5;
-        @apply border-l first:border-l-0;
-    }
-
-    .form-input-dark,
-    .form-select-dark {
-        @apply w-full rounded-none border border-black/15 bg-white px-4 py-3.5 text-sm text-[#171717] outline-none transition placeholder:text-stone-400 focus:border-[#ff4f38] focus:ring-1 focus:ring-[#ff4f38];
-    }
-
-    .form-select-dark {
-        color-scheme: light;
-    }
-
-    .form-select-dark option {
-        background-color: #ffffff;
-        color: #171717;
-    }
-
-    .padd-top {
-        padding-top: 96px !important;
-    }
-
-    .padd-bottom {
-        padding-bottom: 96px !important;
-    }
-
-    .vehicle-description {
-        @apply max-w-none text-stone-700;
-    }
-
-    .vehicle-description h2 {
-        @apply mt-10 border-t border-black/10 pt-8 text-2xl font-black tracking-[-0.03em] text-[#171717] first:mt-0 first:border-t-0 first:pt-0;
-    }
-
-    .vehicle-description h3 {
-        @apply mt-7 text-xl font-black text-[#171717];
-    }
-
-    .vehicle-description p {
-        @apply mt-4 text-base leading-8 text-stone-600;
-    }
-
-    .vehicle-description strong {
-        @apply font-black text-[#171717];
-    }
-
-    .vehicle-description ul {
-        @apply mt-4 space-y-2;
-    }
-
-    .vehicle-description li {
-        @apply relative pl-5 text-base leading-7 text-stone-600;
-    }
-
-    .vehicle-description li::before {
-        content: '';
-        @apply absolute left-0 top-3 h-1.5 w-1.5 rounded-full bg-[#ff4f38];
-    }
-
-    .vehicle-description a {
-        @apply font-bold text-[#e9422c] underline underline-offset-4 hover:text-[#171717];
-    }
+    .site-container { @apply mx-auto w-full max-w-[1380px] px-5 sm:px-8 lg:px-12; }
+    .site-section { @apply py-16 sm:py-20 lg:py-28; }
+    .site-section-tight { @apply py-12 lg:py-16; }
+    .eyebrow { @apply text-[10px] font-bold uppercase tracking-[.22em] text-kohl-yellow-deep; }
+    .heading-xl { @apply text-5xl font-bold leading-[.94] tracking-[-.05em] sm:text-6xl lg:text-7xl; }
+    .heading-lg { @apply text-4xl font-bold leading-[.98] tracking-[-.045em] sm:text-5xl lg:text-6xl; }
+    .page-title { @apply max-w-4xl text-5xl font-bold leading-[.94] tracking-[-.05em] sm:text-6xl lg:text-7xl; }
+    .page-lede { @apply max-w-2xl text-base leading-8 text-kohl-muted sm:text-lg; }
+    .page-intro { @apply border-b border-kohl-line bg-kohl-sky; }
+    .section-header { @apply mb-10 flex flex-col gap-6 border-b border-kohl-line pb-7 md:flex-row md:items-end md:justify-between; }
+    .body-muted { @apply leading-7 text-kohl-muted; }
+    .btn-primary { @apply inline-flex min-h-12 items-center justify-center gap-3 bg-kohl-yellow px-6 py-3 text-xs font-bold uppercase tracking-[.1em] text-kohl-ink transition hover:bg-kohl-yellow-soft active:translate-y-px disabled:pointer-events-none disabled:opacity-50; }
+    .btn-secondary { @apply inline-flex min-h-12 items-center justify-center gap-3 border border-kohl-ink bg-transparent px-6 py-3 text-xs font-bold uppercase tracking-[.1em] text-kohl-ink transition hover:bg-kohl-ink hover:text-white active:translate-y-px disabled:pointer-events-none disabled:opacity-50; }
+    .btn-ghost { @apply inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.1em] text-kohl-ink underline decoration-kohl-yellow decoration-2 underline-offset-6 transition hover:text-kohl-blue; }
+    .dealer-panel { @apply border border-kohl-line bg-white; }
+    .dealer-card { @apply border border-kohl-line bg-white transition duration-300 hover:-translate-y-1 hover:border-kohl-blue hover:shadow-[8px_8px_0_var(--color-kohl-sky)]; }
+    .vehicle-card { @apply block border border-kohl-line bg-white transition duration-300 hover:-translate-y-1 hover:border-kohl-blue hover:shadow-[8px_8px_0_var(--color-kohl-card-shadow)]; }
+    .vehicle-card-media { @apply relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-kohl-sky; }
+    .vehicle-card-status { @apply absolute left-0 top-0 bg-kohl-mid px-3 py-2 text-[9px] font-bold uppercase tracking-[.16em] text-white; }
+    .vehicle-card-body { @apply p-5; }
+    .vehicle-card-meta { @apply text-[10px] font-bold uppercase tracking-[.17em] text-kohl-muted; }
+    .form-input-dark, .form-select-dark { @apply w-full border border-kohl-line bg-white px-4 py-3 text-sm text-kohl-ink outline-none transition placeholder:text-kohl-muted-light focus:border-kohl-blue focus:ring-1 focus:ring-kohl-yellow; }
+    .form-label { @apply mb-2 block text-[10px] font-bold uppercase tracking-[.16em] text-kohl-muted; }
+    .form-error { @apply mt-1 text-xs font-semibold text-red-700; }
+    .form-help { @apply mt-2 text-xs leading-5 text-kohl-muted; }
+    .kohl-hero { @apply relative overflow-hidden bg-kohl-ink; }
+    .kohl-hero-image { @apply absolute inset-0 bg-cover bg-center; }
+    .kohl-hero-shade { @apply absolute inset-0 bg-[linear-gradient(90deg,rgba(16,42,86,.96),rgba(16,42,86,.62),rgba(20,85,160,.12))]; }
+    .kohl-kicker { @apply text-[10px] font-bold uppercase tracking-[.28em] text-kohl-yellow; }
+    .kohl-service-card { @apply min-h-[280px] border border-kohl-line bg-white p-7 transition duration-300 hover:-translate-y-1 hover:bg-kohl-sky hover:shadow-[8px_8px_0_var(--color-kohl-hover)]; }
+    .legal-copy { @apply mx-auto max-w-3xl text-base leading-8 text-kohl-muted; }
+    .legal-copy h2 { @apply mt-12 text-2xl font-semibold tracking-[-.035em] text-kohl-ink; }
+    .legal-copy h3 { @apply mt-8 text-xl font-semibold text-kohl-ink; }
+    .legal-copy p, .legal-copy ul { @apply mt-4; }
+    .legal-copy li { @apply ml-5 list-disc pl-1; }
+    .vehicle-description { @apply max-w-none text-kohl-muted; }
+    .vehicle-description h2 { @apply mt-10 border-t border-kohl-line pt-8 text-2xl font-semibold text-kohl-ink; }
+    .vehicle-description h3 { @apply mt-7 text-xl font-semibold text-kohl-ink; }
+    .vehicle-description p { @apply mt-4 leading-8; }
+    .vehicle-description ul { @apply mt-4 space-y-2; }
+    .vehicle-description li { @apply ml-5 list-disc; }
+    .vehicle-description a { @apply font-bold text-kohl-blue underline underline-offset-4; }
 }

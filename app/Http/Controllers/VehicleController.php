@@ -10,6 +10,7 @@ use App\Services\Lead\LeadNotificationService;
 use App\Services\Lead\LeadTrackingService;
 use App\Services\Lead\VehicleLeadService;
 use App\Support\LeadFormType;
+use App\Support\VehicleDescriptionSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -31,7 +32,7 @@ final class VehicleController extends Controller
             ->where('status', Vehicle::STATUS_AVAILABLE)
             ->limit(3)
             ->get()
-            ->map(static fn(Vehicle $relatedVehicle): array => [
+            ->map(static fn (Vehicle $relatedVehicle): array => [
                 'id' => $relatedVehicle->id,
                 'name' => $relatedVehicle->name,
                 'slug' => $relatedVehicle->slug,
@@ -61,12 +62,15 @@ final class VehicleController extends Controller
                 'interior_color' => $vehicle->interior_color,
                 'short_description' => $vehicle->short_description,
                 'description' => $vehicle->description,
+                'description_html' => VehicleDescriptionSanitizer::sanitize($vehicle->description),
+                'seo_title' => $vehicle->seo_title,
+                'seo_description' => $vehicle->seo_description,
                 'features' => $vehicle->features ?? [],
                 'main_image' => $vehicle->main_image_url,
                 'make' => $vehicle->make?->name,
                 'model' => $vehicle->vehicleModel?->name,
                 'images' => $vehicle->images
-                    ->map(static fn($image): array => [
+                    ->map(static fn ($image): array => [
                         'url' => $image->url,
                         'alt' => $image->alt,
                         'sort_order' => $image->sort_order,
@@ -98,7 +102,7 @@ final class VehicleController extends Controller
             'stock_number' => $vehicle->stock_number,
             'vin' => $vehicle->vin,
             'price' => $vehicle->formatted_price,
-            'url' => url('/inventory/' . $vehicle->slug),
+            'url' => url('/inventory/'.$vehicle->slug),
         ]);
 
         $metaEvent = $leadTrackingService->track($request, LeadFormType::VEHICLE_INQUIRY, [

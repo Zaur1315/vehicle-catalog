@@ -2,8 +2,8 @@
 import {Link, usePage} from '@inertiajs/vue3';
 import {computed, onMounted, ref} from 'vue';
 
-const CONSENT_KEY = 'cars_for_less_cookie_consent';
-const CONSENT_VERSION = '2026-07-19';
+const CONSENT_KEY = 'kohl_auto_sales_cookie_consent';
+const CONSENT_VERSION = '2026-07-28';
 const CONSENT_MAX_AGE_DAYS = 180;
 
 const page = usePage();
@@ -167,7 +167,7 @@ onMounted(() => {
     >
         <aside
             v-if="isVisible"
-            class="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-6xl overflow-hidden border border-black/10 bg-white shadow-[0_25px_80px_rgba(23,23,23,0.24)] sm:inset-x-6 sm:bottom-6"
+            class="fixed inset-x-4 bottom-4 z-[100] mx-auto max-w-6xl overflow-hidden border border-kohl-line bg-white shadow-[10px_10px_0_rgba(16,42,86,.2)] sm:inset-x-6 sm:bottom-6"
             role="dialog"
             aria-modal="true"
             aria-labelledby="cookie-consent-title"
@@ -177,29 +177,29 @@ onMounted(() => {
                 <div class="p-5 sm:p-7 lg:p-8">
                     <div class="flex items-start gap-4">
                         <div
-                            class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#ff4f38] text-sm font-black text-white sm:flex"
+                            class="hidden h-11 w-11 shrink-0 items-center justify-center bg-kohl-ink text-sm font-bold text-white sm:flex"
                             aria-hidden="true"
                         >
-                            CFL
+                            K
                         </div>
 
                         <div>
                             <p
-                                class="text-[10px] font-black uppercase tracking-[0.22em] text-[#e9422c]"
+                                class="text-[10px] font-bold uppercase tracking-[0.22em] text-kohl-yellow-deep"
                             >
                                 Your privacy
                             </p>
 
                             <h2
                                 id="cookie-consent-title"
-                                class="mt-2 text-xl font-black tracking-[-0.03em] text-[#171717] sm:text-2xl"
+                                class="mt-2 text-xl font-bold tracking-[-0.03em] text-kohl-ink sm:text-2xl"
                             >
                                 Choose how we use cookies.
                             </h2>
 
                             <p
                                 id="cookie-consent-description"
-                                class="mt-3 max-w-3xl text-sm leading-6 text-stone-600"
+                                class="mt-3 max-w-3xl text-sm leading-6 text-kohl-muted"
                             >
                                 Necessary cookies keep the website working.
                                 With your permission, marketing cookies help
@@ -210,7 +210,7 @@ onMounted(() => {
 
                             <Link
                                 href="/privacy-policy"
-                                class="mt-3 inline-flex text-xs font-black text-[#171717] underline decoration-[#ff4f38] decoration-2 underline-offset-4 transition hover:text-[#e9422c]"
+                                class="mt-3 inline-flex text-xs font-bold text-kohl-ink underline decoration-kohl-yellow decoration-2 underline-offset-4 transition hover:text-kohl-yellow-deep"
                             >
                                 Read our Privacy Policy
                             </Link>
@@ -219,23 +219,23 @@ onMounted(() => {
 
                     <div
                         v-if="showSettings"
-                        class="mt-6 grid gap-3 border-t border-black/10 pt-6 md:grid-cols-2"
+                        class="mt-6 grid gap-3 border-t border-kohl-line pt-6 md:grid-cols-2"
                     >
-                        <div class="border border-black/10 bg-[#f5f3ee] p-4">
+                        <div class="border border-kohl-line bg-kohl-paper p-4">
                             <div class="flex items-start justify-between gap-4">
                                 <div>
-                                    <h3 class="text-sm font-black text-[#171717]">
+                                    <h3 class="text-sm font-bold text-kohl-ink">
                                         Necessary
                                     </h3>
 
-                                    <p class="mt-1 text-xs leading-5 text-stone-600">
+                                    <p class="mt-1 text-xs leading-5 text-kohl-muted">
                                         Required for security, forms, sessions,
                                         and basic website functionality.
                                     </p>
                                 </div>
 
                                 <span
-                                    class="shrink-0 rounded-full bg-[#171717] px-3 py-1 text-[9px] font-black uppercase tracking-wider text-white"
+                                    class="shrink-0 bg-kohl-ink px-3 py-1 text-[9px] font-bold uppercase tracking-wider text-white"
                                 >
                                     Always on
                                 </span>
@@ -243,18 +243,18 @@ onMounted(() => {
                         </div>
 
                         <label
-                            class="cursor-pointer border border-black/10 bg-[#f5f3ee] p-4 transition hover:border-black/25"
+                            class="cursor-pointer border border-kohl-line bg-kohl-paper p-4 transition hover:border-kohl-ink"
                         >
                             <span class="flex items-start justify-between gap-4">
                                 <span>
                                     <span
-                                        class="block text-sm font-black text-[#171717]"
+                                        class="block text-sm font-bold text-kohl-ink"
                                     >
                                         Marketing
                                     </span>
 
                                     <span
-                                        class="mt-1 block text-xs leading-5 text-stone-600"
+                                        class="mt-1 block text-xs leading-5 text-kohl-muted"
                                     >
                                         Allows Meta Pixel to measure page
                                         activity and lead submissions.
@@ -269,7 +269,7 @@ onMounted(() => {
                                     >
 
                                     <span
-                                        class="block h-6 w-11 rounded-full bg-stone-300 transition peer-checked:bg-[#ff4f38] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#ff4f38]"
+                                        class="block h-6 w-11 bg-stone-300 transition peer-checked:bg-kohl-yellow peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-kohl-yellow"
                                     ></span>
 
                                     <span
@@ -282,7 +282,7 @@ onMounted(() => {
                 </div>
 
                 <div
-                    class="flex flex-col justify-center gap-3 border-t border-black/10 bg-[#f5f3ee] p-5 sm:flex-row lg:min-w-[260px] lg:flex-col lg:border-l lg:border-t-0 lg:p-7"
+                    class="flex flex-col justify-center gap-3 border-t border-kohl-line bg-kohl-paper p-5 sm:flex-row lg:min-w-[260px] lg:flex-col lg:border-l lg:border-t-0 lg:p-7"
                 >
                     <button
                         type="button"
@@ -312,7 +312,7 @@ onMounted(() => {
 
                     <button
                         type="button"
-                        class="px-4 py-2 text-xs font-black text-stone-500 transition hover:text-[#171717]"
+                        class="px-4 py-2 text-xs font-bold text-kohl-muted transition hover:text-kohl-ink"
                         @click="rejectOptional"
                     >
                         Use necessary only

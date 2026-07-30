@@ -189,7 +189,7 @@ Normally reusable:
 
 Normally company-specific:
 
-- `config/site.php` values and matching `.env` settings;
+- `config/site.php` values and matching `.env.carsforlessct` settings;
 - colors and design tokens;
 - logo, favicon, and imagery;
 - navigation labels and page composition;
@@ -277,7 +277,7 @@ If Meta Pixel and CAPI are enabled, preserve browser/server deduplication with t
 
 - Use `.env.example` for documented placeholders only.
 - Never read, print, commit, or return real secret values.
-- Never replace an existing production `.env`.
+- Never replace an existing production `.env.carsforlessct`.
 - Prefer `config()` in application code; do not call `env()` outside configuration files.
 - Clear cached configuration after changing environment-backed configuration.
 - Company identity should have one authoritative source.
@@ -388,7 +388,7 @@ Do not claim that tests passed unless they were actually run.
 - Do not create or switch branches unless explicitly asked.
 - Never use `git reset --hard`, destructive checkout commands, or forced pushes without explicit approval.
 - Do not delete user files or unrelated modifications.
-- Do not include `.env`, credentials, dumps, logs, or private customer data in Git.
+- Do not include `.env.carsforlessct`, credentials, dumps, logs, or private customer data in Git.
 - Do not edit dependency lockfiles unless dependency changes are part of the task.
 - Do not run production mutations as part of ordinary development verification.
 

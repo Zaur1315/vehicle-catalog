@@ -137,7 +137,7 @@ GRANT ALL PRIVILEGES ON DATABASE
 vehicle_catalog TO vehicle_catalog_user;
 ```
 
-Update `.env` if needed:
+Update `.env.carsforlessct` if needed:
 
 ```env
 DB_CONNECTION=pgsql

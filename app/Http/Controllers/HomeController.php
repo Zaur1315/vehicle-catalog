@@ -22,7 +22,7 @@ final class HomeController extends Controller
             ->latest()
             ->limit(6)
             ->get()
-            ->map(static fn(Vehicle $vehicle): array => [
+            ->map(static fn (Vehicle $vehicle): array => [
                 'id' => $vehicle->id,
                 'name' => $vehicle->name,
                 'slug' => $vehicle->slug,
@@ -32,6 +32,7 @@ final class HomeController extends Controller
                 'image' => $vehicle->main_image_url,
                 'make' => $vehicle->make?->name,
                 'model' => $vehicle->vehicleModel?->name,
+                'image_large' => $vehicle->main_image_url,
                 'image_medium' => $vehicle->main_image_medium_url,
                 'image_thumb' => $vehicle->main_image_thumb_url,
             ])

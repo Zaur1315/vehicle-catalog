@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import CookieConsentBanner from '@/Components/CookieConsentBanner.vue';
+import Icon from '@/Components/Icon.vue';
 
 const page = usePage();
 const site = computed(() => page.props.site || {});
@@ -60,8 +61,8 @@ onBeforeUnmount(() => { document.body.style.overflow = ''; clearTimeout(flashTim
     <div class="min-h-screen bg-kohl-paper text-kohl-ink" @keydown="handleKeydown">
         <div class="border-b border-white/10 bg-kohl-ink text-white">
             <div class="site-container flex min-h-10 items-center justify-between gap-4 py-2 text-[10px] font-bold uppercase tracking-[.14em]">
-                <a :href="site.maps_url" target="_blank" rel="noopener" class="truncate text-white/70 transition hover:text-white">{{ site.city || site.address }}</a>
-                <a :href="`tel:${site.phone_tel}`" class="shrink-0 text-kohl-yellow hover:text-white">{{ site.phone }}</a>
+                <a :href="site.maps_url" target="_blank" rel="noopener" class="flex min-w-0 items-center gap-2 truncate text-white/70 transition hover:text-white"><Icon name="pin" />{{ site.city || site.address }}</a>
+                <a :href="`tel:${site.phone_tel}`" class="flex shrink-0 items-center gap-2 text-kohl-yellow hover:text-white"><Icon name="phone" />{{ site.phone }}</a>
             </div>
         </div>
 
@@ -74,7 +75,7 @@ onBeforeUnmount(() => { document.body.style.overflow = ''; clearTimeout(flashTim
                 <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
                     <Link v-for="item in primaryNav" :key="item.href" :href="item.href" class="px-3 py-2 text-xs font-bold uppercase tracking-[.1em] transition" :class="isActive(item.href) ? 'text-kohl-yellow-deep' : 'hover:text-kohl-yellow-deep'">{{ item.label }}</Link>
                 </nav>
-                <div class="hidden lg:block"><Link href="/inventory" class="btn-primary">Find a vehicle <span aria-hidden="true">↗</span></Link></div>
+                <div class="hidden lg:block"><Link href="/inventory" class="btn-primary">Find a vehicle <Icon name="arrow-right" /></Link></div>
                 <button ref="menuButton" type="button" class="grid h-11 w-11 place-items-center border border-kohl-ink lg:hidden" :aria-expanded="mobileMenuOpen" aria-controls="mobile-navigation" aria-label="Toggle menu" @click="toggleMenu"><span class="text-xl leading-none">{{ mobileMenuOpen ? '×' : '☰' }}</span></button>
             </div>
         </header>
@@ -83,9 +84,9 @@ onBeforeUnmount(() => { document.body.style.overflow = ''; clearTimeout(flashTim
             <div v-if="mobileMenuOpen" class="fixed inset-0 z-50 bg-kohl-ink/55 lg:hidden" @click.self="closeMenu">
                 <aside id="mobile-navigation" ref="menuPanel" class="ml-auto flex h-full w-[min(86vw,380px)] flex-col overflow-y-auto bg-kohl-paper p-6 shadow-2xl" aria-label="Mobile navigation">
                     <div class="flex items-center justify-between border-b border-kohl-line pb-6"><span class="text-sm font-bold">{{ site.name }}</span><button type="button" class="text-2xl" aria-label="Close menu" @click="closeMenu">×</button></div>
-                    <nav class="mt-6 grid" aria-label="Mobile primary navigation"><Link v-for="item in primaryNav" :key="item.href" :href="item.href" class="flex items-center justify-between border-b border-kohl-line py-4 text-xl font-bold" :class="isActive(item.href) ? 'text-kohl-yellow-deep' : ''">{{ item.label }} <span aria-hidden="true">↗</span></Link></nav>
-                    <Link href="/inventory" class="btn-primary mt-7">Find a vehicle <span aria-hidden="true">↗</span></Link>
-                    <div class="mt-auto border-t border-kohl-line pt-6 text-sm"><a :href="`tel:${site.phone_tel}`" class="block font-bold">{{ site.phone }}</a><a :href="site.maps_url" target="_blank" rel="noopener" class="mt-3 block leading-6 text-kohl-muted">Get directions ↗</a></div>
+                    <nav class="mt-6 grid" aria-label="Mobile primary navigation"><Link v-for="item in primaryNav" :key="item.href" :href="item.href" class="group flex items-center justify-between border-b border-kohl-line py-4 text-xl font-bold" :class="isActive(item.href) ? 'text-kohl-yellow-deep' : ''">{{ item.label }} <Icon name="arrow-right" class="transition group-hover:translate-x-1" /></Link></nav>
+                    <Link href="/inventory" class="btn-primary mt-7">Find a vehicle <Icon name="arrow-right" /></Link>
+                    <div class="mt-auto border-t border-kohl-line pt-6 text-sm"><a :href="`tel:${site.phone_tel}`" class="flex items-center gap-2 font-bold"><Icon name="phone" />{{ site.phone }}</a><a :href="site.maps_url" target="_blank" rel="noopener" class="mt-3 flex items-center gap-2 leading-6 text-kohl-muted">Get directions <Icon name="pin" /></a></div>
                 </aside>
             </div>
         </Transition>
@@ -99,9 +100,9 @@ onBeforeUnmount(() => { document.body.style.overflow = ''; clearTimeout(flashTim
 
         <footer class="bg-kohl-ink text-white">
             <div class="site-container py-14 lg:py-20"><div class="grid gap-10 border-b border-white/15 pb-12 lg:grid-cols-[1.5fr_.8fr_.8fr]">
-                <div><p class="kohl-kicker">Kohl Auto Sales</p><h2 class="mt-5 max-w-md text-4xl font-bold leading-[.96] tracking-[-.055em]">Your next vehicle starts with a real conversation.</h2><div class="mt-7 flex flex-wrap gap-3"><Link href="/inventory" class="btn-primary">Browse inventory</Link><a :href="`tel:${site.phone_tel}`" class="btn-secondary border-white/40 text-white hover:bg-white hover:text-kohl-ink">Call us</a></div></div>
+                <div><p class="kohl-kicker">Kohl Auto Sales</p><h2 class="mt-5 max-w-md text-4xl font-bold leading-[.96] tracking-[-.055em]">Your next vehicle starts with a real conversation.</h2><div class="mt-7 flex flex-wrap gap-3"><Link href="/inventory" class="btn-primary">Browse inventory <Icon name="arrow-right" /></Link><a :href="`tel:${site.phone_tel}`" class="btn-secondary border-white/40 text-white hover:bg-white hover:text-kohl-ink"><Icon name="phone" />Call us</a></div></div>
                 <div><p class="text-[10px] font-bold uppercase tracking-[.2em] text-white/45">Explore</p><nav class="mt-5 grid gap-3 text-sm font-bold"><Link href="/inventory">Inventory</Link><Link href="/finance">Financing</Link><Link href="/trade-in">Sell or trade</Link><Link href="/about">About Kohl</Link><Link href="/contact">Contact & directions</Link></nav></div>
-                <div><p class="text-[10px] font-bold uppercase tracking-[.2em] text-white/45">Visit</p><a :href="site.maps_url" target="_blank" rel="noopener" class="mt-5 block text-sm font-bold leading-6">{{ site.address }}</a><p class="mt-3 text-sm text-white/55">{{ site.business_hours }}</p><a v-if="site.email" :href="`mailto:${site.email}`" class="mt-3 block break-all text-sm text-white/70">{{ site.email }}</a></div>
+                <div><p class="text-[10px] font-bold uppercase tracking-[.2em] text-white/45">Visit</p><a :href="site.maps_url" target="_blank" rel="noopener" class="mt-5 flex items-start gap-2 text-sm font-bold leading-6"><Icon name="pin" class="mt-0.5" />{{ site.address }}</a><p class="mt-3 text-sm text-white/55">{{ site.business_hours }}</p><a v-if="site.email" :href="`mailto:${site.email}`" class="mt-3 flex items-start gap-2 break-all text-sm text-white/70"><Icon name="mail" class="mt-0.5" />{{ site.email }}</a></div>
             </div><div class="flex flex-col gap-4 pt-6 text-[11px] text-white/45 sm:flex-row sm:justify-between"><p>© {{ new Date().getFullYear() }} {{ site.name }}. All rights reserved.</p><div class="flex gap-5"><Link href="/privacy-policy">Privacy</Link><Link href="/terms">Terms</Link><a href="/sitemap.xml">Sitemap</a></div></div></div>
         </footer>
         <CookieConsentBanner />

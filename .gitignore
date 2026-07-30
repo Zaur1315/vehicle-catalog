@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+.env.carsforlessct
 .env.backup
 .env.production
 .env.*

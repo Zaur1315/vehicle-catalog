@@ -49,5 +49,11 @@ defineProps({
             <path d="m21 3-7.5 18-3.3-7.2L3 10.5 21 3Z" />
             <path d="M10.2 13.8 21 3" />
         </template>
+        <template v-else-if="name === 'sliders'">
+            <path d="M4 7h16" />
+            <path d="M4 17h16" />
+            <circle cx="9" cy="7" r="2" />
+            <circle cx="15" cy="17" r="2" />
+        </template>
     </svg>
 </template>

@@ -33,10 +33,18 @@ const page = usePage();
 
 const site = computed(() => page.props.site || {})
 
-const siteName = site.name;
+const siteName = computed(() => site.value.name || 'Delmar Auto Sale Inc.');
 
 const fullTitle = computed(() => {
-    return props.title === siteName ? siteName : `${props.title} | ${siteName}`;
+    return props.title === siteName.value ? siteName.value : `${props.title} | ${siteName.value}`;
+});
+
+const siteOrigin = computed(() => {
+    if (site.value.domain) {
+        return site.value.domain.startsWith('http') ? site.value.domain : `https://${site.value.domain}`;
+    }
+
+    return typeof window === 'undefined' ? '' : window.location.origin;
 });
 
 const canonicalUrl = computed(() => {
@@ -44,13 +52,13 @@ const canonicalUrl = computed(() => {
         return props.canonical;
     }
 
-    if (typeof window === 'undefined') {
+    if (!siteOrigin.value) {
         return '';
     }
 
     const cleanPath = page.url.split('?')[0];
 
-    return `${window.location.origin}${cleanPath}`;
+    return `${siteOrigin.value}${cleanPath}`;
 });
 
 const absoluteImage = computed(() => {
@@ -62,7 +70,7 @@ const absoluteImage = computed(() => {
         return props.image;
     }
 
-    return `${window.location.origin}${props.image}`;
+    return `${siteOrigin.value}${props.image}`;
 });
 
 const jsonLd = computed(() => {

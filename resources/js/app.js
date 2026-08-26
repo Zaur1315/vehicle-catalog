@@ -3,7 +3,7 @@ import '../css/app.css';
 import {createInertiaApp} from '@inertiajs/vue3';
 import {createApp, h} from 'vue';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Kohl Auto Sales';
+const appName = import.meta.env.VITE_APP_NAME || 'Delmar Auto Sale Inc.';
 
 createInertiaApp({
     title: (title) => title ? `${title} | ${appName}` : appName,

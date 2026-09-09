@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Vehicle;
+use App\Support\SiteUrl;
 use Illuminate\Http\Response;
 
 final class SitemapController extends Controller
@@ -13,49 +14,49 @@ final class SitemapController extends Controller
     {
         $staticUrls = [
             [
-                'loc' => url('/'),
+                'loc' => SiteUrl::to('/'),
                 'priority' => '1.0',
                 'changefreq' => 'weekly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/inventory'),
+                'loc' => SiteUrl::to('/inventory'),
                 'priority' => '0.9',
                 'changefreq' => 'daily',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/finance'),
+                'loc' => SiteUrl::to('/finance'),
                 'priority' => '0.7',
                 'changefreq' => 'monthly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/trade-in'),
+                'loc' => SiteUrl::to('/trade-in'),
                 'priority' => '0.7',
                 'changefreq' => 'monthly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/about'),
+                'loc' => SiteUrl::to('/about'),
                 'priority' => '0.6',
                 'changefreq' => 'monthly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/contact'),
+                'loc' => SiteUrl::to('/contact'),
                 'priority' => '0.8',
                 'changefreq' => 'monthly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/privacy-policy'),
+                'loc' => SiteUrl::to('/privacy-policy'),
                 'priority' => '0.3',
                 'changefreq' => 'yearly',
                 'lastmod' => now()->toDateString(),
             ],
             [
-                'loc' => url('/terms'),
+                'loc' => SiteUrl::to('/terms'),
                 'priority' => '0.3',
                 'changefreq' => 'yearly',
                 'lastmod' => now()->toDateString(),

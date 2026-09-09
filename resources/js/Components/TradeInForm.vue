@@ -1,14 +1,202 @@
 <script setup>
-import { useForm } from '@inertiajs/vue3';
+import SubmissionError from '@/Components/SubmissionError.vue';
+import { useSubmissionFeedback } from '@/useSubmissionFeedback.js';
+const { submissionError, feedback } = useSubmissionFeedback();
+import { useForm, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import Icon from '@/Components/Icon.vue';
 
 const submitted = ref(false);
-const form = useForm({ first_name: '', last_name: '', email: '', phone: '', make: '', model: '', year: '', mileage: '', condition: '', vin: '', message: '' });
-const submit = () => form.post('/trade-in', { preserveScroll: true, onSuccess: () => { form.reset(); submitted.value = true; } });
+const page = usePage();
+const form = useForm({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    make: '',
+    model: '',
+    year: '',
+    mileage: '',
+    condition: '',
+    vin: '',
+    message: '',
+});
+const submit = () => {
+    if (form.processing) return;
+    form.post('/trade-in', {
+        preserveScroll: true,
+        ...feedback,
+        onSuccess: () => {
+            form.reset();
+            submitted.value = true;
+        },
+    });
+};
 </script>
 
 <template>
-    <div v-if="submitted" class="py-8"><p class="eyebrow">Request received</p><h3 class="mt-3 text-3xl font-bold">Thanks for reaching out.</h3><p class="mt-4 leading-7 text-text-muted">Our team will contact you soon to discuss your vehicle and next steps.</p><button type="button" class="btn-primary mt-7" @click="submitted = false">Send another request</button></div>
-    <form v-else @submit.prevent="submit"><p class="eyebrow">Vehicle details</p><h3 class="mt-3 text-2xl font-bold">Tell us about your vehicle.</h3><p class="mt-2 text-sm leading-6 text-text-muted">Fields marked with * are required.</p><div class="mt-7 grid gap-4 sm:grid-cols-2"><label><span class="form-label">Year *</span><input v-model="form.year" required type="number" min="1900" :max="new Date().getFullYear() + 1" class="form-input-dark"><p v-if="form.errors.year" class="form-error">{{ form.errors.year }}</p></label><label><span class="form-label">Mileage *</span><input v-model="form.mileage" required type="number" min="0" class="form-input-dark"><p v-if="form.errors.mileage" class="form-error">{{ form.errors.mileage }}</p></label><label><span class="form-label">Make *</span><input v-model="form.make" required class="form-input-dark"><p v-if="form.errors.make" class="form-error">{{ form.errors.make }}</p></label><label><span class="form-label">Model *</span><input v-model="form.model" required class="form-input-dark"><p v-if="form.errors.model" class="form-error">{{ form.errors.model }}</p></label></div><div class="mt-4 grid gap-4 sm:grid-cols-2"><label><span class="form-label">Condition</span><select v-model="form.condition" class="form-select-dark"><option value="">Select if known</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Needs attention</option></select></label><label><span class="form-label">VIN</span><input v-model="form.vin" maxlength="32" class="form-input-dark"><p v-if="form.errors.vin" class="form-error">{{ form.errors.vin }}</p></label></div><div class="mt-7 border-t border-border pt-6"><p class="form-label">Your contact details</p><div class="grid gap-4 sm:grid-cols-2"><label><span class="form-label">First name *</span><input v-model="form.first_name" required autocomplete="given-name" class="form-input-dark"><p v-if="form.errors.first_name" class="form-error">{{ form.errors.first_name }}</p></label><label><span class="form-label">Last name</span><input v-model="form.last_name" autocomplete="family-name" class="form-input-dark"></label><label><span class="form-label">Phone *</span><input v-model="form.phone" required type="tel" autocomplete="tel" class="form-input-dark"><p v-if="form.errors.phone" class="form-error">{{ form.errors.phone }}</p></label><label><span class="form-label">Email</span><input v-model="form.email" type="email" autocomplete="email" class="form-input-dark"><p v-if="form.errors.email" class="form-error">{{ form.errors.email }}</p></label></div></div><label class="mt-4 block"><span class="form-label">Notes</span><textarea v-model="form.message" rows="4" class="form-input-dark"></textarea><p v-if="form.errors.message" class="form-error">{{ form.errors.message }}</p></label><button class="btn-primary mt-6 w-full" :disabled="form.processing">{{ form.processing ? 'Sending…' : 'Submit trade-in request' }} <Icon name="send" /></button><p class="form-help">By submitting, you ask Delmar Auto Sale Inc. to contact you about this trade-in request.</p></form>
+    <div v-if="submitted" class="py-8" role="status">
+        <p class="eyebrow">Request received</p>
+        <h3 class="mt-3 text-3xl font-bold">Thanks for reaching out.</h3>
+        <p class="mt-4 leading-7 text-text-muted">
+            Our team will contact you soon to discuss your vehicle and next
+            steps.
+        </p>
+        <button
+            type="button"
+            class="btn-primary mt-7"
+            @click="submitted = false"
+        >
+            Send another request
+        </button>
+    </div>
+    <form v-else @submit.prevent="submit">
+        <SubmissionError :message="submissionError" />
+        <p class="eyebrow">Vehicle details</p>
+        <h3 class="mt-3 text-2xl font-bold">Tell us about your vehicle.</h3>
+        <p class="mt-2 text-sm leading-6 text-text-muted">
+            Fields marked with * are required.
+        </p>
+        <div class="mt-7 grid gap-4 sm:grid-cols-2">
+            <label>
+                <span class="form-label">Year *</span>
+                <input
+                    v-model="form.year"
+                    required
+                    type="number"
+                    min="1900"
+                    :max="new Date().getFullYear() + 1"
+                    class="form-input-dark"
+                />
+                <p v-if="form.errors.year" class="form-error">
+                    {{ form.errors.year }}
+                </p>
+            </label>
+            <label>
+                <span class="form-label">Mileage *</span>
+                <input
+                    v-model="form.mileage"
+                    required
+                    type="number"
+                    min="0"
+                    class="form-input-dark"
+                />
+                <p v-if="form.errors.mileage" class="form-error">
+                    {{ form.errors.mileage }}
+                </p>
+            </label>
+            <label>
+                <span class="form-label">Make *</span>
+                <input v-model="form.make" required class="form-input-dark" />
+                <p v-if="form.errors.make" class="form-error">
+                    {{ form.errors.make }}
+                </p>
+            </label>
+            <label>
+                <span class="form-label">Model *</span>
+                <input v-model="form.model" required class="form-input-dark" />
+                <p v-if="form.errors.model" class="form-error">
+                    {{ form.errors.model }}
+                </p>
+            </label>
+        </div>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <label>
+                <span class="form-label">Condition</span>
+                <select v-model="form.condition" class="form-select-dark">
+                    <option value="">Select if known</option>
+                    <option>Excellent</option>
+                    <option>Good</option>
+                    <option>Fair</option>
+                    <option>Needs attention</option>
+                </select>
+                <p v-if="form.errors.condition" class="form-error">
+                    {{ form.errors.condition }}
+                </p>
+            </label>
+            <label>
+                <span class="form-label">VIN</span>
+                <input
+                    v-model="form.vin"
+                    maxlength="32"
+                    class="form-input-dark"
+                />
+                <p v-if="form.errors.vin" class="form-error">
+                    {{ form.errors.vin }}
+                </p>
+            </label>
+        </div>
+        <div class="mt-7 border-t border-border pt-6">
+            <p class="form-label">Your contact details</p>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <label>
+                    <span class="form-label">First name *</span>
+                    <input
+                        v-model="form.first_name"
+                        required
+                        autocomplete="given-name"
+                        class="form-input-dark"
+                    />
+                    <p v-if="form.errors.first_name" class="form-error">
+                        {{ form.errors.first_name }}
+                    </p>
+                </label>
+                <label>
+                    <span class="form-label">Last name</span>
+                    <input
+                        v-model="form.last_name"
+                        autocomplete="family-name"
+                        class="form-input-dark"
+                    />
+                    <p v-if="form.errors.last_name" class="form-error">
+                        {{ form.errors.last_name }}
+                    </p>
+                </label>
+                <label>
+                    <span class="form-label">Phone *</span>
+                    <input
+                        v-model="form.phone"
+                        required
+                        type="tel"
+                        autocomplete="tel"
+                        class="form-input-dark"
+                    />
+                    <p v-if="form.errors.phone" class="form-error">
+                        {{ form.errors.phone }}
+                    </p>
+                </label>
+                <label>
+                    <span class="form-label">Email</span>
+                    <input
+                        v-model="form.email"
+                        type="email"
+                        autocomplete="email"
+                        class="form-input-dark"
+                    />
+                    <p v-if="form.errors.email" class="form-error">
+                        {{ form.errors.email }}
+                    </p>
+                </label>
+            </div>
+        </div>
+        <label class="mt-4 block">
+            <span class="form-label">Notes</span>
+            <textarea
+                v-model="form.message"
+                rows="4"
+                class="form-input-dark"
+            ></textarea>
+            <p v-if="form.errors.message" class="form-error">
+                {{ form.errors.message }}
+            </p>
+        </label>
+        <button class="btn-primary mt-6 w-full" :disabled="form.processing">
+            {{ form.processing ? 'Sending…' : 'Submit vehicle request' }}
+            <Icon name="send" />
+        </button>
+        <p class="form-help">
+            By submitting, you ask {{ page.props.site.name }} to contact you
+            about this sell or trade request.
+        </p>
+    </form>
 </template>

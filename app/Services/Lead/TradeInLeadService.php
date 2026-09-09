@@ -33,7 +33,7 @@ final readonly class TradeInLeadService
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
             'subject' => sprintf(
-                'Trade-in request: %s %s %s',
+                'Sell or trade request: %s %s %s',
                 $data['year'],
                 $data['make'],
                 $data['model'],

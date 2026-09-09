@@ -1,31 +1,140 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Icon from '@/Components/Icon.vue';
+import BrandImage from '@/Components/BrandImage.vue';
 import FaqAccordion from '@/Components/FaqAccordion.vue';
 import FinanceForm from '@/Components/FinanceForm.vue';
-import LeadFormSection from '@/Components/LeadFormSection.vue';
-import Reveal from '@/Components/Reveal.vue';
+import Icon from '@/Components/Icon.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 
 defineOptions({ layout: SiteLayout });
 const site = computed(() => usePage().props.site || {});
-const heroImage = '/images/sections/financing-options-hero.webp';
-const steps = [['01', 'Tell us what you’re considering', 'Add a vehicle or describe the kind of vehicle you want.'], ['02', 'Share a few planning details', 'A target amount, down payment, and term help frame the conversation.'], ['03', 'Talk through the next step', 'Our team will contact you about the request and information that may be needed.']];
-const financeFaq = [['What information may be useful?', 'A vehicle of interest, a target amount, down payment, preferred term, and the best way to reach you can help start the conversation.'], ['Is this a credit application?', 'No. This form is a preliminary request for information. Any credit process or lender review will be explained separately.'], ['Do I need to choose a vehicle first?', 'No. You can describe the kind of car, SUV, or truck you are considering and update the conversation later.']];
+
+const steps = [
+    ['Choose a vehicle', 'Start with a vehicle in our inventory, or tell us what kind of vehicle you are considering.'],
+    ['Share your information', 'Send the preliminary request with the contact and purchase details you are comfortable providing.'],
+    ['Review the next steps', 'Our team will follow up and explain what additional information or separate credit process may be needed.'],
+    ['Move forward', 'If the available path fits your plans, continue the vehicle purchase process with our team.'],
+];
+const preparation = [
+    ['Contact details', 'A reliable phone number and email address.'],
+    ['Employment and income', 'Basic employment and income details may be requested later in the process.'],
+    ['Housing information', 'Your current housing situation may be relevant to a separate application.'],
+    ['Identification', 'Valid identification may be needed if you decide to move forward.'],
+    ['Current vehicle', 'If you have a possible trade, bring its mileage, payoff context, and general condition.'],
+];
+const faqs = [
+    ['Can I submit a request before choosing a vehicle?', 'Yes. Tell us what type of vehicle you are looking for, or browse the current inventory first. Choosing a specific vehicle can make the follow-up conversation more focused.'],
+    ['Can auto financing be discussed for a used vehicle?', 'Yes. The request on this page is designed for vehicles in our pre-owned inventory. Any available terms depend on the vehicle, applicant information, and a separate review.'],
+    ['Can I include a vehicle I may want to trade?', 'Yes. Mention it in your request, then use the Sell or Trade page to share the vehicle details our team will need for a useful follow-up.'],
+    ['What happens after I submit the form?', 'Southern York Motors receives your preliminary request and can contact you about the vehicle, your questions, and any additional steps that may apply.'],
+    ['Does submitting a request guarantee approval?', 'No. This form is not a credit application, approval, rate quote, or financing commitment. Any separate credit process will be explained before you proceed.'],
+];
 </script>
 
 <template>
-    <SeoHead title="Auto Financing Options in Salisbury, MD" description="Explore vehicle financing options at Delmar Auto Sale Inc. in Salisbury, Maryland. Browse inventory, learn how the process works, and submit a financing request online." />
-    <section class="finance-hero"><img :src="heroImage" alt="" class="finance-hero-image" aria-hidden="true"><div class="finance-hero-overlay"></div><div class="site-container relative z-10 flex min-h-[650px] items-end py-20 lg:min-h-[78svh] lg:items-center lg:py-24"><div class="max-w-[920px] text-white"><p class="delmar-kicker">Financing Options</p><h1 class="mt-6 max-w-[900px] text-5xl font-bold leading-[.94] tracking-[-.06em] sm:text-6xl lg:text-8xl">A simpler way to finance your next vehicle.</h1><p class="mt-7 max-w-2xl text-lg leading-8 text-white/75">Explore financing options for your next vehicle at Delmar Auto Sale Inc. Start by finding the right vehicle, then share a few planning details so our team can discuss the next steps.</p><div class="mt-9 flex flex-col gap-3 sm:flex-row"><a href="#financing-request" class="btn-primary">Start financing request <Icon name="arrow-right" /></a><Link href="/inventory" class="btn-light">Browse inventory</Link></div><p class="mt-7 text-sm font-semibold text-white/60">Delmar Auto Sale Inc. · Salisbury, Maryland</p></div></div></section>
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-start"><Reveal><div><p class="eyebrow">Start with clarity</p><h2 class="mt-4 heading-lg">Financing shouldn’t make car shopping complicated.</h2></div></Reveal><Reveal><div class="max-w-3xl text-lg leading-8 text-text-muted"><p>Financing is part of the broader vehicle shopping conversation. First, explore the vehicles that fit your needs. Then share a few planning details so Delmar Auto Sale Inc. can follow up and discuss what comes next.</p><p class="mt-6">You can ask about a specific vehicle, describe what you are looking for, or bring up a trade-in along the way.</p></div></Reveal></div></section>
-    <section class="site-section bg-white"><div class="site-container grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><div><p class="eyebrow">Why start with Delmar?</p><h2 class="mt-4 heading-lg">A local conversation around your next vehicle.</h2></div></Reveal><div class="border-t border-border"><Reveal v-for="(item, index) in [['One place to start', 'Connect vehicle shopping and financing in one dealership experience.'], ['Vehicle-focused process', 'Your request can be tied to a real vehicle or the kind of vehicle you are considering.'], ['Personal assistance', 'Ask questions and discuss the next step directly with the Delmar team.'], ['Trade-in support', 'Share information about your current vehicle through our existing trade-in process.']]" :key="item[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><article class="grid gap-4 border-b border-border py-7 sm:grid-cols-[72px_1fr]"><span class="font-display text-2xl font-bold text-brand">{{ `0${index + 1}` }}</span><div><h3 class="text-xl font-bold">{{ item[0] }}</h3><p class="mt-2 max-w-2xl leading-7 text-text-muted">{{ item[1] }}</p></div></article></Reveal></div></div></section>
-    <section class="site-section bg-surface-muted"><div class="site-container"><div class="max-w-2xl"><p class="eyebrow">The process</p><h2 class="mt-4 heading-lg">How financing works.</h2></div><div class="mt-12 grid border-y border-border bg-white md:grid-cols-3"><Reveal v-for="(step, index) in steps" :key="step[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><article class="border-b border-border px-6 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 lg:px-7"><span class="font-display text-3xl font-bold text-brand">{{ step[0] }}</span><h3 class="mt-6 text-xl font-bold">{{ step[1] }}</h3><p class="mt-3 leading-7 text-text-muted">{{ step[2] }}</p></article></Reveal></div></div></section>
-    <section class="finance-choice-section"><div class="site-container grid gap-8 py-16 lg:grid-cols-[1fr_auto] lg:items-center lg:py-20"><div><p class="delmar-kicker">Choose your next step</p><h2 class="mt-4 text-4xl font-bold tracking-[-.05em] text-white sm:text-5xl">Start with the right vehicle.</h2><p class="mt-5 max-w-2xl text-lg leading-8 text-white/70">Explore current inventory, then return here when you are ready to share a financing request.</p></div><Link href="/inventory" class="btn-light">Browse inventory <Icon name="arrow-right" /></Link></div></section>
-    <section class="site-section bg-white"><div class="site-container grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center"><div><p class="eyebrow">Trade-in support</p><h2 class="mt-4 heading-lg">Have a vehicle to trade?</h2><p class="mt-5 max-w-xl text-lg leading-8 text-text-muted">Share the details of your current vehicle through our Value Your Trade page and discuss how it fits into your next purchase conversation.</p></div><Link href="/trade-in" class="btn-secondary justify-self-start lg:justify-self-end">Value Your Trade <Icon name="arrow-right" /></Link></div></section>
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Before you submit</p><h2 class="mt-4 heading-lg">A little context goes a long way.</h2><p class="mt-5 max-w-xl leading-7 text-text-muted">You do not need every answer before you reach out. Share what you know and ask what you need.</p></div><div class="grid gap-4 sm:grid-cols-2"><div class="pre-submit-item"><span>01</span><h3>Vehicle direction</h3><p>A specific vehicle or a useful description of the type you are looking for.</p></div><div class="pre-submit-item"><span>02</span><h3>Planning details</h3><p>A target amount, down payment, and preferred term if you have them.</p></div><div class="pre-submit-item"><span>03</span><h3>Contact details</h3><p>A phone number is required so our team can follow up with you.</p></div><div class="pre-submit-item"><span>04</span><h3>Your questions</h3><p>Use the message field to tell us what you would like to understand.</p></div></div></div></section>
-    <section class="site-section bg-white"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Financing questions</p><h2 class="mt-4 heading-lg">Keep the details clear.</h2></div><FaqAccordion :items="financeFaq" /></div></section>
-    <LeadFormSection id="financing-request" eyebrow="Financing Options" title="Start your financing request." description="Complete the form below and Delmar Auto Sale Inc. can follow up with you about your financing request and next steps."><template #aside><p>{{ site.name }}</p><p>{{ site.address }}</p><a class="transition hover:text-white" :href="`tel:${site.phone_tel}`">{{ site.phone }}</a><br><a v-if="site.email" class="transition hover:text-white" :href="`mailto:${site.email}`">{{ site.email }}</a></template><FinanceForm /></LeadFormSection>
-    <section class="border-t border-border bg-white"><div class="site-container flex flex-col gap-5 py-12 sm:flex-row sm:items-center sm:justify-between"><div><p class="eyebrow">Still have questions?</p><h2 class="mt-3 text-3xl font-bold">Talk with Delmar directly.</h2></div><div class="flex flex-wrap gap-3"><a :href="`tel:${site.phone_tel}`" class="btn-secondary"><Icon name="phone" />Call Delmar</a><Link href="/contact" class="btn-primary">Contact us <Icon name="arrow-right" /></Link></div></div></section>
+    <SeoHead
+        title="Auto Financing"
+        :description="'Explore auto financing for a pre-owned vehicle with ' + site.name + ' in ' + site.city + ', Pennsylvania. Learn what to expect and start a preliminary request.'"
+        image="/images/southern-york/interior-1280.webp"
+    />
+    <section class="site-container split-intro">
+        <div>
+            <p class="eyebrow">Auto financing</p>
+            <h1>Auto financing for your next vehicle.</h1>
+            <p>
+                Tell us what you are considering and where you are in the
+                process. We will use your preliminary request to start a
+                focused conversation about the next steps.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="#financing-request" class="btn-primary">Start Financing Request</a>
+                <Link href="/inventory" class="btn-secondary">Browse Inventory</Link>
+            </div>
+            <p class="!text-xs">A preliminary request, not a credit application or approval.</p>
+        </div>
+        <div class="split-intro-media">
+            <BrandImage name="interior" alt="Warm leather seats and a sunlit vehicle interior" eager />
+        </div>
+    </section>
+
+    <section class="site-section bg-white">
+        <div class="site-container">
+            <div class="process-heading">
+                <div>
+                    <p class="eyebrow">How auto financing works</p>
+                    <h2 class="heading-lg">A process without the guesswork.</h2>
+                </div>
+                <p>
+                    The online form starts the conversation. It gives our team
+                    enough context to respond without asking you to send
+                    sensitive financial information through the website.
+                </p>
+            </div>
+            <ol class="numbered-process mt-10">
+                <li v-for="step in steps" :key="step[0]">
+                    <span aria-hidden="true"></span>
+                    <h3>{{ step[0] }}</h3>
+                    <p>{{ step[1] }}</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <section class="site-section site-container">
+        <div class="preparation-panel">
+            <div>
+                <p class="eyebrow">Prepare at your pace</p>
+                <h2 class="heading-lg">What you may want to have ready.</h2>
+                <p class="mt-6 max-w-lg leading-8 text-text-muted">
+                    You do not need to upload these items with the preliminary
+                    form. If you continue into a separate financing process,
+                    having the basics nearby may make the conversation easier.
+                </p>
+                <p class="mt-5 text-sm leading-7 text-text-muted">
+                    Never send a Social Security number, banking details, or
+                    identification documents through the message field.
+                </p>
+            </div>
+            <ul class="preparation-list">
+                <li v-for="item in preparation" :key="item[0]">
+                    <span><Icon name="arrow-right" /></span>
+                    <div><h3>{{ item[0] }}</h3><p>{{ item[1] }}</p></div>
+                </li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="site-section bg-[#e9eddf]">
+        <div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+                <p class="eyebrow">Questions about auto financing</p>
+                <h2 class="heading-lg">Know what the form does.</h2>
+                <p class="mt-6 max-w-md leading-8 text-text-muted">
+                    These answers explain the preliminary request on this site.
+                    Specific terms can only be discussed after the relevant
+                    information is reviewed.
+                </p>
+            </div>
+            <FaqAccordion :items="faqs" />
+        </div>
+    </section>
+
+    <section id="financing-request" class="site-section bg-white">
+        <div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
+            <div>
+                <p class="eyebrow">Ready to explore your options?</p>
+                <h2 class="heading-lg">Start with a few useful details.</h2>
+                <p class="mt-6 max-w-md leading-8 text-text-muted">
+                    Share how we can reach you, the vehicle you are considering,
+                    and any questions you want our team to address first.
+                </p>
+                <Link href="/inventory" class="btn-secondary mt-8">
+                    Browse Inventory <Icon name="arrow-right" />
+                </Link>
+            </div>
+            <div class="form-surface"><FinanceForm /></div>
+        </div>
+    </section>
 </template>

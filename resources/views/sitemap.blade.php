@@ -10,7 +10,7 @@
     @endforeach
     @foreach ($vehicles as $vehicle)
         <url>
-            <loc>{{ url('/inventory/' . $vehicle->slug) }}</loc>
+            <loc>{{ \App\Support\SiteUrl::to('/inventory/' . $vehicle->slug) }}</loc>
             <lastmod>{{ optional($vehicle->updated_at)->toDateString() }}</lastmod>
             <changefreq>weekly</changefreq>
             <priority>0.8</priority>

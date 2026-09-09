@@ -1,36 +1,91 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import Icon from '@/Components/Icon.vue';
+import BrandImage from '@/Components/BrandImage.vue';
 import ContactForm from '@/Components/ContactForm.vue';
-import FaqAccordion from '@/Components/FaqAccordion.vue';
-import LeadFormSection from '@/Components/LeadFormSection.vue';
-import Reveal from '@/Components/Reveal.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
-
 defineOptions({ layout: SiteLayout });
 const site = computed(() => usePage().props.site || {});
-const heroImage = '/images/sections/contact-delmar-hero.webp';
-const topics = [['Vehicle availability', 'Ask about a vehicle, photos, details, or arranging a visit.'], ['Financing Options', 'Ask about the financing request process and next steps.'], ['Value Your Trade', 'Talk through your current vehicle and the next step.'], ['General questions', 'Send anything else you would like to discuss.']];
-const contactFaq = [['Where is Delmar Auto Sale Inc. located?', 'Delmar Auto Sale Inc. is located at 28650 Ocean Gateway #2002 in Salisbury, Maryland.'], ['What are your business hours?', 'The dealership is open Monday through Friday from 9:00 AM to 5:00 PM.'], ['How can I ask about a specific vehicle?', 'Use the vehicle inquiry on its detail page, call Delmar, or send a message below with the vehicle name or stock number.'], ['Can I contact Delmar about financing?', 'Yes. You can use the Financing Options page or select that topic when sending a message.'], ['Can I ask about a trade-in?', 'Yes. Visit Value Your Trade or choose that topic in the contact form.'], ['How can I get directions to the dealership?', 'Use the Get directions link to open the provided Google Maps place.']];
+const topics = [
+    ['Vehicle availability'],
+    ['Finance question'],
+    ['Sell or trade question'],
+    ['General question'],
+];
 </script>
-
 <template>
-    <SeoHead title="Contact Delmar Auto Sale Inc. | Salisbury, MD" description="Contact Delmar Auto Sale Inc. in Salisbury, Maryland. Call, email, get directions, ask about available vehicles, financing options or your trade-in." />
-    <section class="contact-hero"><img :src="heroImage" alt="" class="contact-hero-image" aria-hidden="true"><div class="contact-hero-overlay"></div><div class="site-container relative z-10 flex min-h-[650px] items-end py-20 lg:min-h-[78svh] lg:items-center lg:py-24"><div class="max-w-[920px] text-white"><p class="delmar-kicker">Contact Delmar</p><h1 class="mt-6 max-w-[900px] text-5xl font-bold leading-[.94] tracking-[-.06em] sm:text-6xl lg:text-8xl">Let’s talk about your next vehicle.</h1><p class="mt-7 max-w-2xl text-lg leading-8 text-white/75">Have a question about a vehicle, financing, trade-in, or visiting the dealership? Contact Delmar Auto Sale Inc. in Salisbury, Maryland.</p><div class="mt-9 flex flex-col gap-3 sm:flex-row"><a :href="`tel:${site.phone_tel}`" class="btn-primary"><Icon name="phone" />Call Delmar</a><a href="#contact-message" class="btn-light">Send a message <Icon name="arrow-right" /></a></div><p class="mt-7 text-sm font-semibold text-white/60">Delmar Auto Sale Inc. · Salisbury, Maryland</p></div></div></section>
-
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><div><p class="eyebrow">Reach Delmar your way</p><h2 class="mt-4 heading-lg">A clear answer starts with a clear question.</h2></div></Reveal><div class="contact-options-grid"><Reveal v-for="(option, index) in [['Call', site.phone, `tel:${site.phone_tel}`, 'phone'], ['Email', site.email, `mailto:${site.email}`, 'mail'], ['Visit', site.address, site.maps_url, 'pin'], ['Hours', site.business_hours, '', ''] ]" :key="option[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><a v-if="option[0] !== 'Hours' && option[1]" :href="option[2]" :target="option[0] === 'Visit' ? '_blank' : undefined" :rel="option[0] === 'Visit' ? 'noopener' : undefined" class="contact-option"><span class="eyebrow">{{ option[0] }}</span><span class="mt-3 flex items-start gap-2 text-lg font-bold"><Icon v-if="option[3]" :name="option[3]" />{{ option[1] }}</span></a><div v-else class="contact-option"><span class="eyebrow">{{ option[0] }}</span><span class="mt-3 block text-lg font-bold">{{ option[1] }}</span></div></Reveal></div></div></section>
-
-    <section class="site-section bg-white"><div class="site-container grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><div><p class="eyebrow">What can we help with?</p><h2 class="mt-4 heading-lg">Start with the question that brought you here.</h2></div></Reveal><div class="border-t border-border"><Reveal v-for="(topic, index) in topics" :key="topic[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><Link :href="`/contact?subject=${encodeURIComponent(topic[0])}#contact-message`" class="group grid gap-4 border-b border-border py-7 sm:grid-cols-[72px_1fr_auto] sm:items-start"><span class="font-display text-2xl font-bold text-brand">{{ `0${index + 1}` }}</span><div><h3 class="text-xl font-bold transition-colors group-hover:text-brand">{{ topic[0] }}</h3><p class="mt-2 max-w-2xl leading-7 text-text-muted">{{ topic[1] }}</p></div><Icon name="arrow-right" class="mt-1 text-brand transition-transform group-hover:translate-x-1" /></Link></Reveal></div></div></section>
-
-    <section class="contact-location-section"><div class="site-container grid gap-12 py-16 lg:grid-cols-[1fr_1fr] lg:items-center lg:py-24"><div><p class="delmar-kicker">Plan your visit</p><h2 class="mt-4 text-4xl font-bold tracking-[-.05em] text-white sm:text-6xl">Visit Delmar in Salisbury.</h2><p class="mt-6 max-w-2xl text-lg leading-8 text-white/70">Call ahead when you have a specific vehicle in mind so the team can help you plan your visit.</p><div class="mt-8 flex flex-wrap gap-3"><a v-if="site.maps_url" :href="site.maps_url" target="_blank" rel="noopener" class="btn-primary">Get directions <Icon name="pin" /></a><Link href="/inventory" class="btn-light">Browse inventory</Link></div></div><div class="contact-location-panel"><p class="eyebrow">Delmar Auto Sale Inc.</p><p class="mt-4 text-2xl font-bold">{{ site.address }}</p><p class="mt-4 text-sm leading-6 text-text-muted">{{ site.business_hours }}</p><a class="mt-5 block font-semibold text-ink transition hover:text-brand" :href="`tel:${site.phone_tel}`">{{ site.phone }}</a><a v-if="site.email" class="mt-2 block break-all text-sm text-text-muted transition hover:text-brand" :href="`mailto:${site.email}`">{{ site.email }}</a></div></div></section>
-
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><div><p class="eyebrow">A helpful next step</p><h2 class="mt-4 heading-lg">Keep the vehicle conversation moving.</h2></div></Reveal><div class="border-t border-border"><Reveal v-for="(item, index) in [['Browse inventory', 'See the vehicles currently listed by Delmar.', '/inventory'], ['Financing Options', 'Learn about the financing request process.', '/finance'], ['Value Your Trade', 'Share details about your current vehicle.', '/trade-in']]" :key="item[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><Link :href="item[2]" class="group grid gap-4 border-b border-border py-7 sm:grid-cols-[72px_1fr_auto] sm:items-start"><span class="font-display text-2xl font-bold text-brand">{{ `0${index + 1}` }}</span><div><h3 class="text-xl font-bold transition-colors group-hover:text-brand">{{ item[0] }}</h3><p class="mt-2 leading-7 text-text-muted">{{ item[1] }}</p></div><Icon name="arrow-right" class="mt-1 text-brand transition-transform group-hover:translate-x-1" /></Link></Reveal></div></div></section>
-
-    <section class="site-section bg-white"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Contact questions</p><h2 class="mt-4 heading-lg">Make the visit easier.</h2></div><FaqAccordion :items="contactFaq" /></div></section>
-
-    <LeadFormSection id="contact-message" eyebrow="Send a message" title="How can we help?" description="Send Delmar Auto Sale Inc. a message and include any details that can help us understand your question."><template #aside><p>{{ site.name }}</p><p>{{ site.address }}</p><a class="transition hover:text-white" :href="`tel:${site.phone_tel}`">{{ site.phone }}</a><br><a v-if="site.email" class="transition hover:text-white" :href="`mailto:${site.email}`">{{ site.email }}</a></template><ContactForm :topics="topics" /></LeadFormSection>
-
-    <section class="border-t border-border bg-white"><div class="site-container flex flex-col gap-5 py-12 sm:flex-row sm:items-center sm:justify-between"><div><p class="eyebrow">Prefer to talk directly?</p><h2 class="mt-3 text-3xl font-bold">Call Delmar when you’re ready.</h2></div><div class="flex flex-wrap gap-3"><a :href="`tel:${site.phone_tel}`" class="btn-primary"><Icon name="phone" />{{ site.phone }}</a><Link href="/inventory" class="btn-secondary">Browse inventory</Link></div></div></section>
+    <SeoHead
+        title="Let's talk about your next vehicle"
+        :description="
+            'Contact ' +
+            site.name +
+            ' in ' +
+            site.city +
+            '. Call ' +
+            site.phone +
+            ', send a message or get directions to the dealership.'
+        "
+        image="/images/southern-york/visit-1280.webp"
+    />
+    <section class="site-container py-14 md:py-20">
+        <div class="max-w-3xl">
+            <p class="eyebrow">We're here to help</p>
+            <h1 class="page-title mt-5">
+                A question today.
+                <br />
+                A clearer road ahead.
+            </h1>
+            <p class="mt-6 max-w-xl leading-8 text-text-muted">
+                Ask about a vehicle, plan a visit, or tell us what you're
+                looking for. We'd like to hear from you.
+            </p>
+        </div>
+        <div class="mt-10 grid gap-5 md:grid-cols-3">
+            <a :href="'tel:' + site.phone_tel" class="purchase-option !p-6">
+                <p class="eyebrow">Give us a call ↗</p>
+                <span class="mt-4 text-xl font-semibold">{{ site.phone }}</span>
+            </a>
+            <a :href="'mailto:' + site.email" class="purchase-option !p-6">
+                <p class="eyebrow">Drop us a line ↗</p>
+                <span class="mt-4 break-all text-base font-semibold">
+                    {{ site.email }}
+                </span>
+            </a>
+            <a
+                :href="site.maps_url"
+                target="_blank"
+                rel="noopener"
+                class="purchase-option !p-6"
+            >
+                <p class="eyebrow">Come see us ↗</p>
+                <span class="mt-4 text-sm font-semibold leading-7">
+                    {{ site.address }}
+                </span>
+            </a>
+        </div>
+    </section>
+    <section class="site-container grid gap-10 pb-20 lg:grid-cols-2">
+        <div>
+            <div class="aspect-[5/4] overflow-hidden rounded-2xl">
+                <BrandImage
+                    name="visit"
+                    alt="A pickup beside a tree-lined country road"
+                />
+            </div>
+            <h2 class="mt-7 text-2xl font-semibold">
+                Make the trip with a plan.
+            </h2>
+            <p class="mt-4 max-w-lg leading-8 text-text-muted">
+                Call before you visit to confirm vehicle availability and
+                arrange a convenient time to stop by.
+            </p>
+            <p v-if="site.business_hours" class="mt-4 text-sm">
+                {{ site.business_hours }}
+            </p>
+        </div>
+        <div id="contact-message" class="form-surface">
+            <ContactForm :topics="topics" />
+        </div>
+    </section>
 </template>

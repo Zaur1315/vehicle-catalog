@@ -1,48 +1,258 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import FaqAccordion from '@/Components/FaqAccordion.vue';
+import BrandImage from '@/Components/BrandImage.vue';
+import VehicleCard from '@/Components/VehicleCard.vue';
+import SeoHead from '@/Components/SeoHead.vue';
 import Icon from '@/Components/Icon.vue';
 import Reveal from '@/Components/Reveal.vue';
-import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
-import VehicleCard from '@/Components/VehicleCard.vue';
-
 defineOptions({ layout: SiteLayout });
-const props = defineProps({ featuredVehicles: { type: Array, default: () => [] }, reviews: { type: Array, default: () => [] } });
+defineProps({ featuredVehicles: { type: Array, default: () => [] } });
 const site = computed(() => usePage().props.site || {});
-const heroVehicle = computed(() => props.featuredVehicles[0] || null);
-const heroPoster = '/images/banner/img.png';
-const heroVideo = '/images/banner/1406-147169807.mp4';
-const financingImage = '/images/sections/financing.webp';
-const faqs = [
-    ['Where is Delmar Auto Sale Inc. located?', 'We are located at 28650 Ocean Gateway #2002 in Salisbury, Maryland. Use the directions link or call ahead when planning a visit.'],
-    ['How can I view vehicles currently available?', 'Browse the online inventory to review current vehicles, photos, specifications, mileage, and pricing. Availability should be confirmed with our team.'],
-    ['Can I ask about financing?', 'Yes. Send a preliminary financing request and our team can discuss the next step. A request is not a credit decision or approval.'],
-    ['Can I trade in my current vehicle?', 'Yes. Share your vehicle details through the trade-in form to start a conversation about your options.'],
-    ['How can I contact Delmar Auto Sale Inc.?', 'Call us at the number below, send a message through the contact page, or visit us in Salisbury during business hours.'],
-];
-const schema = computed(() => ({ '@context': 'https://schema.org', '@type': 'AutoDealer', name: site.value.name, telephone: site.value.phone_tel, email: site.value.email, address: { '@type': 'PostalAddress', streetAddress: site.value.address, addressLocality: site.value.city, addressRegion: site.value.state, postalCode: site.value.zip, addressCountry: site.value.country }, url: site.value.domain ? `https://${site.value.domain}` : undefined }));
+const schema = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'AutoDealer',
+    name: site.value.name,
+    telephone: site.value.phone_tel,
+    email: site.value.email,
+    url: 'https://' + site.value.domain,
+    address: {
+        '@type': 'PostalAddress',
+        streetAddress: site.value.street_address,
+        addressLocality: site.value.city,
+        addressRegion: site.value.state,
+        postalCode: site.value.zip,
+        addressCountry: site.value.country,
+    },
+}));
 </script>
-
 <template>
-    <SeoHead title="Used Cars in Salisbury, MD" description="Shop quality pre-owned vehicles in Salisbury, Maryland. Browse Delmar Auto Sale Inc. inventory, ask about financing, or start a trade-in conversation." :image="heroVehicle?.image_large" :schema="schema" />
-
-    <section class="delmar-hero"><img :src="heroPoster" alt="" class="absolute inset-0 h-full w-full object-cover object-[58%_center]" aria-hidden="true"><video class="delmar-hero-video" autoplay muted loop playsinline :poster="heroPoster" preload="metadata" aria-hidden="true"><source :src="heroVideo" type="video/mp4"></video><div class="delmar-hero-shade"></div><div class="delmar-hero-vignette"></div><div class="site-container relative z-10 flex min-h-[680px] items-end py-28 lg:min-h-[85svh] lg:items-center lg:py-24"><div class="max-w-[1100px] text-white"><p class="delmar-kicker">Pre-owned vehicles in Salisbury, Maryland</p><h1 class="mt-6 max-w-[1100px] heading-xl">Your Next Car <span class="text-red-300">Starts Here.</span></h1><p class="mt-7 max-w-[760px] text-lg leading-8 text-white/75">Shop quality pre-owned vehicles from Delmar Auto Sale Inc. Browse our current inventory, ask about financing, or contact our team to find the right vehicle.</p><div class="mt-9 flex flex-wrap gap-3"><Link href="/inventory" class="btn-primary">Browse inventory <Icon name="arrow-right" /></Link><Link href="/finance" class="btn-light">Get financing</Link></div><a :href="`tel:${site.phone_tel}`" class="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-white/70 transition hover:text-white"><Icon name="phone" />{{ site.phone }}</a></div></div></section>
-
-    <section class="border-b border-border bg-ink text-white"><div class="site-container grid sm:grid-cols-3"><Link v-for="item in [{ label: 'Shop by make', href: '/inventory', note: 'Explore current inventory' }, { label: 'Financing Options', href: '/finance', note: 'Plan your next step' }, { label: 'Value Your Trade', href: '/trade-in', note: 'Tell us about your vehicle' }]" :key="item.label" :href="item.href" class="group flex items-center justify-between border-b border-white/15 py-6 sm:border-b-0 sm:border-r sm:px-7 sm:first:pl-0 sm:last:border-r-0"><span><span class="block font-display text-lg font-bold">{{ item.label }}</span><span class="mt-1 block text-xs text-white/55">{{ item.note }}</span></span><Icon name="arrow-right" class="text-red-300 transition group-hover:translate-x-1" /></Link></div></section>
-
-    <section class="site-section"><div class="site-container"><div class="section-header"><div><p class="eyebrow">Fresh on the lot</p><h2 class="mt-4 heading-lg">Vehicles worth a closer look.</h2><p class="mt-5 max-w-xl text-text-muted">Review real photos, specifications, mileage, and pricing from our current inventory.</p></div><Link href="/inventory" class="btn-secondary">View all vehicles <Icon name="arrow-right" /></Link></div><div v-if="featuredVehicles.length" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"><Reveal v-for="(vehicle, index) in featuredVehicles.slice(0, 6)" :key="vehicle.id" :style="{ '--reveal-delay': `${Math.min(index, 4) * 70}ms` }"><VehicleCard :vehicle="vehicle" /></Reveal></div><div v-else class="border-l-4 border-brand bg-white p-8"><h2 class="text-2xl font-bold">Inventory is being updated.</h2><p class="mt-3 text-text-muted">Call {{ site.name }} for current availability.</p><a :href="`tel:${site.phone_tel}`" class="btn-primary mt-6"><Icon name="phone" />Call {{ site.phone }}</a></div></div></section>
-
-    <section class="bg-ink text-white"><div class="site-container grid gap-10 py-16 lg:grid-cols-[.75fr_1.25fr] lg:py-24"><div><p class="delmar-kicker">Why Delmar</p><h2 class="mt-5 heading-lg">A more direct way to shop for your next vehicle.</h2></div><div class="grid gap-8 sm:grid-cols-2"><article v-for="item in [['Local', 'A local dealership in Salisbury, Maryland.'], ['Straightforward', 'Clear details and an easy way to ask useful questions.'], ['Current inventory', 'Start online with vehicles available to review now.'], ['Personal assistance', 'Call, message, or visit when you are ready for the next step.']]" :key="item[0]" class="border-t border-white/20 pt-5"><h3 class="text-xl font-bold">{{ item[0] }}</h3><p class="mt-3 leading-7 text-white/60">{{ item[1] }}</p></article></div></div></section>
-
-    <section class="site-section bg-white"><div class="site-container"><div class="max-w-2xl"><p class="eyebrow">The process</p><h2 class="mt-4 heading-lg">A simpler way to find your next car.</h2></div><div class="mt-12 grid border-y border-border md:grid-cols-4"><article v-for="item in [['01', 'Browse', 'Explore our current inventory.'], ['02', 'Choose', 'Review the vehicle details and photos.'], ['03', 'Connect', 'Ask about availability, financing, or trade-in.'], ['04', 'Visit', 'Come see us in Salisbury when you are ready.']]" :key="item[0]" class="border-b border-border py-7 md:border-b-0 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"><span class="text-sm font-bold text-brand">{{ item[0] }}</span><h3 class="mt-5 text-2xl font-bold">{{ item[1] }}</h3><p class="mt-3 leading-7 text-text-muted">{{ item[2] }}</p></article></div></div></section>
-
-    <section class="financing-section"><img :src="financingImage" alt="" class="financing-section-image" aria-hidden="true"><div class="financing-section-overlay"></div><div class="site-container relative z-10 grid gap-10 py-20 lg:min-h-[540px] lg:grid-cols-2 lg:items-center lg:py-24"><div><p class="delmar-kicker">Financing</p><h2 class="mt-4 heading-lg">Financing made easier.</h2><p class="mt-6 max-w-xl text-lg leading-8 text-white/75">If financing is part of your purchase, send a preliminary request and discuss the details with our team. No guarantees or assumptions—just a clear place to start.</p><Link href="/finance" class="btn-primary mt-8">Explore financing <Icon name="arrow-right" /></Link></div><div class="bg-ink p-8 text-white sm:p-10"><p class="delmar-kicker">Your current vehicle</p><h3 class="mt-4 text-3xl font-bold">Thinking about trading in?</h3><p class="mt-4 leading-7 text-white/65">Share the year, make, model, mileage, and condition of your vehicle to begin the conversation.</p><Link href="/trade-in" class="mt-7 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.1em] text-white underline decoration-red-300 decoration-2 underline-offset-4">Start your trade-in <Icon name="arrow-right" /></Link></div></div></section>
-
-    <section v-if="reviews.length" class="site-section bg-white"><div class="site-container"><div class="section-header"><div><p class="eyebrow">Social proof</p><h2 class="mt-4 heading-lg">What our customers say.</h2></div><span class="text-sm font-semibold text-text-muted">Recent Google reviews</span></div><div class="grid gap-5 md:grid-cols-3"><article v-for="review in reviews.slice(0, 3)" :key="review.id" class="border border-border p-7"><p class="text-sm tracking-[.2em] text-brand" aria-label="Five star review">★★★★★</p><p class="mt-5 leading-7 text-text-muted">“{{ review.text }}”</p><p class="mt-7 text-xs font-bold uppercase tracking-[.15em]">{{ review.author_name }}</p></article></div></div></section>
-
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Questions, answered</p><h2 class="mt-4 heading-lg">Useful before you call.</h2><p class="mt-5 max-w-sm leading-7 text-text-muted">A few practical answers to help you choose your next step.</p></div><FaqAccordion :items="faqs" /></div></section>
-
-    <section class="border-t border-white/10 bg-brand text-white"><div class="site-container grid gap-8 py-14 lg:grid-cols-[1fr_auto] lg:items-center"><div><p class="text-[10px] font-bold uppercase tracking-[.22em] text-white/65">Visit us in Salisbury</p><h2 class="mt-3 text-4xl font-bold tracking-[-.05em] sm:text-5xl">Ready to find your next vehicle?</h2><p class="mt-4 text-white/75">{{ site.address }} · {{ site.business_hours }}</p></div><div class="flex flex-wrap gap-3"><Link href="/inventory" class="btn-dark">Browse inventory <Icon name="arrow-right" /></Link><a :href="`tel:${site.phone_tel}`" class="btn-light"><Icon name="phone" />Call us</a></div></div></section>
+    <SeoHead
+        :title="'Used vehicles in ' + site.city + ', ' + site.state"
+        :description="
+            'Discover pre-owned vehicles at ' +
+            site.name +
+            '. Browse current inventory, explore auto financing, or tell us about the vehicle you may want to trade.'
+        "
+        image="/images/southern-york/road-1280.webp"
+        :schema="schema"
+    />
+    <section class="home-hero site-container">
+        <div class="home-hero-copy">
+            <p class="eyebrow">Southern York County, Pennsylvania</p>
+            <h1>
+                A new chapter.
+                <br />
+                A better
+                <em>drive.</em>
+            </h1>
+            <p>
+                For the everyday miles and the places you haven't been. Find a
+                pre-owned vehicle that feels right for what comes next.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+                <Link href="/inventory" class="btn-primary">
+                    Explore the inventory
+                    <Icon name="arrow-right" />
+                </Link>
+                <Link href="/about" class="btn-ghost">
+                    Why Southern York
+                </Link>
+            </div>
+            <div class="hero-location">
+                <Icon name="pin" />
+                <span>
+                    Your local dealership in {{ site.city }}, {{ site.state }}
+                </span>
+            </div>
+        </div>
+        <div class="home-hero-media">
+            <BrandImage
+                name="road"
+                alt="A graphite crossover beside rolling Pennsylvania countryside"
+                eager
+            />
+            <div class="hero-image-caption">
+                <span>Southern York Motors</span>
+                <span>Made for the road ahead ↗</span>
+            </div>
+        </div>
+    </section>
+    <section class="path-strip">
+        <div class="site-container grid md:grid-cols-3">
+            <Link
+                v-for="item in [
+                    [
+                        '01',
+                        'Find your fit',
+                        'Browse available vehicles',
+                        '/inventory',
+                    ],
+                    [
+                        '02',
+                        'Explore your options',
+                        'Visit Auto Financing',
+                        '/finance',
+                    ],
+                    [
+                        '03',
+                        'Bring your current vehicle',
+                        'Start a sell or trade request',
+                        '/trade-in',
+                    ],
+                ]"
+                :key="item[0]"
+                :href="item[3]"
+                class="path-link"
+            >
+                <span class="path-number">{{ item[0] }}</span>
+                <span>
+                    <strong>{{ item[1] }}</strong>
+                    <small>{{ item[2] }}</small>
+                </span>
+                <Icon name="arrow-right" />
+            </Link>
+        </div>
+    </section>
+    <section class="site-section site-container">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">On the lot</p>
+                <h2 class="heading-lg">Meet your next possibility.</h2>
+            </div>
+            <Link href="/inventory" class="btn-ghost">
+                View all inventory
+                <Icon name="arrow-right" />
+            </Link>
+        </div>
+        <div
+            v-if="featuredVehicles.length"
+            class="grid gap-x-7 gap-y-10 md:grid-cols-2 xl:grid-cols-3"
+        >
+            <VehicleCard
+                v-for="vehicle in featuredVehicles"
+                :key="vehicle.id"
+                :vehicle="vehicle"
+            />
+        </div>
+        <div v-else class="empty-state">
+            <h3 class="text-2xl">Let's find out what's available.</h3>
+            <p>
+                Our selection changes. Browse the full inventory or call our
+                team for the latest details.
+            </p>
+            <Link href="/inventory" class="btn-primary">Browse inventory</Link>
+        </div>
+    </section>
+    <Reveal tag="section" class="home-principles">
+        <div class="site-container grid gap-12 lg:grid-cols-[1fr_1.1fr]">
+            <div>
+                <p class="eyebrow">Shop with confidence</p>
+                <h2 class="heading-lg">A clearer way to move forward.</h2>
+                <p class="mt-6 max-w-md leading-8">
+                    Start online, look closely at the vehicles that interest
+                    you, and reach a real person when you are ready. We keep
+                    each next step easy to understand.
+                </p>
+                <Link href="/about" class="btn-light mt-8">
+                    Why Southern York
+                    <Icon name="arrow-right" />
+                </Link>
+            </div>
+            <div>
+                <article
+                    v-for="item in [
+                        [
+                            'Straightforward shopping',
+                            'Vehicle photos, listed prices, mileage and specifications give you useful information before you visit.',
+                        ],
+                        [
+                            'Real support',
+                            'Ask about availability, auto financing, or your current vehicle by phone or message before making the trip.',
+                        ],
+                        [
+                            'Flexible next steps',
+                            'Browse first, start a preliminary financing request, or tell us about a vehicle you may want to trade.',
+                        ],
+                        [
+                            'Local convenience',
+                            'Visit us in New Freedom, within reach of drivers across Southern York County and nearby Maryland communities.',
+                        ],
+                    ]"
+                    :key="item[0]"
+                    class="principle"
+                >
+                    <h3>{{ item[0] }}</h3>
+                    <p>{{ item[1] }}</p>
+                </article>
+            </div>
+        </div>
+    </Reveal>
+    <Reveal tag="section" class="site-section site-container">
+        <div class="process-heading">
+            <div>
+                <p class="eyebrow">How buying a vehicle works</p>
+                <h2 class="heading-lg">
+                    A simple way to find your next vehicle.
+                </h2>
+            </div>
+            <p>
+                Use the site to narrow the search, then bring us into the
+                conversation when you want details or help with the next step.
+            </p>
+        </div>
+        <ol class="numbered-process mt-10">
+            <li v-for="step in [
+                ['Explore inventory', 'See what is currently available and narrow the list around your needs.'],
+                ['Find the right fit', 'Review photos, mileage, features, pricing, and vehicle details.'],
+                ['Talk with our team', 'Ask about a vehicle and discuss auto financing or a possible trade.'],
+                ['Take the next step', 'Contact Southern York Motors to continue the purchase conversation.'],
+            ]" :key="step[0]">
+                <span aria-hidden="true"></span>
+                <h3>{{ step[0] }}</h3>
+                <p>{{ step[1] }}</p>
+            </li>
+        </ol>
+    </Reveal>
+    <Reveal tag="section" class="site-section home-services">
+        <div class="site-container">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">More than inventory</p>
+                <h2 class="heading-lg">Choose where to begin.</h2>
+            </div>
+            <p class="body-muted max-w-md">
+                Every shopper arrives at a different point. Start with the part
+                of the process that matters to you now.
+            </p>
+        </div>
+        <div class="service-paths">
+            <article v-for="item in [
+                ['Find your vehicle', 'Compare the pre-owned vehicles currently on the lot.', '/inventory', 'Browse Inventory'],
+                ['Explore auto financing', 'Send a preliminary request and start a conversation about possible next steps.', '/finance', 'Auto Financing'],
+                ['Sell or trade your car', 'Share the basics about your current vehicle so our team can follow up.', '/trade-in', 'Sell or Trade'],
+            ]" :key="item[0]" class="service-path">
+                <Icon name="arrow-right" />
+                <h3>{{ item[0] }}</h3>
+                <p>{{ item[1] }}</p>
+                <Link :href="item[2]" class="btn-ghost">{{ item[3] }}</Link>
+            </article>
+        </div>
+        </div>
+    </Reveal>
+    <Reveal tag="section" class="local-callout">
+        <div class="site-container grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div>
+                <p class="eyebrow">Serving drivers around Southern Pennsylvania</p>
+                <h2 class="heading-lg">Local to New Freedom.</h2>
+                <p class="mt-5 max-w-2xl leading-8 text-white/75">
+                    Southern York Motors is located on Susquehanna Trail South,
+                    convenient for shoppers in Southern York County, across York
+                    County, and in nearby northern Maryland communities.
+                </p>
+            </div>
+            <Link href="/contact" class="btn-light">Plan your visit</Link>
+        </div>
+    </Reveal>
 </template>

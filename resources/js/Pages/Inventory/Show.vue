@@ -1,46 +1,233 @@
 <script setup>
+import { useSubmissionFeedback } from '@/useSubmissionFeedback.js';
+const { submissionError, feedback } = useSubmissionFeedback();
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import Icon from '@/Components/Icon.vue';
-import SeoHead from '@/Components/SeoHead.vue';
-import SiteLayout from '@/Layouts/SiteLayout.vue';
+import { computed, ref } from 'vue';
+import VehicleGallery from '@/Components/VehicleGallery.vue';
 import VehicleCard from '@/Components/VehicleCard.vue';
 import VehicleInquiryModal from '@/Components/VehicleInquiryModal.vue';
-
+import SeoHead from '@/Components/SeoHead.vue';
+import SiteLayout from '@/Layouts/SiteLayout.vue';
 defineOptions({ layout: SiteLayout });
-const props = defineProps({ vehicle: { type: Object, required: true }, relatedVehicles: { type: Array, default: () => [] } });
+const props = defineProps({
+    vehicle: { type: Object, required: true },
+    relatedVehicles: { type: Array, default: () => [] },
+});
 const site = computed(() => usePage().props.site || {});
-const activeIndex = ref(0); const lightboxOpen = ref(false); const inquiryOpen = ref(false); const inquirySuccess = ref(false);
-const gallery = computed(() => { const images = props.vehicle.main_image ? [{ url: props.vehicle.main_image, alt: props.vehicle.name }] : []; (props.vehicle.images || []).forEach((image) => { if (image.url && !images.some((item) => item.url === image.url)) images.push({ url: image.url, alt: image.alt || props.vehicle.name }); }); return images; });
-const activeImage = computed(() => gallery.value[activeIndex.value] || null);
-const specs = computed(() => [['Mileage', props.vehicle.mileage], ['Transmission', props.vehicle.transmission], ['Drivetrain', props.vehicle.drivetrain], ['Engine', props.vehicle.engine], ['Body style', props.vehicle.body_type], ['Fuel type', props.vehicle.fuel_type], ['Exterior', props.vehicle.exterior_color], ['Interior', props.vehicle.interior_color], ['VIN', props.vehicle.vin], ['Stock number', props.vehicle.stock_number]].filter(([, value]) => value));
-const keySpecs = computed(() => specs.value.filter(([label]) => ['Mileage', 'Transmission', 'Drivetrain', 'Engine', 'Body style'].includes(label)).slice(0, 5));
-const vehicleFaq = [['How do I ask about this vehicle?', 'Use Request information to send your contact details and questions, or call the dealership directly.'], ['Can I discuss financing for this vehicle?', 'Yes. Use the financing page to send a preliminary request, then mention this vehicle in the vehicle-interest field.'], ['Can I bring a trade-in?', 'Yes. The Sell or trade form lets you share the details of your current vehicle before you visit.']];
-const form = useForm({ first_name: '', last_name: '', email: '', phone: '', preferred_contact_time: '', message: '' });
-const openInquiry = () => { inquirySuccess.value = false; inquiryOpen.value = true; };
-const closeInquiry = () => { inquiryOpen.value = false; if (inquirySuccess.value) { inquirySuccess.value = false; form.reset(); } };
-const submit = () => form.post(`/inventory/${props.vehicle.slug}/inquiry`, { preserveScroll: true, onSuccess: () => { form.reset(); inquirySuccess.value = true; } });
-const next = () => { if (gallery.value.length) activeIndex.value = (activeIndex.value + 1) % gallery.value.length; };
-const previous = () => { if (gallery.value.length) activeIndex.value = activeIndex.value === 0 ? gallery.value.length - 1 : activeIndex.value - 1; };
-const handleKeydown = (event) => { if (lightboxOpen.value) { if (event.key === 'Escape') lightboxOpen.value = false; if (event.key === 'ArrowRight') next(); if (event.key === 'ArrowLeft') previous(); } };
-const vehicleSchema = computed(() => ({ '@context': 'https://schema.org', '@type': 'Vehicle', name: props.vehicle.name, image: gallery.value.map((image) => image.url), vehicleIdentificationNumber: props.vehicle.vin || undefined, mileageFromOdometer: props.vehicle.mileage ? { '@type': 'QuantitativeValue', value: String(props.vehicle.mileage).replace(/[^\d]/g, ''), unitCode: 'SMI' } : undefined }));
-onMounted(() => window.addEventListener('keydown', handleKeydown)); onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown));
+const inquiryOpen = ref(false);
+const inquirySuccess = ref(false);
+const form = useForm({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    preferred_contact_time: '',
+    message: '',
+});
+const submit = () => {
+    if (form.processing) return;
+    form.post('/inventory/' + props.vehicle.slug + '/inquiry', {
+        preserveScroll: true,
+        ...feedback,
+        onSuccess: () => {
+            form.reset();
+            inquirySuccess.value = true;
+        },
+    });
+};
+const openInquiry = () => {
+    inquirySuccess.value = false;
+    inquiryOpen.value = true;
+};
+const specs = computed(() =>
+    [
+        ['Mileage', props.vehicle.mileage],
+        ['Transmission', props.vehicle.transmission],
+        ['Drivetrain', props.vehicle.drivetrain],
+        ['Engine', props.vehicle.engine],
+        ['Body style', props.vehicle.body_type],
+        ['Fuel type', props.vehicle.fuel_type],
+        ['Exterior', props.vehicle.exterior_color],
+        ['Interior', props.vehicle.interior_color],
+        ['VIN', props.vehicle.vin],
+        ['Stock number', props.vehicle.stock_number],
+    ].filter(([, value]) => value && value !== '-'),
+);
+const schema = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'Vehicle',
+    name: props.vehicle.name,
+    vehicleIdentificationNumber: props.vehicle.vin || undefined,
+    image: props.vehicle.main_image,
+    brand: props.vehicle.make
+        ? { '@type': 'Brand', name: props.vehicle.make }
+        : undefined,
+    model: props.vehicle.model,
+    vehicleModelDate: String(props.vehicle.year),
+}));
 </script>
-
 <template>
-    <SeoHead :title="vehicle.seo_title || vehicle.name" :description="vehicle.seo_description || vehicle.short_description || `View details and ask about ${vehicle.name}.`" :image="vehicle.main_image" type="product" :schema="vehicleSchema" />
-    <section class="vehicle-breadcrumbs"><div class="site-container py-6"><nav class="flex flex-wrap gap-2 text-xs font-bold text-text-muted" aria-label="Breadcrumb"><Link href="/" class="transition hover:text-brand">Home</Link><span>/</span><Link href="/inventory" class="transition hover:text-brand">Inventory</Link><span>/</span><span class="truncate">{{ vehicle.name }}</span></nav></div></section>
-    <section class="vehicle-page"><div class="site-container grid gap-10 py-8 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-14 lg:py-12">
-        <aside class="vehicle-summary order-2 lg:order-1 lg:sticky lg:top-28 lg:self-start"><div class="vehicle-summary-panel"><p class="eyebrow">Available now</p><p class="mt-4 text-xs font-bold uppercase tracking-[.16em] text-text-muted">{{ vehicle.year }} · {{ vehicle.make || 'Pre-owned' }}</p><h1 class="mt-2 text-3xl font-bold leading-tight tracking-[-.05em]">{{ vehicle.name }}</h1><div class="mt-7 border-t border-border pt-6"><p class="text-[10px] font-bold uppercase tracking-[.16em] text-text-muted">Asking price</p><p class="mt-2 font-display text-4xl font-bold tracking-[-.06em] text-ink">{{ vehicle.price }}</p></div><dl v-if="keySpecs.length" class="vehicle-key-specs mt-7"><div v-for="([label, value]) in keySpecs" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div></dl><button class="btn-primary mt-7 w-full" @click="openInquiry">Request information <Icon name="arrow-right" /></button><a :href="`tel:${site.phone_tel}`" class="btn-secondary mt-3 w-full"><Icon name="phone" />Call {{ site.phone }}</a><div class="mt-6 grid gap-3 border-t border-border pt-5"><Link href="/finance" class="vehicle-action-link">Explore financing <Icon name="arrow-right" /></Link><Link href="/trade-in" class="vehicle-action-link">Sell or trade a vehicle <Icon name="arrow-right" /></Link></div></div></aside>
-        <main class="order-1 min-w-0 lg:order-2"><div class="vehicle-gallery"><div class="relative aspect-[16/10] overflow-hidden rounded-[var(--radius-card)] border border-border bg-surface-muted"><button v-if="activeImage" class="h-full w-full" aria-label="Open vehicle photo gallery" @click="lightboxOpen = true"><img :src="activeImage.url" :alt="activeImage.alt" width="1200" height="750" class="h-full w-full object-cover"></button><div v-else class="grid h-full place-items-center text-xs font-bold uppercase tracking-[.2em] text-text-muted">Image coming soon</div><div v-if="gallery.length > 1" class="absolute bottom-4 right-4 flex gap-2"><button class="gallery-control" aria-label="Previous image" @click="previous"><Icon name="arrow-left" /></button><button class="gallery-control" aria-label="Next image" @click="next"><Icon name="arrow-right" /></button></div></div><div v-if="gallery.length > 1" class="mt-3 flex gap-3 overflow-x-auto pb-2"><button v-for="(image, index) in gallery" :key="image.url" class="gallery-thumbnail" :class="index === activeIndex ? 'is-active' : ''" :aria-label="`View image ${index + 1}`" @click="activeIndex = index"><img :src="image.url" :alt="image.alt" width="112" height="80" class="h-full w-full object-cover"></button></div></div>
-            <div class="vehicle-overview"><p class="eyebrow">Vehicle overview</p><h2 class="mt-3 text-4xl font-bold tracking-[-.05em] sm:text-5xl">{{ vehicle.name }}</h2><p v-if="vehicle.short_description" class="mt-5 max-w-3xl text-lg leading-8 text-text-muted">{{ vehicle.short_description }}</p></div>
-            <div class="vehicle-content-section"><h2 class="text-3xl font-bold">Specifications</h2><dl class="vehicle-spec-grid mt-7"><div v-for="([label, value]) in specs" :key="label"><dt>{{ label }}</dt><dd>{{ value }}</dd></div></dl></div>
-            <div v-if="vehicle.description_html" class="vehicle-content-section"><h2 class="text-3xl font-bold">About this vehicle</h2><div class="vehicle-description" v-html="vehicle.description_html"></div></div><div v-if="vehicle.features?.length" class="vehicle-content-section"><h2 class="text-3xl font-bold">Highlights</h2><ul class="mt-6 grid gap-3 sm:grid-cols-2"><li v-for="feature in vehicle.features" :key="typeof feature === 'string' ? feature : feature.label || feature.name" class="vehicle-feature">{{ typeof feature === 'string' ? feature : feature.label || feature.name }}</li></ul></div>
-            <div class="vehicle-next-steps"><div><p class="eyebrow">Your next step</p><h2 class="mt-3 text-3xl font-bold">Ready to talk about this vehicle?</h2><p class="mt-3 max-w-xl leading-7 text-white/70">Ask about availability, arrange a conversation, or share the details you want to know.</p></div><button class="btn-light" @click="openInquiry">Request information <Icon name="arrow-right" /></button></div>
-        </main>
-    </div></section>
-    <section v-if="relatedVehicles.length" class="site-section border-t border-border bg-surface-muted"><div class="site-container"><div class="section-header"><div><p class="eyebrow">Keep looking</p><h2 class="mt-4 heading-lg">More vehicles to consider.</h2></div><Link href="/inventory" class="btn-secondary">View all <Icon name="arrow-right" /></Link></div><div class="grid gap-5 md:grid-cols-3"><VehicleCard v-for="related in relatedVehicles" :key="related.id" :vehicle="related" /></div></div></section>
-    <section class="site-section bg-white"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Vehicle questions</p><h2 class="mt-4 heading-lg">Before you make the trip.</h2></div><div class="border-t border-border"><details v-for="faq in vehicleFaq" :key="faq[0]" class="border-b border-border py-5"><summary class="cursor-pointer list-none pr-8 text-lg font-semibold">{{ faq[0] }}</summary><p class="mt-3 max-w-2xl leading-7 text-text-muted">{{ faq[1] }}</p></details></div></div></section>
-    <div v-if="lightboxOpen" class="vehicle-lightbox" role="dialog" aria-modal="true" aria-label="Vehicle photo gallery" @click.self="lightboxOpen = false"><button class="lightbox-close" aria-label="Close gallery" @click="lightboxOpen = false">×</button><button v-if="gallery.length > 1" class="lightbox-control left-5" aria-label="Previous image" @click="previous"><Icon name="arrow-left" /></button><img v-if="activeImage" :src="activeImage.url" :alt="activeImage.alt" class="max-h-[85vh] max-w-full object-contain"><button v-if="gallery.length > 1" class="lightbox-control right-5" aria-label="Next image" @click="next"><Icon name="arrow-right" /></button></div>
-    <VehicleInquiryModal :open="inquiryOpen" :vehicle="vehicle" :form="form" :success="inquirySuccess" @close="closeInquiry" @submit="submit" />
+    <SeoHead
+        :title="vehicle.seo_title || vehicle.name"
+        :description="
+            vehicle.seo_description || 'Explore ' +
+            vehicle.name +
+            ' at ' +
+            site.name +
+            '. View photos, specifications and availability, or contact our team in ' +
+            site.city +
+            '.'
+        "
+        :image="vehicle.main_image"
+        type="product"
+        :schema="schema"
+    />
+    <section class="site-container py-8">
+        <nav
+            aria-label="Breadcrumb"
+            class="flex flex-wrap gap-2 text-xs text-text-muted"
+        >
+            <Link href="/">Home</Link>
+            <span aria-hidden="true">/</span>
+            <Link href="/inventory">Inventory</Link>
+            <span aria-hidden="true">/</span>
+            <span>{{ vehicle.name }}</span>
+        </nav>
+    </section>
+    <section
+        class="site-container grid gap-9 pb-16 lg:grid-cols-[1.5fr_1fr] lg:items-start"
+    >
+        <VehicleGallery :vehicle="vehicle" />
+        <aside
+            class="rounded-2xl border border-border bg-white p-6 sm:p-8 lg:sticky lg:top-28"
+        >
+            <p class="eyebrow">Available to explore</p>
+            <h1
+                class="mt-4 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl"
+            >
+                {{ vehicle.name }}
+            </h1>
+            <p class="mt-4 text-sm text-text-muted">
+                {{ vehicle.year }}
+                <span v-if="vehicle.body_type">· {{ vehicle.body_type }}</span>
+                <span v-if="vehicle.mileage && vehicle.mileage !== '-'">
+                    · {{ vehicle.mileage }}
+                </span>
+            </p>
+            <div class="my-7 border-y border-border py-6">
+                <p class="text-xs text-text-muted">Listed price</p>
+                <p class="mt-2 text-4xl font-semibold tracking-tight">
+                    {{ vehicle.price }}
+                </p>
+            </div>
+            <button class="btn-primary w-full" @click="openInquiry">
+                Ask about this vehicle ↗
+            </button>
+            <a
+                :href="'tel:' + site.phone_tel"
+                class="btn-secondary mt-3 w-full"
+            >
+                Call {{ site.phone }}
+            </a>
+            <div class="mt-6 flex flex-wrap gap-5 text-xs font-bold">
+                <Link
+                    :href="
+                        '/finance?vehicle=' + encodeURIComponent(vehicle.name)
+                    "
+                    class="underline underline-offset-4"
+                >
+                    Explore Auto Financing
+                </Link>
+                <Link href="/trade-in" class="underline underline-offset-4">
+                    Sell or Trade
+                </Link>
+            </div>
+            <p class="mt-6 text-xs leading-6 text-text-muted">
+                Confirm availability and final purchase details with our team
+                before you visit.
+            </p>
+        </aside>
+    </section>
+    <section class="border-y border-border bg-white">
+        <div class="site-container grid gap-12 py-16 lg:grid-cols-2">
+            <div>
+                <p class="eyebrow">The details</p>
+                <h2 class="heading-lg">Get to know this vehicle.</h2>
+                <dl class="vehicle-spec-grid mt-7">
+                    <div v-for="[label, value] in specs" :key="label">
+                        <dt>{{ label }}</dt>
+                        <dd>{{ value }}</dd>
+                    </div>
+                </dl>
+            </div>
+            <div>
+                <div v-if="vehicle.description_html">
+                    <h2 class="text-2xl font-semibold">A closer look</h2>
+                    <div
+                        class="vehicle-description"
+                        v-html="vehicle.description_html"
+                    ></div>
+                </div>
+                <p
+                    v-else-if="vehicle.short_description"
+                    class="leading-8 text-text-muted"
+                >
+                    {{ vehicle.short_description }}
+                </p>
+                <div v-if="vehicle.features?.length" class="mt-9">
+                    <h2 class="text-2xl font-semibold">
+                        Features & highlights
+                    </h2>
+                    <ul class="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+                        <li
+                            v-for="(feature, index) in vehicle.features"
+                            :key="index"
+                            class="border-b border-border py-3"
+                        >
+                            {{
+                                typeof feature === 'string'
+                                    ? feature
+                                    : feature.label || feature.name
+                            }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-9 rounded-xl bg-surface-muted p-6">
+                    <p class="eyebrow">See it for yourself</p>
+                    <p class="mt-4 leading-7 text-text-muted">
+                        A photo is a good start. A conversation can help you
+                        decide what to do next.
+                    </p>
+                    <button class="btn-ghost mt-3" @click="openInquiry">
+                        Talk to our team ↗
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section v-if="relatedVehicles.length" class="site-container site-section">
+        <div class="section-header">
+            <div>
+                <p class="eyebrow">Keep exploring</p>
+                <h2 class="heading-lg">A few more possibilities.</h2>
+            </div>
+            <Link href="/inventory" class="btn-ghost">All inventory ↗</Link>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+            <VehicleCard
+                v-for="related in relatedVehicles"
+                :key="related.id"
+                :vehicle="related"
+            />
+        </div>
+    </section>
+    <VehicleInquiryModal
+        :open="inquiryOpen"
+        :vehicle="vehicle"
+        :form="form"
+        :success="inquirySuccess"
+        :error="submissionError"
+        @close="inquiryOpen = false"
+        @submit="submit"
+    />
 </template>

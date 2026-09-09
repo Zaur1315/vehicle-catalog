@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Support\SiteUrl;
 use Illuminate\Http\Response;
 
 final class RobotsController extends Controller
@@ -16,7 +17,7 @@ final class RobotsController extends Controller
             'Disallow: /admin',
             'Disallow: /login',
             '',
-            sprintf('Sitemap: %s', url('/sitemap.xml')),
+            sprintf('Sitemap: %s', SiteUrl::to('/sitemap.xml')),
             '',
         ]);
 

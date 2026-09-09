@@ -15,7 +15,7 @@ final class ContactLeadFormTypeResolver
             'Delivery question' => LeadFormType::DELIVERY,
             'Warranty or return question' => LeadFormType::WARRANTY,
             'Finance question' => LeadFormType::FINANCE,
-            'Trade-in question' => LeadFormType::TRADE_IN,
+            'Sell or trade question' => LeadFormType::TRADE_IN,
             default => LeadFormType::CONTACT,
         };
     }

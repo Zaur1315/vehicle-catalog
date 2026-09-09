@@ -33,7 +33,7 @@ const page = usePage();
 
 const site = computed(() => page.props.site || {})
 
-const siteName = computed(() => site.value.name || 'Delmar Auto Sale Inc.');
+const siteName = computed(() => site.value.name || 'Southern York Motors');
 
 const fullTitle = computed(() => {
     return props.title === siteName.value ? siteName.value : `${props.title} | ${siteName.value}`;
@@ -62,7 +62,7 @@ const canonicalUrl = computed(() => {
 });
 
 const absoluteImage = computed(() => {
-    if (!props.image || typeof window === 'undefined') {
+    if (!props.image) {
         return '';
     }
 

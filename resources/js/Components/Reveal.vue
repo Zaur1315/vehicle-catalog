@@ -2,20 +2,23 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 
 const element = ref(null);
+const visible = ref(true);
+defineProps({ tag: { type: String, default: 'div' } });
 let observer;
 
 onMounted(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        element.value?.classList.add('is-visible');
         return;
     }
 
+    if (!('IntersectionObserver' in window)) return;
+    visible.value = false;
     observer = new IntersectionObserver(([entry]) => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
+            visible.value = true;
             observer.disconnect();
         }
-    }, { threshold: 0.12 });
+    }, { threshold: 0, rootMargin: '0px 0px -35px 0px' });
     if (element.value) observer.observe(element.value);
 });
 
@@ -23,5 +26,5 @@ onBeforeUnmount(() => observer?.disconnect());
 </script>
 
 <template>
-    <div ref="element" class="reveal"><slot /></div>
+    <component :is="tag" ref="element" class="reveal" :class="{ 'is-visible': visible }" @focusin="visible = true"><slot /></component>
 </template>

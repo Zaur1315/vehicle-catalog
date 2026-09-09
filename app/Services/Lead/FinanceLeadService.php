@@ -31,7 +31,7 @@ final readonly class FinanceLeadService
             'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
-            'subject' => 'Finance pre-approval request',
+            'subject' => 'Preliminary financing request',
             'message' => $data['message'] ?? null,
             'status' => Lead::STATUS_NEW,
             'source' => 'finance_page',

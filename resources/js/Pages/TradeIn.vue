@@ -1,41 +1,125 @@
 <script setup>
-import { Link, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import Icon from '@/Components/Icon.vue';
+import { Link } from '@inertiajs/vue3';
+import BrandImage from '@/Components/BrandImage.vue';
 import FaqAccordion from '@/Components/FaqAccordion.vue';
-import LeadFormSection from '@/Components/LeadFormSection.vue';
-import Reveal from '@/Components/Reveal.vue';
+import Icon from '@/Components/Icon.vue';
+import TradeInForm from '@/Components/TradeInForm.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
-import TradeInForm from '@/Components/TradeInForm.vue';
 
 defineOptions({ layout: SiteLayout });
-const site = computed(() => usePage().props.site || {});
-const heroImage = '/images/sections/value-your-trade-hero.webp';
-const benefits = [['Tell us about your vehicle', 'Start with the year, make, model, and mileage you know.'], ['Start from home', 'Send the basics online before you make the trip to Salisbury.'], ['Connect it to your next vehicle', 'Browse current inventory as you consider your next move.'], ['Talk with Delmar', 'Our team can follow up about your vehicle and the next step.']];
-const steps = [['01', 'Tell us about your vehicle', 'Provide the basic details about your current car, SUV, or truck.'], ['02', 'Submit your information', 'Send the trade-in request using the form below.'], ['03', 'Connect with Delmar', 'Our team can follow up to discuss your vehicle and next steps.'], ['04', 'Find your next vehicle', 'Browse current inventory and continue your purchase conversation.']];
-const tradeFaq = [['How do I start a trade-in request?', 'Share your vehicle details in the form below to begin a conversation with Delmar Auto Sale Inc.'], ['What vehicle information should I provide?', 'Year, make, model, mileage, condition, and VIN if available can help us understand your vehicle.'], ['Do I need to choose another vehicle first?', 'No. You can submit your current vehicle details while you are still exploring your options.'], ['Can I browse inventory before submitting my trade-in?', 'Yes. Browse current inventory before or after sending your request.'], ['What happens after I submit the form?', 'Your vehicle information is sent to Delmar Auto Sale Inc. so the dealership can follow up about your request and next steps.'], ['Can I also ask about financing?', 'Yes. Financing Options can be part of the same vehicle shopping conversation.']];
+const steps = [
+    ['Tell us about your vehicle', 'Start with its year, make, model, mileage, and your contact information.'],
+    ['Share the useful details', 'Describe its condition and history, and include the VIN if you have it nearby.'],
+    ['Let our team review it', 'Southern York Motors will review what you send and follow up for any missing context.'],
+    ['Discuss the next step', 'Continue the conversation around a vehicle in our inventory and a possible trade.'],
+];
+const valueFactors = [
+    ['Vehicle basics', 'Make, model, model year, trim, and equipment help identify the vehicle accurately.'],
+    ['Mileage and condition', 'Odometer mileage and the vehicle’s mechanical, interior, and exterior condition matter.'],
+    ['History and ownership', 'Reported damage, maintenance context, title status, and an existing loan may affect the discussion.'],
+    ['Current market', 'Availability and demand for similar vehicles can change over time.'],
+];
+const faqs = [
+    ['Do I need to choose my next vehicle first?', 'No. You can submit the vehicle details while you browse. The current site workflow is intended to begin a possible trade-in conversation connected with your next purchase.'],
+    ['What information should I provide?', 'Year, make, model, mileage, condition, and contact details are the best starting point. A VIN and additional notes are helpful when available.'],
+    ['Can I submit a vehicle with an existing loan?', 'You may tell us that a loan exists in the notes. Our team will need more information before discussing how it could affect a possible transaction.'],
+    ['Is the online submission a final value or offer?', 'No. The form does not produce an estimate, appraisal, or offer. Vehicle information and actual condition must be reviewed before any value can be discussed.'],
+    ['What happens after I submit?', 'Southern York Motors receives the request and can contact you about the vehicle, missing details, and possible next steps.'],
+];
 </script>
 
 <template>
-    <SeoHead title="Value Your Trade in Salisbury, MD" description="Tell Delmar Auto Sale Inc. about your current vehicle, explore your next vehicle, and start a trade-in request online in Salisbury, Maryland." />
-    <section class="trade-hero"><img :src="heroImage" alt="" class="trade-hero-image" aria-hidden="true"><div class="trade-hero-overlay"></div><div class="site-container relative z-10 flex min-h-[650px] items-end py-20 lg:min-h-[78svh] lg:items-center lg:py-24"><div class="max-w-[920px] text-white"><p class="delmar-kicker">Value Your Trade</p><h1 class="mt-6 max-w-[900px] text-5xl font-bold leading-[.94] tracking-[-.06em] sm:text-6xl lg:text-8xl">Turn your current vehicle into your next move.</h1><p class="mt-7 max-w-2xl text-lg leading-8 text-white/75">Tell Delmar Auto Sale Inc. about your current vehicle and start a conversation about using it toward your next purchase.</p><div class="mt-9 flex flex-col gap-3 sm:flex-row"><a href="#trade-in-request" class="btn-primary">Start your trade-in <Icon name="arrow-right" /></a><Link href="/inventory" class="btn-light">Browse inventory</Link></div><p class="mt-7 text-sm font-semibold text-white/60">Delmar Auto Sale Inc. · Salisbury, Maryland</p></div></div></section>
+    <SeoHead
+        title="Sell or Trade"
+        description="Tell Southern York Motors about the vehicle you may want to trade toward your next purchase in New Freedom, Pennsylvania."
+        image="/images/southern-york/trade-1280.webp"
+    />
+    <section class="site-container split-intro">
+        <div class="split-intro-media lg:order-1">
+            <BrandImage name="trade" alt="A car key with a silver sedan softly in the background" eager />
+        </div>
+        <div class="lg:order-2">
+            <p class="eyebrow">Sell or trade</p>
+            <h1>Sell or trade your current vehicle.</h1>
+            <p>
+                Share a few useful details about what you drive today. Our
+                current online process is designed to begin a possible trade-in
+                discussion as you consider your next vehicle.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <a href="#vehicle-request" class="btn-primary">Tell Us About Your Vehicle</a>
+                <Link href="/inventory" class="btn-secondary">Browse Inventory</Link>
+            </div>
+        </div>
+    </section>
 
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr] lg:items-start"><Reveal><div><p class="eyebrow">Start with your current vehicle</p><h2 class="mt-4 heading-lg">Your current vehicle can be part of the next one.</h2></div></Reveal><Reveal><div class="max-w-3xl text-lg leading-8 text-text-muted"><p>A trade-in request connects what you drive today with what you may want next. Share the details you know and Delmar Auto Sale Inc. can follow up to discuss the vehicle and the next steps.</p><p class="mt-6">You can browse inventory before sending your request, or use the conversation to help shape your search.</p></div></Reveal></div></section>
+    <section class="site-section bg-white">
+        <div class="site-container">
+            <div class="process-heading">
+                <div>
+                    <p class="eyebrow">How it works</p>
+                    <h2 class="heading-lg">A straightforward trade process.</h2>
+                </div>
+                <p>The form collects the starting details. It does not create an instant valuation, final appraisal, or purchase offer.</p>
+            </div>
+            <ol class="numbered-process mt-10">
+                <li v-for="step in steps" :key="step[0]">
+                    <span aria-hidden="true"></span>
+                    <h3>{{ step[0] }}</h3>
+                    <p>{{ step[1] }}</p>
+                </li>
+            </ol>
+        </div>
+    </section>
 
-    <section class="site-section bg-white"><div class="site-container grid gap-12 lg:grid-cols-[.7fr_1.3fr]"><Reveal><div><p class="eyebrow">Why start online?</p><h2 class="mt-4 heading-lg">A practical first step for your next vehicle.</h2></div></Reveal><div class="border-t border-border"><Reveal v-for="(benefit, index) in benefits" :key="benefit[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><article class="grid gap-4 border-b border-border py-7 sm:grid-cols-[72px_1fr]"><span class="font-display text-2xl font-bold text-brand">{{ `0${index + 1}` }}</span><div><h3 class="text-xl font-bold">{{ benefit[0] }}</h3><p class="mt-2 max-w-2xl leading-7 text-text-muted">{{ benefit[1] }}</p></div></article></Reveal></div></div></section>
+    <section class="site-section site-container">
+        <div class="section-header">
+            <div><p class="eyebrow">Understanding value</p><h2 class="heading-lg">What can affect vehicle value.</h2></div>
+            <p class="body-muted max-w-md">Online details help start the review. Actual condition and supporting information are still needed before value can be discussed with confidence.</p>
+        </div>
+        <div class="factor-grid">
+            <article v-for="item in valueFactors" :key="item[0]">
+                <Icon name="arrow-right" /><h3>{{ item[0] }}</h3><p>{{ item[1] }}</p>
+            </article>
+        </div>
+    </section>
 
-    <section class="site-section bg-surface-muted"><div class="site-container"><div class="max-w-2xl"><p class="eyebrow">The process</p><h2 class="mt-4 heading-lg">How the trade-in process works.</h2></div><div class="mt-12 grid border-y border-border bg-white md:grid-cols-4"><Reveal v-for="(step, index) in steps" :key="step[0]" :style="{ '--reveal-delay': `${index * 70}ms` }"><article class="border-b border-border px-6 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 lg:px-7"><span class="font-display text-3xl font-bold text-brand">{{ step[0] }}</span><h3 class="mt-6 text-xl font-bold">{{ step[1] }}</h3><p class="mt-3 leading-7 text-text-muted">{{ step[2] }}</p></article></Reveal></div></div></section>
+    <section class="home-principles">
+        <div class="site-container grid gap-12 lg:grid-cols-[.85fr_1.15fr]">
+            <div>
+                <p class="eyebrow">Why consider a trade?</p>
+                <h2 class="heading-lg">Keep both sides of the move together.</h2>
+                <p class="mt-6 max-w-md leading-8 text-white/75">A possible trade lets you discuss the vehicle you have and the one you want as part of the same dealership visit.</p>
+            </div>
+            <div>
+                <article v-for="item in [
+                    ['A simpler conversation', 'Talk about your current vehicle and your next vehicle with the same team.'],
+                    ['Less private-sale coordination', 'A trade may reduce the need to manage listings, inquiries, and meetings on your own.'],
+                    ['Purchase context', 'If a trade is accepted, its agreed value may be considered as part of the next transaction.'],
+                ]" :key="item[0]" class="principle">
+                    <h3>{{ item[0] }}</h3><p>{{ item[1] }}</p>
+                </article>
+            </div>
+        </div>
+    </section>
 
-    <section class="trade-next-section"><div class="site-container grid gap-8 py-16 lg:grid-cols-[1fr_auto] lg:items-center lg:py-20"><div><p class="delmar-kicker">Keep moving</p><h2 class="mt-4 text-4xl font-bold tracking-[-.05em] text-white sm:text-5xl">Already thinking about your next vehicle?</h2><p class="mt-5 max-w-2xl text-lg leading-8 text-white/70">Explore Delmar’s current inventory before or after you send your trade-in details.</p></div><Link href="/inventory" class="btn-light">Browse inventory <Icon name="arrow-right" /></Link></div></section>
+    <section class="site-section bg-[#e9eddf]">
+        <div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
+            <div><p class="eyebrow">Sell or trade questions</p><h2 class="heading-lg">A few things to know first.</h2></div>
+            <FaqAccordion :items="faqs" />
+        </div>
+    </section>
 
-    <section class="site-section bg-white"><div class="site-container grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center"><div><p class="eyebrow">Financing Options</p><h2 class="mt-4 heading-lg">Need financing too?</h2><p class="mt-5 max-w-xl text-lg leading-8 text-text-muted">Trade-in and financing can be part of one vehicle shopping process. Explore the next step when you are ready.</p></div><Link href="/finance" class="btn-secondary justify-self-start lg:justify-self-end">Explore financing <Icon name="arrow-right" /></Link></div></section>
-
-    <section class="site-section bg-surface-muted"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">What helps us understand your vehicle</p><h2 class="mt-4 heading-lg">Bring the details you know.</h2><p class="mt-5 max-w-xl leading-7 text-text-muted">The more context you can share, the more useful the starting conversation can be. You do not need every answer before reaching out.</p></div><div class="grid gap-4 sm:grid-cols-2"><div class="trade-detail-item"><span>01</span><h3>Year, make, model</h3><p>Basic vehicle identity and trim details if known.</p></div><div class="trade-detail-item"><span>02</span><h3>Mileage</h3><p>Current mileage gives useful context about the vehicle.</p></div><div class="trade-detail-item"><span>03</span><h3>Condition</h3><p>Tell us what you know about the vehicle’s current condition.</p></div><div class="trade-detail-item"><span>04</span><h3>VIN and notes</h3><p>Include the VIN if available and any additional context.</p></div></div></div></section>
-
-    <section class="site-section bg-white"><div class="site-container grid gap-10 lg:grid-cols-[.7fr_1.3fr]"><div><p class="eyebrow">Trade-in questions</p><h2 class="mt-4 heading-lg">Keep the details clear.</h2></div><FaqAccordion :items="tradeFaq" /></div></section>
-
-    <LeadFormSection id="trade-in-request" eyebrow="Value Your Trade" title="Tell us about your vehicle." description="Complete the form below and Delmar Auto Sale Inc. can follow up with you about your vehicle and the next steps."><template #aside><p>{{ site.name }}</p><p>{{ site.address }}</p><a class="transition hover:text-white" :href="`tel:${site.phone_tel}`">{{ site.phone }}</a><br><a v-if="site.email" class="transition hover:text-white" :href="`mailto:${site.email}`">{{ site.email }}</a></template><TradeInForm /></LeadFormSection>
-
-    <section class="border-t border-border bg-white"><div class="site-container flex flex-col gap-5 py-12 sm:flex-row sm:items-center sm:justify-between"><div><p class="eyebrow">Questions about your trade?</p><h2 class="mt-3 text-3xl font-bold">Talk with Delmar directly.</h2></div><div class="flex flex-wrap gap-3"><a :href="`tel:${site.phone_tel}`" class="btn-secondary"><Icon name="phone" />Call Delmar</a><Link href="/contact" class="btn-primary">Contact us <Icon name="arrow-right" /></Link></div></div></section>
+    <section id="vehicle-request" class="site-section bg-white">
+        <div class="site-container grid gap-12 lg:grid-cols-[.75fr_1.25fr]">
+            <div>
+                <p class="eyebrow">Tell us what you drive</p>
+                <h2 class="heading-lg">Start with the vehicle in your driveway.</h2>
+                <p class="mt-6 max-w-md leading-8 text-text-muted">Include what you know now. Our team can ask for additional details after reviewing the request.</p>
+                <Link href="/inventory" class="btn-secondary mt-8">Browse Inventory <Icon name="arrow-right" /></Link>
+            </div>
+            <div class="form-surface"><TradeInForm /></div>
+        </div>
+    </section>
 </template>

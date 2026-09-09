@@ -53,6 +53,7 @@ class HandleInertiaRequests extends Middleware
                 'phone_tel' => config('site.phone_tel'),
                 'email' => config('site.email'),
                 'address' => config('site.address'),
+                'street_address' => config('site.street_address'),
                 'maps_url' => config('site.maps_url'),
                 'maps_embed_url' => config('site.maps_embed_url'),
                 'city' => config('site.city'),

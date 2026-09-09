@@ -3,10 +3,10 @@ import '../css/app.css';
 import {createInertiaApp} from '@inertiajs/vue3';
 import {createApp, h} from 'vue';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Delmar Auto Sale Inc.';
+const appName = import.meta.env.VITE_APP_NAME || 'Southern York Motors';
 
 createInertiaApp({
-    title: (title) => title ? `${title} | ${appName}` : appName,
+    title: (title) => title || appName,
     resolve: (name) => {
         const pages = import.meta.glob('./Pages/**/*.vue', {eager: true});
 

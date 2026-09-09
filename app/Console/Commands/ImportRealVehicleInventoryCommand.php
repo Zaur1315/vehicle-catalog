@@ -42,21 +42,21 @@ final class ImportRealVehicleInventoryCommand extends Command
 
     public function handle(): int
     {
-        $source = rtrim((string)$this->argument('source'), DIRECTORY_SEPARATOR);
+        $source = rtrim((string) $this->argument('source'), DIRECTORY_SEPARATOR);
 
-        if (!File::isDirectory($source)) {
+        if (! File::isDirectory($source)) {
             $this->error(sprintf('Source directory does not exist: %s', $source));
 
             return self::FAILURE;
         }
 
-        if ((bool)$this->option('clean')) {
+        if ((bool) $this->option('clean')) {
             $this->cleanInventory();
         }
 
         $txtFiles = collect(File::files($source))
-            ->filter(static fn($file) => preg_match('/^\d+_.+\.txt$/', $file->getFilename()) === 1)
-            ->sortBy(static fn($file) => (int)Str::before($file->getFilename(), '_'))
+            ->filter(static fn ($file) => preg_match('/^\d+_.+\.txt$/', $file->getFilename()) === 1)
+            ->sortBy(static fn ($file) => (int) Str::before($file->getFilename(), '_'))
             ->values();
 
         if ($txtFiles->isEmpty()) {
@@ -66,7 +66,7 @@ final class ImportRealVehicleInventoryCommand extends Command
         }
 
         $skip = collect($this->option('skip'))
-            ->map(static fn($value) => (string)$value)
+            ->map(static fn ($value) => (string) $value)
             ->filter()
             ->values()
             ->all();
@@ -76,17 +76,17 @@ final class ImportRealVehicleInventoryCommand extends Command
         foreach ($txtFiles as $txtFile) {
             $prefix = Str::before($txtFile->getFilename(), '_');
 
-            if (in_array((string)$prefix, $skip, true)) {
+            if (in_array((string) $prefix, $skip, true)) {
                 $this->warn(sprintf('Skipped vehicle prefix #%s by option.', $prefix));
 
                 continue;
             }
 
             $vehicle = $this->parseVehicleFile($txtFile->getPathname());
-            $fileSlug = Str::beforeLast(Str::after($txtFile->getFilename(), $prefix . '_'), '.txt');
+            $fileSlug = Str::beforeLast(Str::after($txtFile->getFilename(), $prefix.'_'), '.txt');
             $titleSlug = Str::slug($vehicle['title']);
 
-            if (!(bool)$this->option('allow-mismatch') && $fileSlug !== $titleSlug) {
+            if (! (bool) $this->option('allow-mismatch') && $fileSlug !== $titleSlug) {
                 $this->error(sprintf(
                     'Mismatch in %s: filename slug is "%s", but title slug is "%s". Fix the txt file or run with --skip=%s.',
                     $txtFile->getFilename(),
@@ -98,7 +98,7 @@ final class ImportRealVehicleInventoryCommand extends Command
                 return self::FAILURE;
             }
 
-            $imageDirectory = $this->findImageDirectory($source, (string)$prefix);
+            $imageDirectory = $this->findImageDirectory($source, (string) $prefix);
 
             if ($imageDirectory === null) {
                 $this->error(sprintf('Image folder not found for prefix #%s.', $prefix));
@@ -106,10 +106,10 @@ final class ImportRealVehicleInventoryCommand extends Command
                 return self::FAILURE;
             }
 
-            $stockNumber = 'A20' . str_pad((string)$prefix, 2, '0', STR_PAD_LEFT);
-            $slug = Str::slug($vehicle['title'] . '-' . $stockNumber);
-            $quality = (int)$this->option('quality');
-            $defaultPrice = (int)$this->option('default-price');
+            $stockNumber = 'A20'.str_pad((string) $prefix, 2, '0', STR_PAD_LEFT);
+            $slug = Str::slug($vehicle['title'].'-'.$stockNumber);
+            $quality = (int) $this->option('quality');
+            $defaultPrice = (int) $this->option('default-price');
 
             $make = VehicleMake::query()->updateOrCreate(
                 ['name' => $vehicle['make']],
@@ -150,7 +150,7 @@ final class ImportRealVehicleInventoryCommand extends Command
                     'short_description' => Str::limit($vehicle['short_description'], 240),
                     'description' => $vehicle['description'],
                     'features' => array_map(
-                        static fn(string $label): array => ['label' => $label],
+                        static fn (string $label): array => ['label' => $label],
                         $vehicle['features'],
                     ),
                     'main_image' => $mainImagePath,
@@ -158,10 +158,12 @@ final class ImportRealVehicleInventoryCommand extends Command
                     'is_featured' => true,
                     'is_active' => true,
                     'published_at' => now(),
-                    'seo_title' => $vehicle['title'] . ' for Sale in Meriden, CT',
+                    'seo_title' => sprintf('%s in %s, %s', $vehicle['title'], config('site.city'), config('site.state')),
                     'seo_description' => sprintf(
-                        '%s available from Marick Auto Sales in Meriden, CT. View mileage, photos, delivery, warranty, finance, and trade-in details.',
+                        'Explore %s at %s. View photos, specifications and availability, or contact our team in %s.',
                         $vehicle['title'],
+                        config('site.name'),
+                        config('site.city'),
                     ),
                 ],
             );
@@ -194,12 +196,12 @@ final class ImportRealVehicleInventoryCommand extends Command
 
         return [
             'title' => $title,
-            'year' => (int)Str::before($title, ' '),
+            'year' => (int) Str::before($title, ' '),
             'make' => $this->requiredField($text, 'Make'),
             'model' => $this->requiredField($text, 'Model'),
             'engine' => $this->requiredField($text, 'Engine'),
             'drivetrain' => $this->requiredField($text, 'Drivetrain'),
-            'mileage' => (int)preg_replace('/\D+/', '', $this->requiredField($text, 'Mileage')),
+            'mileage' => (int) preg_replace('/\D+/', '', $this->requiredField($text, 'Mileage')),
             'transmission' => $this->requiredField($text, 'Transmission'),
             'vin' => $this->requiredField($text, 'VIN'),
             'body_type' => $this->requiredField($text, 'Body Style'),
@@ -272,7 +274,7 @@ final class ImportRealVehicleInventoryCommand extends Command
     private function firstParagraph(string $markdown): string
     {
         $paragraphs = preg_split('/\R{2,}/', trim($markdown)) ?: [];
-        $first = trim((string)($paragraphs[0] ?? ''));
+        $first = trim((string) ($paragraphs[0] ?? ''));
 
         return $this->stripMarkdown($first);
     }
@@ -332,11 +334,11 @@ final class ImportRealVehicleInventoryCommand extends Command
         foreach (File::directories($source) as $directory) {
             $basename = basename($directory);
 
-            if (!Str::startsWith($basename, $prefix . '_')) {
+            if (! Str::startsWith($basename, $prefix.'_')) {
                 continue;
             }
 
-            $imageDirectory = $directory . DIRECTORY_SEPARATOR . 'img';
+            $imageDirectory = $directory.DIRECTORY_SEPARATOR.'img';
 
             if (File::isDirectory($imageDirectory)) {
                 return $imageDirectory;
@@ -356,8 +358,8 @@ final class ImportRealVehicleInventoryCommand extends Command
         $vehicle->images()->delete();
 
         $sourceImages = collect(File::files($imageDirectory))
-            ->filter(static fn($file) => in_array(strtolower($file->getExtension()), ['jpg', 'jpeg', 'png', 'webp'], true))
-            ->sortBy(static fn($file) => $file->getFilename())
+            ->filter(static fn ($file) => in_array(strtolower($file->getExtension()), ['jpg', 'jpeg', 'png', 'webp'], true))
+            ->sortBy(static fn ($file) => $file->getFilename())
             ->values();
 
         if ($sourceImages->isEmpty()) {
@@ -365,7 +367,7 @@ final class ImportRealVehicleInventoryCommand extends Command
         }
 
         foreach ($sourceImages as $index => $sourceImage) {
-            $basename = $index === 0 ? 'main' : str_pad((string)$index, 2, '0', STR_PAD_LEFT);
+            $basename = $index === 0 ? 'main' : str_pad((string) $index, 2, '0', STR_PAD_LEFT);
             $large = sprintf('vehicles/%s/large/%s.webp', $slug, $basename);
             $medium = sprintf('vehicles/%s/medium/%s.webp', $slug, $basename);
             $thumb = sprintf('vehicles/%s/thumb/%s.webp', $slug, $basename);
@@ -377,7 +379,7 @@ final class ImportRealVehicleInventoryCommand extends Command
             VehicleImage::query()->create([
                 'vehicle_id' => $vehicle->id,
                 'path' => $large,
-                'alt' => $index === 0 ? $name . ' main photo' : sprintf('%s photo %d', $name, $index + 1),
+                'alt' => $index === 0 ? $name.' main photo' : sprintf('%s photo %d', $name, $index + 1),
                 'sort_order' => $index,
                 'is_main' => $index === 0,
             ]);
@@ -392,12 +394,11 @@ final class ImportRealVehicleInventoryCommand extends Command
     private function generateWebp(
         string $sourcePath,
         string $targetRelativePath,
-        int    $width,
-        int    $height,
-        int    $quality,
+        int $width,
+        int $height,
+        int $quality,
         string $mode,
-    ): void
-    {
+    ): void {
         $targetAbsolutePath = Storage::disk('public')->path($targetRelativePath);
 
         File::ensureDirectoryExists(dirname($targetAbsolutePath));

@@ -27,7 +27,7 @@ final readonly class ContactLeadService
             'last_name' => $data['last_name'] ?? null,
             'email' => $data['email'] ?? null,
             'phone' => $data['phone'],
-            'subject' => $data['subject'] ?: 'Contact request',
+            'subject' => ($data['subject'] ?? null) ?: 'Contact request',
             'message' => $data['message'] ?? null,
             'status' => Lead::STATUS_NEW,
             'source' => 'contact_page',

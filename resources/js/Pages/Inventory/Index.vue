@@ -1,39 +1,245 @@
 <script setup>
 import { Link, router } from '@inertiajs/vue3';
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import {
+    computed,
+    onBeforeUnmount,
+    onMounted,
+    reactive,
+    ref,
+    watch,
+} from 'vue';
 import Icon from '@/Components/Icon.vue';
-import Reveal from '@/Components/Reveal.vue';
+import InventoryFilters from '@/Components/InventoryFilters.vue';
+import SiteDialog from '@/Components/SiteDialog.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 import VehicleCard from '@/Components/VehicleCard.vue';
 
 defineOptions({ layout: SiteLayout });
-const props = defineProps({ vehicles: { type: Object, required: true }, filters: { type: Object, default: () => ({}) }, filterOptions: { type: Object, default: () => ({}) } });
+const props = defineProps({
+    vehicles: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+    filterOptions: { type: Object, default: () => ({}) },
+});
 const filtersOpen = ref(false);
-const form = reactive({ make: props.filters.make || '', model: props.filters.model || '', year_from: props.filters.year_from || '', year_to: props.filters.year_to || '', price_min: props.filters.price_min || '', price_max: props.filters.price_max || '', mileage_min: props.filters.mileage_min || '', mileage_max: props.filters.mileage_max || '', body_type: props.filters.body_type || '', transmission: props.filters.transmission || '', drivetrain: props.filters.drivetrain || '', color: props.filters.color || '', sort: props.filters.sort || 'newest' });
-const models = computed(() => !form.make ? props.filterOptions.models || [] : (props.filterOptions.models || []).filter((model) => model.make_slug === form.make));
-const filterLabels = { make: 'Make', model: 'Model', year_from: 'Year from', year_to: 'Year to', price_min: 'Min price', price_max: 'Max price', mileage_min: 'Min mileage', mileage_max: 'Max mileage', body_type: 'Body style', transmission: 'Transmission', drivetrain: 'Drivetrain', color: 'Color' };
-const activeFilters = computed(() => Object.entries(form).filter(([key, value]) => key !== 'sort' && value !== '' && value !== null).map(([key, value]) => ({ key, value, label: filterLabels[key] || key })));
-const apply = () => { const query = {}; Object.entries(form).forEach(([key, value]) => { if (value !== '' && value !== null) query[key] = value; }); filtersOpen.value = false; router.get('/inventory', query, { preserveState: true, preserveScroll: true, replace: true }); };
-const reset = () => { Object.keys(form).forEach((key) => { form[key] = key === 'sort' ? 'newest' : ''; }); filtersOpen.value = false; router.get('/inventory', {}, { preserveState: true, preserveScroll: true, replace: true }); };
-const remove = (key) => { form[key] = ''; if (key === 'make') form.model = ''; apply(); };
-watch(() => form.make, (make, previous) => { if (previous && make !== previous) form.model = ''; });
-const handleKeydown = (event) => { if (event.key === 'Escape' && filtersOpen.value) filtersOpen.value = false; };
-watch(filtersOpen, (open) => { document.body.style.overflow = open ? 'hidden' : ''; });
-onMounted(() => window.addEventListener('keydown', handleKeydown));
-onBeforeUnmount(() => { window.removeEventListener('keydown', handleKeydown); document.body.style.overflow = ''; });
+const form = reactive({
+    make: props.filters.make || '',
+    model: props.filters.model || '',
+    year_from: props.filters.year_from || '',
+    year_to: props.filters.year_to || '',
+    price_min: props.filters.price_min || '',
+    price_max: props.filters.price_max || '',
+    mileage_min: props.filters.mileage_min || '',
+    mileage_max: props.filters.mileage_max || '',
+    body_type: props.filters.body_type || '',
+    transmission: props.filters.transmission || '',
+    drivetrain: props.filters.drivetrain || '',
+    color: props.filters.color || '',
+    sort: props.filters.sort || 'newest',
+});
+const models = computed(() =>
+    !form.make
+        ? props.filterOptions.models || []
+        : (props.filterOptions.models || []).filter(
+              (model) => model.make_slug === form.make,
+          ),
+);
+const filterLabels = {
+    make: 'Make',
+    model: 'Model',
+    year_from: 'Year from',
+    year_to: 'Year to',
+    price_min: 'Min price',
+    price_max: 'Max price',
+    mileage_min: 'Min mileage',
+    mileage_max: 'Max mileage',
+    body_type: 'Body style',
+    transmission: 'Transmission',
+    drivetrain: 'Drivetrain',
+    color: 'Color',
+};
+const activeFilters = computed(() =>
+    Object.entries(form)
+        .filter(
+            ([key, value]) => key !== 'sort' && value !== '' && value !== null,
+        )
+        .map(([key, value]) => ({
+            key,
+            value,
+            label: filterLabels[key] || key,
+        })),
+);
+const apply = () => {
+    const query = {};
+    Object.entries(form).forEach(([key, value]) => {
+        if (value !== '' && value !== null) query[key] = value;
+    });
+    filtersOpen.value = false;
+    router.get('/inventory', query, {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+    });
+};
+const reset = () => {
+    Object.keys(form).forEach((key) => {
+        form[key] = key === 'sort' ? 'newest' : '';
+    });
+    filtersOpen.value = false;
+    router.get(
+        '/inventory',
+        {},
+        { preserveState: true, preserveScroll: true, replace: true },
+    );
+};
+const remove = (key) => {
+    form[key] = '';
+    if (key === 'make') form.model = '';
+    apply();
+};
+watch(
+    () => form.make,
+    () => {
+        if (!models.value.some((model) => model.slug === form.model))
+            form.model = '';
+    },
+);
 </script>
-
 <template>
-    <SeoHead title="Browse Inventory" description="Browse available pre-owned vehicles from Delmar Auto Sale Inc. in Salisbury, Maryland." />
-
-    <section class="inventory-intro"><div class="site-container grid gap-8 py-16 lg:grid-cols-[1fr_auto] lg:items-end lg:py-24"><div><p class="eyebrow">Delmar Auto Sale Inc. · Salisbury, Maryland</p><h1 class="mt-5 heading-lg">Browse inventory.</h1><p class="mt-5 max-w-2xl text-lg leading-8 text-text-muted">Find your next vehicle from our current selection of pre-owned cars, SUVs, trucks, and more.</p></div><div class="inventory-count"><span class="inventory-count-number">{{ vehicles.total }}</span><span class="inventory-count-label">vehicles available</span></div></div></section>
-
-    <section class="inventory-toolbar"><div class="site-container flex flex-wrap items-center justify-between gap-4 py-5"><div><p class="text-sm font-bold">{{ vehicles.total }} vehicle<span v-if="vehicles.total !== 1">s</span> available</p><p class="mt-1 text-xs text-text-muted">Use the filters to narrow down the details that matter.</p></div><div class="flex w-full flex-wrap items-center gap-3 sm:w-auto"><button class="btn-secondary lg:hidden" :aria-expanded="filtersOpen" aria-controls="inventory-filters" @click="filtersOpen = true"><Icon name="sliders" />Filters<span v-if="activeFilters.length" class="ml-1 text-brand">({{ activeFilters.length }})</span></button><label class="inventory-sort"><span>Sort by</span><select v-model="form.sort" @change="apply"><option value="newest">Newest listed</option><option value="price_asc">Price: low to high</option><option value="price_desc">Price: high to low</option><option value="year_desc">Year: newest</option><option value="year_asc">Year: oldest</option><option value="mileage_asc">Mileage: lowest</option><option value="mileage_desc">Mileage: highest</option></select></label></div></div></section>
-
-    <section class="inventory-main site-section"><div class="site-container grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start"><div class="min-w-0"><div v-if="activeFilters.length" class="mb-8 flex flex-wrap items-center gap-2"><span class="mr-2 text-[10px] font-bold uppercase tracking-[.16em] text-text-muted">Filtered by</span><button v-for="filter in activeFilters" :key="filter.key" type="button" class="filter-chip" @click="remove(filter.key)">{{ filter.label }}: {{ filter.value }} <span aria-hidden="true">×</span></button><button type="button" class="clear-link" @click="reset">Clear all</button></div><div v-if="vehicles.data.length" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"><Reveal v-for="(vehicle, index) in vehicles.data" :key="vehicle.id" :style="{ '--reveal-delay': `${Math.min(index, 4) * 70}ms` }"><VehicleCard :vehicle="vehicle" /></Reveal></div><div v-else class="inventory-empty"><span class="eyebrow">No close matches</span><h2 class="mt-4 text-3xl font-bold">No vehicles matched your filters.</h2><p class="mt-3 max-w-xl leading-7 text-text-muted">Try adjusting or clearing some filters to see more available inventory.</p><button class="btn-primary mt-7" @click="reset">Clear filters <Icon name="arrow-right" /></button></div><nav v-if="vehicles.links?.length > 3" class="inventory-pagination" aria-label="Inventory pagination"><component :is="link.url ? Link : 'span'" v-for="link in vehicles.links" :key="link.label" :href="link.url || undefined" class="pagination-link" :class="link.active ? 'is-active' : !link.url ? 'is-disabled' : ''" v-html="link.label" /></nav></div>
-
-            <aside class="inventory-filter-sidebar"><div class="filter-panel"><div class="flex items-start justify-between gap-4 border-b border-border pb-5"><div><p class="eyebrow">Filters</p><h2 class="mt-2 text-2xl font-bold">Find a vehicle</h2></div><button v-if="activeFilters.length" type="button" class="clear-link" @click="reset">Clear all</button></div><form class="mt-8 grid gap-5" @submit.prevent="apply"><label><span class="form-label">Make</span><select v-model="form.make" class="form-select-dark"><option value="">Any make</option><option v-for="make in filterOptions.makes" :key="make.slug" :value="make.slug">{{ make.name }}</option></select></label><label><span class="form-label">Model</span><select v-model="form.model" class="form-select-dark"><option value="">Any model</option><option v-for="model in models" :key="model.slug" :value="model.slug">{{ model.name }}</option></select></label><div class="filter-group"><p class="filter-group-title">Price & mileage</p><div class="grid grid-cols-2 gap-3"><label><span class="form-label">Min price</span><input v-model="form.price_min" type="number" min="0" placeholder="$0" class="form-input-dark"></label><label><span class="form-label">Max price</span><input v-model="form.price_max" type="number" min="0" placeholder="Any" class="form-input-dark"></label><label><span class="form-label">Min miles</span><input v-model="form.mileage_min" type="number" min="0" placeholder="0" class="form-input-dark"></label><label><span class="form-label">Max miles</span><input v-model="form.mileage_max" type="number" min="0" placeholder="Any" class="form-input-dark"></label></div></div><div class="filter-group"><p class="filter-group-title">Vehicle details</p><div class="grid gap-5"><label><span class="form-label">Year from</span><input v-model="form.year_from" type="number" min="1900" placeholder="Any" class="form-input-dark"></label><label><span class="form-label">Year to</span><input v-model="form.year_to" type="number" min="1900" placeholder="Any" class="form-input-dark"></label><label><span class="form-label">Body style</span><select v-model="form.body_type" class="form-select-dark"><option value="">Any body style</option><option v-for="(label, value) in filterOptions.bodyTypes" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Transmission</span><select v-model="form.transmission" class="form-select-dark"><option value="">Any transmission</option><option v-for="(label, value) in filterOptions.transmissions" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Drivetrain</span><select v-model="form.drivetrain" class="form-select-dark"><option value="">Any drivetrain</option><option v-for="(label, value) in filterOptions.drivetrains" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Exterior color</span><select v-model="form.color" class="form-select-dark"><option value="">Any color</option><option v-for="color in filterOptions.colors" :key="color" :value="color">{{ color }}</option></select></label></div></div><div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1">Apply filters</button><button type="button" class="btn-secondary" @click="reset">Clear</button></div></form></div></aside></div></section>
-
-    <Transition enter-active-class="transition duration-300" enter-from-class="opacity-0" leave-active-class="transition duration-200" leave-to-class="opacity-0"><div v-if="filtersOpen" class="fixed inset-0 z-50 bg-ink/60 lg:hidden" @click.self="filtersOpen = false"><section id="inventory-filters" class="inventory-filter-drawer" role="dialog" aria-modal="true" aria-labelledby="mobile-filters-title"><div class="flex items-center justify-between border-b border-border pb-5"><div><p class="eyebrow">Refine</p><h2 id="mobile-filters-title" class="mt-2 text-2xl font-bold">Find a vehicle</h2></div><button type="button" class="icon-close" aria-label="Close filters" @click="filtersOpen = false">×</button></div><form class="mt-7 grid gap-5" @submit.prevent="apply"><label><span class="form-label">Make</span><select v-model="form.make" class="form-select-dark"><option value="">Any make</option><option v-for="make in filterOptions.makes" :key="make.slug" :value="make.slug">{{ make.name }}</option></select></label><label><span class="form-label">Model</span><select v-model="form.model" class="form-select-dark"><option value="">Any model</option><option v-for="model in models" :key="model.slug" :value="model.slug">{{ model.name }}</option></select></label><div class="filter-group"><p class="filter-group-title">Price & mileage</p><div class="grid grid-cols-2 gap-3"><label><span class="form-label">Min price</span><input v-model="form.price_min" type="number" min="0" class="form-input-dark"></label><label><span class="form-label">Max price</span><input v-model="form.price_max" type="number" min="0" class="form-input-dark"></label><label><span class="form-label">Min miles</span><input v-model="form.mileage_min" type="number" min="0" class="form-input-dark"></label><label><span class="form-label">Max miles</span><input v-model="form.mileage_max" type="number" min="0" class="form-input-dark"></label></div></div><div class="filter-group"><p class="filter-group-title">Vehicle details</p><div class="grid gap-5"><label><span class="form-label">Year from</span><input v-model="form.year_from" type="number" min="1900" class="form-input-dark"></label><label><span class="form-label">Year to</span><input v-model="form.year_to" type="number" min="1900" class="form-input-dark"></label><label><span class="form-label">Body style</span><select v-model="form.body_type" class="form-select-dark"><option value="">Any body style</option><option v-for="(label, value) in filterOptions.bodyTypes" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Transmission</span><select v-model="form.transmission" class="form-select-dark"><option value="">Any transmission</option><option v-for="(label, value) in filterOptions.transmissions" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Drivetrain</span><select v-model="form.drivetrain" class="form-select-dark"><option value="">Any drivetrain</option><option v-for="(label, value) in filterOptions.drivetrains" :key="value" :value="value">{{ label }}</option></select></label><label><span class="form-label">Exterior color</span><select v-model="form.color" class="form-select-dark"><option value="">Any color</option><option v-for="color in filterOptions.colors" :key="color" :value="color">{{ color }}</option></select></label></div></div><div class="flex gap-3 pt-2"><button type="submit" class="btn-primary flex-1">Apply filters</button><button type="button" class="btn-secondary" @click="reset">Clear</button></div></form></section></div></Transition>
+    <SeoHead
+        title="Find your next vehicle"
+        description="Explore available pre-owned cars, trucks and SUVs at Southern York Motors in New Freedom, PA. Filter by the details that matter to you."
+    />
+    <section class="site-container pb-16 pt-12">
+        <p class="eyebrow">The Southern York selection</p>
+        <div class="mb-9 mt-4 flex flex-wrap items-end justify-between gap-5">
+            <h1 class="page-title">Find your kind of drive.</h1>
+            <p class="text-sm text-text-muted">
+                {{ vehicles.total }} vehicle{{
+                    vehicles.total === 1 ? '' : 's'
+                }}
+                available
+            </p>
+        </div>
+        <div class="inventory-toolbar">
+            <button class="btn-secondary lg:hidden" @click="filtersOpen = true">
+                <Icon name="sliders" />
+                Filters
+                {{
+                    activeFilters.length ? '(' + activeFilters.length + ')' : ''
+                }}
+            </button>
+            <p class="hidden text-sm text-text-muted lg:block">
+                A closer look starts with the details.
+            </p>
+            <label
+                class="flex flex-wrap items-center gap-3 text-xs font-semibold"
+            >
+                <span>Sort by</span>
+                <select
+                    v-model="form.sort"
+                    class="form-select-dark !w-auto !text-sm"
+                    @change="apply"
+                >
+                    <option value="newest">Newest listed</option>
+                    <option value="price_asc">Price: low to high</option>
+                    <option value="price_desc">Price: high to low</option>
+                    <option value="year_desc">Year: newest</option>
+                    <option value="year_asc">Year: oldest</option>
+                    <option value="mileage_asc">Mileage: lowest</option>
+                    <option value="mileage_desc">Mileage: highest</option>
+                </select>
+            </label>
+        </div>
+        <div class="grid items-start gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
+            <aside class="filter-panel hidden lg:block">
+                <h2 class="mb-6 text-lg font-semibold">Narrow your search</h2>
+                <InventoryFilters
+                    :form="form"
+                    :options="filterOptions"
+                    :models="models"
+                    @apply="apply"
+                    @reset="reset"
+                />
+            </aside>
+            <div class="min-w-0">
+                <div
+                    v-if="activeFilters.length"
+                    class="mb-6 flex flex-wrap gap-2"
+                >
+                    <button
+                        v-for="filter in activeFilters"
+                        :key="filter.key"
+                        class="filter-chip"
+                        @click="remove(filter.key)"
+                    >
+                        {{ filter.label }}: {{ filter.value }} ×
+                    </button>
+                    <button class="clear-link" @click="reset">Clear all</button>
+                </div>
+                <div
+                    v-if="vehicles.data.length"
+                    class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                >
+                    <VehicleCard
+                        v-for="vehicle in vehicles.data"
+                        :key="vehicle.id"
+                        :vehicle="vehicle"
+                    />
+                </div>
+                <div v-else class="empty-state">
+                    <h2 class="text-2xl font-semibold">
+                        Let's widen the search.
+                    </h2>
+                    <p>
+                        No vehicles match those details right now. Clear a
+                        filter or contact us to talk about what you're looking
+                        for.
+                    </p>
+                    <button class="btn-primary" @click="reset">
+                        Clear filters
+                    </button>
+                    <Link href="/contact" class="btn-ghost ml-5">
+                        Ask our team
+                    </Link>
+                </div>
+                <nav
+                    v-if="vehicles.links?.length > 3"
+                    class="inventory-pagination"
+                    aria-label="Inventory pagination"
+                >
+                    <component
+                        :is="link.url ? Link : 'span'"
+                        v-for="link in vehicles.links"
+                        :key="link.label"
+                        :href="link.url || undefined"
+                        :aria-current="link.active ? 'page' : undefined"
+                        class="pagination-link"
+                        :class="
+                            link.active
+                                ? 'is-active'
+                                : !link.url
+                                  ? 'is-disabled'
+                                  : ''
+                        "
+                        v-html="link.label"
+                    />
+                </nav>
+            </div>
+        </div>
+    </section>
+    <SiteDialog
+        :open="filtersOpen"
+        title="Find your fit"
+        drawer
+        @close="filtersOpen = false"
+    >
+        <InventoryFilters
+            :form="form"
+            :options="filterOptions"
+            :models="models"
+            @apply="apply"
+            @reset="reset"
+        />
+    </SiteDialog>
 </template>

@@ -31,7 +31,7 @@ final class VehicleImage extends Model
     public function getUrlAttribute(): string
     {
         if ($this->path === null || $this->path === '') {
-            return asset('images/placeholders/vehicle-placeholder.jpg');
+            return asset('images/placeholders/vehicle-placeholder.svg');
         }
 
         if (str_starts_with($this->path, 'http://') || str_starts_with($this->path, 'https://')) {
@@ -42,6 +42,6 @@ final class VehicleImage extends Model
             return asset($this->path);
         }
 
-        return asset('storage/' . ltrim($this->path, '/'));
+        return asset('storage/'.ltrim($this->path, '/'));
     }
 }

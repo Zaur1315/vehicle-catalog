@@ -21,16 +21,196 @@ const sections = [
 </script>
 
 <template>
-    <LegalPageLayout title="Privacy Policy" description="Learn how Delmar Auto Sale Inc. handles information submitted through this website and the services used to operate it." seo-title="Privacy Policy | Delmar Auto Sale Inc." seo-description="Read the Privacy Policy for Delmar Auto Sale Inc. and learn how information submitted through delmarautosales-md.com may be collected, used and handled." hero-image="/images/sections/privacy-policy-hero.webp" last-updated="August 27, 2026" :sections="sections" contact-title="Privacy questions?">
-        <section id="introduction" class="legal-section"><h2>Introduction</h2><p>This Privacy Policy explains how {{ site.name }} handles information connected with <strong>{{ site.domain }}</strong>, including its vehicle listings, online forms, and related pages. It is intended to describe the website’s current information practices in plain language.</p></section>
-        <section id="information-we-collect" class="legal-section"><h2>Information We Collect</h2><p>We collect information you choose to provide and limited technical information needed to operate, secure, and understand the website.</p><h3>Information you provide</h3><p>Depending on the form you use, this may include your first and last name, phone number, email address, message, subject, vehicle of interest, financing preferences, or details about a vehicle you want to value.</p><p>The trade-in form may also include a vehicle’s year, make, model, mileage, condition, VIN, and notes. The financing form may include a target amount, down payment, preferred term, credit score range, vehicle interest, and additional context. The site does not ask these forms for a Social Security number, bank account, credit report, or driver’s license.</p><h3>Information collected automatically</h3><p>Web servers and the Laravel application may process information such as IP address, browser or device characteristics, pages visited, referrer information, timestamps, session identifiers, and security-related request data. We do not use this site to request precise GPS location data.</p></section>
-        <section id="how-we-use" class="legal-section"><h2>How We Use Information</h2><p>We use information to respond to vehicle, contact, financing, and trade-in requests; communicate about the subject of a request; maintain dealership records; deliver requested email notifications; secure the website; and operate and improve its public pages.</p><p>A financing form on this site is a preliminary request for dealership follow-up. It is not presented as a credit application, loan approval, rate quote, or decision by {{ site.name }}.</p></section>
-        <section id="forms" class="legal-section"><h2>Vehicle and Dealership Requests</h2><p>When you send a vehicle inquiry, contact message, financing request, or trade-in request, the information is submitted to {{ site.name }} through the site’s existing lead process. The dealership may use it to answer your question and discuss the relevant vehicle or next step.</p><p>Submitting a form does not itself create a purchase agreement, financing commitment, appraisal, reservation, or other transaction.</p></section>
-        <section id="cookies" class="legal-section"><h2>Cookies and Similar Technologies</h2><p>The website uses necessary browser storage and cookies to support security, forms, sessions, and normal operation. The site also uses a cookie-consent control that records whether optional marketing measurement has been enabled.</p><p>If you allow optional marketing cookies, the site may initialize Meta Pixel for page-view and conversion measurement. Your choice is stored locally and related consent cookies may be set. Clearing browser storage or cookies may remove that choice.</p></section>
-        <section id="third-party" class="legal-section"><h2>Analytics and Third-Party Services</h2><p>Where enabled and consented to, Meta technologies may be used to measure visits, advertising effectiveness, and submitted leads. The server-side Meta Conversions API may receive lead event information only when the applicable marketing consent is present. We do not publish or include Meta identifiers or access credentials in this policy.</p><p>The website may use Resend or another configured email delivery provider to deliver lead notifications. Vehicle images are served from the application’s configured storage, and Google Reviews are synchronized through the configured Google Places integration when enabled.</p><p>Links to Google Maps are provided for directions. Following an external map link takes you to Google’s service and is governed by its policies.</p></section>
-        <section id="sharing" class="legal-section"><h2>How Information May Be Shared</h2><p>Information may be accessible to {{ site.name }} and service providers that support hosting, application security, email delivery, analytics or advertising measurement, and other website operations. Providers receive information as needed for those services.</p><p>Information may also be disclosed when reasonably necessary to comply with law, respond to a lawful request, protect the website or people, investigate misuse, or support a business transaction. We do not describe submitted information as being sold merely because operational providers process it.</p></section>
-        <section id="retention-security" class="legal-section"><h2>Data Retention and Security</h2><p>We retain submitted information for as long as reasonably necessary for the purposes described here and applicable business or legal requirements. This policy does not promise a fixed retention period.</p><p>Reasonable administrative, technical, and organizational measures are used to protect information. No internet transmission or storage method can be guaranteed completely secure.</p></section>
-        <section id="choices" class="legal-section"><h2>Your Choices</h2><p>You can choose whether to enable optional marketing measurement through the site’s consent control. You can also choose not to submit a form, although that may prevent the dealership from responding to an online request.</p><p>To ask about information associated with a request, contact {{ site.name }} using the details below. We may need to verify a request and may retain information where required for legitimate business or legal reasons.</p></section>
-        <section id="changes-contact" class="legal-section"><h2>Children’s Privacy</h2><p>This website is intended for general vehicle shoppers and is not directed specifically to children. We do not knowingly request personal information from children through the website.</p><h2>Changes to This Policy</h2><p>We may update this policy when the website, its services, or information practices change. The “Last updated” date identifies the current version.</p><h2>Contact Us</h2><p>For privacy questions, contact {{ site.name }} at {{ site.address }} by <a :href="`mailto:${site.email}`">{{ site.email }}</a> or <a :href="`tel:${site.phone_tel}`">{{ site.phone }}</a>.</p></section>
+    <LegalPageLayout
+        title="Privacy Policy"
+        description="Learn how Southern York Motors handles information submitted through this website and the services used to operate it."
+        seo-title="Privacy Policy | Southern York Motors"
+        seo-description="Read the Privacy Policy for Southern York Motors and learn how information submitted through southernyorkmotors.com may be collected, used and handled."
+        last-updated="September 9, 2026"
+        :sections="sections"
+        contact-title="Privacy questions?"
+    >
+        <section id="introduction" class="legal-section">
+            <h2>Introduction</h2>
+            <p>
+                This Privacy Policy explains how {{ site.name }} handles
+                information connected with
+                <strong>{{ site.domain }}</strong>
+                , including its vehicle listings, online forms, and related
+                pages. It is intended to describe the website’s current
+                information practices in plain language.
+            </p>
+        </section>
+        <section id="information-we-collect" class="legal-section">
+            <h2>Information We Collect</h2>
+            <p>
+                We collect information you choose to provide and limited
+                technical information needed to operate, secure, and understand
+                the website.
+            </p>
+            <h3>Information you provide</h3>
+            <p>
+                Depending on the form you use, this may include your first and
+                last name, phone number, email address, message, subject,
+                vehicle of interest, financing preferences, or details about a
+                vehicle you want to value.
+            </p>
+            <p>
+                The trade-in form may also include a vehicle’s year, make,
+                model, mileage, condition, VIN, and notes. The financing form
+                may include a target amount, down payment, preferred term,
+                credit score range, vehicle interest, and additional context.
+                The site does not ask these forms for a Social Security number,
+                bank account, credit report, or driver’s license.
+            </p>
+            <h3>Information collected automatically</h3>
+            <p>
+                Web servers and the Laravel application may process information
+                such as IP address, browser or device characteristics, pages
+                visited, referrer information, timestamps, session identifiers,
+                and security-related request data. We do not use this site to
+                request precise GPS location data.
+            </p>
+        </section>
+        <section id="how-we-use" class="legal-section">
+            <h2>How We Use Information</h2>
+            <p>
+                We use information to respond to vehicle, contact, financing,
+                and trade-in requests; communicate about the subject of a
+                request; maintain dealership records; deliver requested email
+                notifications; secure the website; and operate and improve its
+                public pages.
+            </p>
+            <p>
+                A financing form on this site is a preliminary request for
+                dealership follow-up. It is not presented as a credit
+                application, loan approval, rate quote, or decision by
+                {{ site.name }}.
+            </p>
+        </section>
+        <section id="forms" class="legal-section">
+            <h2>Vehicle and Dealership Requests</h2>
+            <p>
+                When you send a vehicle inquiry, contact message, financing
+                request, or trade-in request, the information is submitted to
+                {{ site.name }} through the site’s existing lead process. The
+                dealership may use it to answer your question and discuss the
+                relevant vehicle or next step.
+            </p>
+            <p>
+                Submitting a form does not itself create a purchase agreement,
+                financing commitment, appraisal, reservation, or other
+                transaction.
+            </p>
+        </section>
+        <section id="cookies" class="legal-section">
+            <h2>Cookies and Similar Technologies</h2>
+            <p>
+                The website uses necessary browser storage and cookies to
+                support security, forms, sessions, and normal operation. The
+                site also uses a cookie-consent control that records whether
+                optional marketing measurement has been enabled.
+            </p>
+            <p>
+                If you allow optional marketing cookies, the site may initialize
+                Meta Pixel for page-view and conversion measurement. Your choice
+                is stored locally and related consent cookies may be set. You
+                can change your choice using Cookie preferences in the footer.
+                Clearing browser storage or cookies may remove that choice.
+            </p>
+        </section>
+        <section id="third-party" class="legal-section">
+            <h2>Analytics and Third-Party Services</h2>
+            <p>
+                Where enabled and consented to, Meta technologies may be used to
+                measure visits, advertising effectiveness, and submitted leads.
+                The server-side Meta Conversions API may receive lead event
+                information only when the applicable marketing consent is
+                present. We do not publish or include Meta identifiers or access
+                credentials in this policy.
+            </p>
+            <p>
+                The website may use Resend or another configured email delivery
+                provider to deliver lead notifications. Vehicle images are
+                served from the application’s configured storage, and Google
+                Reviews are synchronized through the configured Google Places
+                integration when enabled.
+            </p>
+            <p>
+                Links to Google Maps are provided for directions. Following an
+                external map link takes you to Google’s service and is governed
+                by its policies.
+            </p>
+        </section>
+        <section id="sharing" class="legal-section">
+            <h2>How Information May Be Shared</h2>
+            <p>
+                Information may be accessible to {{ site.name }} and service
+                providers that support hosting, application security, email
+                delivery, analytics or advertising measurement, and other
+                website operations. Providers receive information as needed for
+                those services.
+            </p>
+            <p>
+                Information may also be disclosed when reasonably necessary to
+                comply with law, respond to a lawful request, protect the
+                website or people, investigate misuse, or support a business
+                transaction. We do not describe submitted information as being
+                sold merely because operational providers process it.
+            </p>
+        </section>
+        <section id="retention-security" class="legal-section">
+            <h2>Data Retention and Security</h2>
+            <p>
+                We retain submitted information for as long as reasonably
+                necessary for the purposes described here and applicable
+                business or legal requirements. This policy does not promise a
+                fixed retention period.
+            </p>
+            <p>
+                Reasonable administrative, technical, and organizational
+                measures are used to protect information. No internet
+                transmission or storage method can be guaranteed completely
+                secure.
+            </p>
+        </section>
+        <section id="choices" class="legal-section">
+            <h2>Your Choices</h2>
+            <p>
+                You can choose whether to enable optional marketing measurement
+                through the site’s consent control. You can also choose not to
+                submit a form, although that may prevent the dealership from
+                responding to an online request.
+            </p>
+            <p>
+                To ask about information associated with a request, contact
+                {{ site.name }} using the details below. We may need to verify a
+                request and may retain information where required for legitimate
+                business or legal reasons.
+            </p>
+        </section>
+        <section id="changes-contact" class="legal-section">
+            <h2>Children’s Privacy</h2>
+            <p>
+                This website is intended for general vehicle shoppers and is not
+                directed specifically to children. We do not knowingly request
+                personal information from children through the website.
+            </p>
+            <h2>Changes to This Policy</h2>
+            <p>
+                We may update this policy when the website, its services, or
+                information practices change. The “Last updated” date identifies
+                the current version.
+            </p>
+            <h2>Contact Us</h2>
+            <p>
+                For privacy questions, contact {{ site.name }} at
+                {{ site.address }} by
+                <a :href="`mailto:${site.email}`">{{ site.email }}</a>
+                or
+                <a :href="`tel:${site.phone_tel}`">{{ site.phone }}</a>
+                .
+            </p>
+        </section>
     </LegalPageLayout>
 </template>

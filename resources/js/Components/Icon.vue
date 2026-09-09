@@ -18,7 +18,10 @@ defineProps({
         aria-hidden="true"
         focusable="false"
     >
-        <template v-if="name === 'arrow-right'">
+        <template v-if="name === 'menu'">
+            <path d="M4 7h16M4 12h16M4 17h16" />
+        </template>
+        <template v-else-if="name === 'arrow-right'">
             <path d="M4 12h15" />
             <path d="m13 6 6 6-6 6" />
         </template>

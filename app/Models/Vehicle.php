@@ -12,12 +12,17 @@ use Illuminate\Support\Facades\Storage;
 final class Vehicle extends Model
 {
     public const CONDITION_NEW = 'new';
+
     public const CONDITION_USED = 'used';
+
     public const CONDITION_CERTIFIED = 'certified';
 
     public const STATUS_DRAFT = 'draft';
+
     public const STATUS_AVAILABLE = 'available';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_SOLD = 'sold';
 
     protected $fillable = [
@@ -90,7 +95,7 @@ final class Vehicle extends Model
             return 'Price on request';
         }
 
-        return '$' . number_format((float) $this->price, 2);
+        return '$'.number_format((float) $this->price, 2);
     }
 
     public function getFormattedMileageAttribute(): string
@@ -99,13 +104,13 @@ final class Vehicle extends Model
             return '-';
         }
 
-        return number_format($this->mileage) . ' mi';
+        return number_format($this->mileage).' mi';
     }
 
     public function getMainImageUrlAttribute(): string
     {
         if ($this->main_image === null || $this->main_image === '') {
-            return asset('images/placeholders/vehicle-placeholder.jpg');
+            return asset('images/placeholders/vehicle-placeholder.svg');
         }
 
         if (str_starts_with($this->main_image, 'http://') || str_starts_with($this->main_image, 'https://')) {
@@ -116,7 +121,7 @@ final class Vehicle extends Model
             return asset($this->main_image);
         }
 
-        return asset('storage/' . ltrim($this->main_image, '/'));
+        return asset('storage/'.ltrim($this->main_image, '/'));
     }
 
     public function getMainImageThumbUrlAttribute(): ?string

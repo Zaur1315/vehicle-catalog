@@ -22,11 +22,10 @@ final class TradeInController extends Controller
 
     public function store(
         StoreTradeInLeadRequest $request,
-        TradeInLeadService      $tradeInLeadService,
-        LeadTrackingService     $leadTrackingService,
+        TradeInLeadService $tradeInLeadService,
+        LeadTrackingService $leadTrackingService,
         LeadNotificationService $leadNotificationService,
-    ): RedirectResponse
-    {
+    ): RedirectResponse {
         $validated = $request->validated();
 
         $tradeInLeadService->create($validated);
@@ -34,13 +33,13 @@ final class TradeInController extends Controller
         $metaEvent = $leadTrackingService->track($request, LeadFormType::TRADE_IN, [
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
-            'content_name' => 'Trade-In Request',
+            'content_name' => 'Sell or Trade Request',
         ]);
 
-        $leadNotificationService->send('Trade-In', $validated);
+        $leadNotificationService->send('Sell or Trade', $validated);
 
         return back()->with([
-            'success' => 'Your trade-in request has been sent. Our team will contact you soon.',
+            'success' => 'Your vehicle request has been sent. Our team will contact you soon.',
             'meta_event' => $metaEvent,
         ]);
     }

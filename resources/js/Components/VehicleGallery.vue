@@ -61,7 +61,7 @@ const swipe = (event) => {
                     width="1200"
                     height="900"
                     fetchpriority="high"
-                    class="h-full w-full object-contain"
+                    class="h-full w-full object-cover"
                     @error="failed = true"
                 />
             </button>
@@ -135,7 +135,7 @@ const swipe = (event) => {
                     :alt="current.alt"
                     width="1200"
                     height="900"
-                    class="max-h-[60dvh] w-full object-contain"
+                    class="max-h-[60dvh] w-full object-cover"
                 />
             </div>
             <div class="mt-5 flex items-center justify-between">

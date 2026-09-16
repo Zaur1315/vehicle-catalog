@@ -246,6 +246,7 @@
     .vehicle-description ul { @apply mt-4 space-y-2; }
     .vehicle-description li { @apply ml-5 list-disc; }
     .vehicle-description a { @apply font-bold text-brand underline underline-offset-4; }
+    .vehicle-description-plain { white-space: pre-wrap; overflow-wrap: anywhere; }
     @media (max-width: 640px) { .delmar-hero { min-height: 680px; } .financing-section { min-height: 620px; } .financing-section-image { object-position: 68% center; } .financing-section-overlay { background: linear-gradient(90deg,rgba(10,12,15,.9),rgba(10,12,15,.68)),linear-gradient(0deg,rgba(10,12,15,.68),transparent 55%); } }
     @media (prefers-reduced-motion: reduce) { .delmar-hero-video { display: none; } .faq-panel { transition: none; } .faq-icon::before, .faq-icon::after { transition: none; } .cookie-consent-enter-active, .cookie-consent-leave-active, .cookie-consent-enter-active .cookie-consent-modal, .cookie-consent-leave-active .cookie-consent-modal { transition: opacity .01ms; } .cookie-consent-enter-from .cookie-consent-modal, .cookie-consent-leave-to .cookie-consent-modal { transform: none; } }
 }

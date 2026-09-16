@@ -15,6 +15,13 @@ final class VehicleDescriptionSanitizer
             return '';
         }
 
+        if (preg_match('/<(?:p|div|h[1-6]|ul|ol|li|a|strong|em|br|blockquote|table|thead|tbody|tr|th|td)\b[^>]*>/i', $description) !== 1) {
+            return sprintf(
+                '<div class="vehicle-description-plain">%s</div>',
+                htmlspecialchars($description, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            );
+        }
+
         $config = (new HtmlSanitizerConfig)
             ->allowSafeElements()
             ->allowLinkSchemes(['https', 'http', 'mailto'])

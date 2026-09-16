@@ -24,7 +24,7 @@ final class RebuildVehicleInventoryCommand extends Command
         }
         $this->info('Scanning source directory...');
         try {
-            $manifest = $importer->inspect($source);
+            $manifest = $importer->inspect($source, requireSourceImages: false);
         } catch (Throwable $exception) {
             $this->error($exception->getMessage());
 

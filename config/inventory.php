@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'import_source' => env('VEHICLE_IMPORT_SOURCE'),
+    'import_source' => env('VEHICLE_IMPORT_SOURCE') ?: public_path('vehicles-source'),
     'image_quality' => 84,
     'prices' => [
         '2023 Porsche Panamera Turbo S' => 99999,

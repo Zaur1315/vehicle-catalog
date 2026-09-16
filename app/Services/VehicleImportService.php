@@ -20,7 +20,7 @@ final class VehicleImportService
     public function __construct(private readonly Filesystem $files, private readonly VehicleImageProcessor $imageProcessor) {}
 
     /** @return array{vehicles: list<array<string, mixed>>, unmatched_prices: list<string>, warnings: list<string>, image_count: int} */
-    public function inspect(string $source): array
+    public function inspect(string $source, bool $requireSourceImages = true): array
     {
         $source = rtrim($source, DIRECTORY_SEPARATOR);
         if (! $this->files->isDirectory($source) || ! is_readable($source)) {
@@ -69,7 +69,7 @@ final class VehicleImportService
             $slugs[$slug] = true;
 
             $images = $this->imageFiles($directory);
-            if ($images === []) {
+            if ($requireSourceImages && $images === []) {
                 throw new RuntimeException("No supported images found for {$directoryName}");
             }
 

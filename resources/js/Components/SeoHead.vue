@@ -27,13 +27,14 @@ const props = defineProps({
         type: [Object, Array],
         default: null,
     },
+    preloadImage: Boolean,
 });
 
 const page = usePage();
 
 const site = computed(() => page.props.site || {})
 
-const siteName = computed(() => site.value.name || 'Southern York Motors');
+const siteName = computed(() => site.value.name || 'Advantage Auto Sales');
 
 const fullTitle = computed(() => {
     return props.title === siteName.value ? siteName.value : `${props.title} | ${siteName.value}`;
@@ -84,6 +85,7 @@ const jsonLd = computed(() => {
 
 <template>
     <Head :title="fullTitle">
+        <link v-if="preloadImage && absoluteImage" rel="preload" as="image" :href="absoluteImage">
         <meta
             v-if="description"
             name="description"

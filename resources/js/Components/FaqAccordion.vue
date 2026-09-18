@@ -38,9 +38,9 @@ const id = useId();
                 :aria-labelledby="`${id}-faq-button-${index}`"
             >
                 <div class="faq-answer-inner">
-                <p class="max-w-2xl px-5 pb-7 pt-1 text-sm leading-8 text-text-muted sm:px-7">
-                    {{ item[1] }}
-                </p>
+                    <p class="max-w-2xl px-5 pb-7 pt-1 text-sm leading-8 text-text-muted sm:px-7">
+                        {{ item[1] }}
+                    </p>
                 </div>
             </div>
         </article>

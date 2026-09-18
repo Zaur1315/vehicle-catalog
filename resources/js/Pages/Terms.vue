@@ -25,10 +25,10 @@ const sections = [
 <template>
     <LegalPageLayout
         title="Terms of Use"
-        description="These terms explain the conditions that apply when you use the Southern York Motors website and its online features."
-        seo-title="Terms of Use | Southern York Motors"
-        seo-description="Review the Terms of Use that apply to the Southern York Motors website, vehicle listings, online forms and related website features."
-        last-updated="September 9, 2026"
+        description="These terms explain the conditions that apply when you use the Advantage Auto Sales website and its online features."
+        seo-title="Terms of Use | Advantage Auto Sales"
+        seo-description="Review the Terms of Use that apply to the Advantage Auto Sales website, vehicle listings, online forms and related website features."
+        last-updated="September 18, 2026"
         :sections="sections"
         contact-title="Questions about these terms?"
     >

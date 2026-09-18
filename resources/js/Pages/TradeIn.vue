@@ -1,6 +1,5 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import BrandImage from '@/Components/BrandImage.vue';
 import FaqAccordion from '@/Components/FaqAccordion.vue';
 import Icon from '@/Components/Icon.vue';
 import TradeInForm from '@/Components/TradeInForm.vue';
@@ -11,7 +10,7 @@ defineOptions({ layout: SiteLayout });
 const steps = [
     ['Tell us about your vehicle', 'Start with its year, make, model, mileage, and your contact information.'],
     ['Share the useful details', 'Describe its condition and history, and include the VIN if you have it nearby.'],
-    ['Let our team review it', 'Southern York Motors will review what you send and follow up for any missing context.'],
+    ['Let our team review it', 'Advantage Auto Sales will review what you send and follow up for any missing context.'],
     ['Discuss the next step', 'Continue the conversation around a vehicle in our inventory and a possible trade.'],
 ];
 const valueFactors = [
@@ -25,19 +24,19 @@ const faqs = [
     ['What information should I provide?', 'Year, make, model, mileage, condition, and contact details are the best starting point. A VIN and additional notes are helpful when available.'],
     ['Can I submit a vehicle with an existing loan?', 'You may tell us that a loan exists in the notes. Our team will need more information before discussing how it could affect a possible transaction.'],
     ['Is the online submission a final value or offer?', 'No. The form does not produce an estimate, appraisal, or offer. Vehicle information and actual condition must be reviewed before any value can be discussed.'],
-    ['What happens after I submit?', 'Southern York Motors receives the request and can contact you about the vehicle, missing details, and possible next steps.'],
+    ['What happens after I submit?', 'Advantage Auto Sales receives the request and can contact you about the vehicle, missing details, and possible next steps.'],
 ];
 </script>
 
 <template>
     <SeoHead
         title="Sell or Trade"
-        description="Tell Southern York Motors about the vehicle you may want to trade toward your next purchase in New Freedom, Pennsylvania."
-        image="/images/southern-york/trade-1280.webp"
+        description="Tell Advantage Auto Sales about a vehicle you may want to sell or trade in Uniontown, Pennsylvania."
+        image="/images/advantage/trade.webp"
     />
     <section class="site-container split-intro">
         <div class="split-intro-media lg:order-1">
-            <BrandImage name="trade" alt="A car key with a silver sedan softly in the background" eager />
+            <img :src="'/images/advantage/trade.webp'" alt="A blue pickup and silver SUV with Pennsylvania license plates at a local dealership" width="1280" height="853" fetchpriority="high" />
         </div>
         <div class="lg:order-2">
             <p class="eyebrow">Sell or trade</p>
@@ -104,7 +103,7 @@ const faqs = [
         </div>
     </section>
 
-    <section class="site-section bg-[#e9eddf]">
+    <section class="site-section bg-surface-muted">
         <div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
             <div><p class="eyebrow">Sell or trade questions</p><h2 class="heading-lg">A few things to know first.</h2></div>
             <FaqAccordion :items="faqs" />

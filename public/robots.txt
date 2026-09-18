@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 
-Sitemap: https://southernyorkmotors.com/sitemap.xml
+Sitemap: https://advantageautosales-pa.com/sitemap.xml

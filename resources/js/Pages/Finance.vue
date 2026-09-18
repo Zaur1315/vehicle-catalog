@@ -1,7 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import BrandImage from '@/Components/BrandImage.vue';
 import FaqAccordion from '@/Components/FaqAccordion.vue';
 import FinanceForm from '@/Components/FinanceForm.vue';
 import Icon from '@/Components/Icon.vue';
@@ -28,7 +27,7 @@ const faqs = [
     ['Can I submit a request before choosing a vehicle?', 'Yes. Tell us what type of vehicle you are looking for, or browse the current inventory first. Choosing a specific vehicle can make the follow-up conversation more focused.'],
     ['Can auto financing be discussed for a used vehicle?', 'Yes. The request on this page is designed for vehicles in our pre-owned inventory. Any available terms depend on the vehicle, applicant information, and a separate review.'],
     ['Can I include a vehicle I may want to trade?', 'Yes. Mention it in your request, then use the Sell or Trade page to share the vehicle details our team will need for a useful follow-up.'],
-    ['What happens after I submit the form?', 'Southern York Motors receives your preliminary request and can contact you about the vehicle, your questions, and any additional steps that may apply.'],
+    ['What happens after I submit the form?', 'Advantage Auto Sales receives your preliminary request and can contact you about the vehicle, your questions, and any additional steps that may apply.'],
     ['Does submitting a request guarantee approval?', 'No. This form is not a credit application, approval, rate quote, or financing commitment. Any separate credit process will be explained before you proceed.'],
 ];
 </script>
@@ -37,7 +36,7 @@ const faqs = [
     <SeoHead
         title="Auto Financing"
         :description="'Explore auto financing for a pre-owned vehicle with ' + site.name + ' in ' + site.city + ', Pennsylvania. Learn what to expect and start a preliminary request.'"
-        image="/images/southern-york/interior-1280.webp"
+        image="/images/advantage/financing.webp"
     />
     <section class="site-container split-intro">
         <div>
@@ -55,7 +54,7 @@ const faqs = [
             <p class="!text-xs">A preliminary request, not a credit application or approval.</p>
         </div>
         <div class="split-intro-media">
-            <BrandImage name="interior" alt="Warm leather seats and a sunlit vehicle interior" eager />
+            <img :src="'/images/advantage/financing.webp'" alt="A clean late-model vehicle interior with a complete branded steering wheel" width="1280" height="853" fetchpriority="high" />
         </div>
     </section>
 
@@ -106,7 +105,7 @@ const faqs = [
         </div>
     </section>
 
-    <section class="site-section bg-[#e9eddf]">
+    <section class="site-section bg-surface-muted">
         <div class="site-container grid gap-12 lg:grid-cols-[.8fr_1.2fr]">
             <div>
                 <p class="eyebrow">Questions about auto financing</p>

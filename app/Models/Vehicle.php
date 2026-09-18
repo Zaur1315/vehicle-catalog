@@ -117,8 +117,10 @@ final class Vehicle extends Model
             return $this->main_image;
         }
 
-        if (str_starts_with($this->main_image, 'images/')) {
-            return asset($this->main_image);
+        $publicPath = $this->publicImagePath($this->main_image);
+
+        if ($publicPath !== null) {
+            return asset($publicPath);
         }
 
         return asset('storage/'.ltrim($this->main_image, '/'));
@@ -131,6 +133,14 @@ final class Vehicle extends Model
         }
 
         $thumbPath = str_replace('/large/', '/thumb/', $this->main_image);
+
+        if (($publicPath = $this->publicImagePath($thumbPath)) !== null) {
+            return asset($publicPath);
+        }
+
+        if (($publicPath = $this->publicImagePath($this->main_image)) !== null) {
+            return asset($publicPath);
+        }
 
         if (Storage::disk('public')->exists($thumbPath)) {
             return Storage::url($thumbPath);
@@ -147,10 +157,26 @@ final class Vehicle extends Model
 
         $mediumPath = str_replace('/large/', '/medium/', $this->main_image);
 
+        if (($publicPath = $this->publicImagePath($mediumPath)) !== null) {
+            return asset($publicPath);
+        }
+
+        if (($publicPath = $this->publicImagePath($this->main_image)) !== null) {
+            return asset($publicPath);
+        }
+
         if (Storage::disk('public')->exists($mediumPath)) {
             return Storage::url($mediumPath);
         }
 
         return Storage::url($this->main_image);
+    }
+
+    private function publicImagePath(string $path): ?string
+    {
+        $path = ltrim($path, '/');
+        $candidate = str_starts_with($path, 'images/') ? $path : 'images/'.$path;
+
+        return is_file(public_path($candidate)) ? $candidate : null;
     }
 }

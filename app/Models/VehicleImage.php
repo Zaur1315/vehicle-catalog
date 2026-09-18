@@ -38,8 +38,11 @@ final class VehicleImage extends Model
             return $this->path;
         }
 
-        if (str_starts_with($this->path, 'images/')) {
-            return asset($this->path);
+        $path = ltrim($this->path, '/');
+        $publicPath = str_starts_with($path, 'images/') ? $path : 'images/'.$path;
+
+        if (is_file(public_path($publicPath))) {
+            return asset($publicPath);
         }
 
         return asset('storage/'.ltrim($this->path, '/'));

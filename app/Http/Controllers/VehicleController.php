@@ -41,6 +41,11 @@ final class VehicleController extends Controller
                 'price' => $relatedVehicle->formatted_price,
                 'mileage' => $relatedVehicle->formatted_mileage,
                 'image' => $relatedVehicle->main_image_url,
+                'make' => $relatedVehicle->make?->name,
+                'model' => $relatedVehicle->vehicleModel?->name,
+                'body_type' => $relatedVehicle->body_type,
+                'transmission' => $relatedVehicle->transmission,
+                'drivetrain' => $relatedVehicle->drivetrain,
             ]);
 
         return Inertia::render('Inventory/Show', [

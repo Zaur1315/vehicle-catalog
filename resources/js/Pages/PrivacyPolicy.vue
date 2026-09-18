@@ -23,10 +23,10 @@ const sections = [
 <template>
     <LegalPageLayout
         title="Privacy Policy"
-        description="Learn how Southern York Motors handles information submitted through this website and the services used to operate it."
-        seo-title="Privacy Policy | Southern York Motors"
-        seo-description="Read the Privacy Policy for Southern York Motors and learn how information submitted through southernyorkmotors.com may be collected, used and handled."
-        last-updated="September 9, 2026"
+        description="Learn how Advantage Auto Sales handles information submitted through this website and the services used to operate it."
+        seo-title="Privacy Policy | Advantage Auto Sales"
+        seo-description="Read the Privacy Policy for Advantage Auto Sales and learn how information submitted through advantageautosales-pa.com may be collected, used and handled."
+        last-updated="September 18, 2026"
         :sections="sections"
         contact-title="Privacy questions?"
     >

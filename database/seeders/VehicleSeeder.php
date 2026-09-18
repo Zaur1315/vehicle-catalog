@@ -32,7 +32,7 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => '4T1G11AK1MU000001',
                 'stock_number' => 'A1001',
-                'image_count' => 4,
+                'image_count' => 2,
                 'features' => [
                     'Backup camera',
                     'Bluetooth',
@@ -58,7 +58,7 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Gray',
                 'vin' => '1FTEW1E45LFA00002',
                 'stock_number' => 'A1002',
-                'image_count' => 4,
+                'image_count' => 2,
                 'features' => [
                     'Tow package',
                     'Backup camera',
@@ -84,7 +84,7 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Cognac',
                 'vin' => '5UXCR6C05N9000003',
                 'stock_number' => 'A1003',
-                'image_count' => 3,
+                'image_count' => 2,
                 'features' => [
                     'Navigation',
                     'Panoramic roof',
@@ -110,7 +110,7 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => 'W1KWF8DB1MR000004',
                 'stock_number' => 'A1004',
-                'image_count' => 3,
+                'image_count' => 2,
                 'features' => [
                     'Blind spot monitor',
                     'Sunroof',
@@ -136,7 +136,7 @@ final class VehicleSeeder extends Seeder
                 'interior_color' => 'Black',
                 'vin' => '1GNSKBKC9KR000005',
                 'stock_number' => 'A1005',
-                'image_count' => 6,
+                'image_count' => 2,
                 'features' => [
                     'Third row seating',
                     'Tow package',
@@ -174,7 +174,7 @@ final class VehicleSeeder extends Seeder
                 $data['trim'],
             );
 
-            $slug = Str::slug($name . '-' . $data['stock_number']);
+            $slug = Str::slug($name.'-'.$data['stock_number']);
             $mainImagePath = $this->imagePath($slug, 'large', 'main');
 
             /** @var Vehicle $vehicle */
@@ -199,15 +199,15 @@ final class VehicleSeeder extends Seeder
                     'exterior_color' => $data['exterior_color'],
                     'interior_color' => $data['interior_color'],
                     'short_description' => sprintf(
-                        'Clean used %s with verified inventory details and dealer inspection.',
+                        'View photos and available details for this used %s.',
                         $name,
                     ),
                     'description' => sprintf(
-                        '<p>This %s has been prepared for sale and is available from Marick Auto Sales in Meriden, CT.</p><p>Contact our sales team for current availability, pricing confirmation, delivery options, warranty details, finance questions, and trade-in review.</p>',
+                        '<p>Explore the available details for this %s and contact Advantage Auto Sales with questions.</p><p>Call our Uniontown team to confirm current availability and discuss the next step.</p>',
                         e($name),
                     ),
                     'features' => array_map(
-                        static fn(string $label): array => ['label' => $label],
+                        static fn (string $label): array => ['label' => $label],
                         $data['features'],
                     ),
                     'main_image' => $mainImagePath,
@@ -215,8 +215,8 @@ final class VehicleSeeder extends Seeder
                     'is_featured' => true,
                     'is_active' => true,
                     'published_at' => now(),
-                    'seo_title' => $name . ' for Sale in Meriden, CT',
-                    'seo_description' => $name . ' available from Marick Auto Sales in Meriden, CT. View price, mileage, photos, delivery, warranty, finance, and trade-in details.',
+                    'seo_title' => $name.' for Sale in Uniontown, PA',
+                    'seo_description' => $name.' available from Advantage Auto Sales in Uniontown, PA. View price, mileage, photos, and vehicle details.',
                 ],
             );
 
@@ -224,7 +224,7 @@ final class VehicleSeeder extends Seeder
                 vehicle: $vehicle,
                 slug: $slug,
                 name: $name,
-                imageCount: (int)$data['image_count'],
+                imageCount: (int) $data['image_count'],
             );
         }
     }
@@ -236,7 +236,7 @@ final class VehicleSeeder extends Seeder
         VehicleImage::query()->create([
             'vehicle_id' => $vehicle->id,
             'path' => $this->imagePath($slug, 'large', 'main'),
-            'alt' => $name . ' main photo',
+            'alt' => $name.' main photo',
             'sort_order' => 0,
             'is_main' => true,
         ]);
@@ -244,7 +244,7 @@ final class VehicleSeeder extends Seeder
         for ($index = 1; $index <= $imageCount; $index++) {
             VehicleImage::query()->create([
                 'vehicle_id' => $vehicle->id,
-                'path' => $this->imagePath($slug, 'large', str_pad((string)$index, 2, '0', STR_PAD_LEFT)),
+                'path' => $this->imagePath($slug, 'large', str_pad((string) $index, 2, '0', STR_PAD_LEFT)),
                 'alt' => sprintf('%s photo %d', $name, $index),
                 'sort_order' => $index,
                 'is_main' => false,
@@ -254,6 +254,6 @@ final class VehicleSeeder extends Seeder
 
     private function imagePath(string $slug, string $size, string $name): string
     {
-        return sprintf('vehicles/%s/%s/%s.webp', $slug, $size, $name);
+        return sprintf('images/vehicles/%s/%s/%s.webp', $slug, $size, $name);
     }
 }

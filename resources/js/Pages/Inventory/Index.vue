@@ -2,15 +2,10 @@
 import { Link, router } from '@inertiajs/vue3';
 import {
     computed,
-    onBeforeUnmount,
-    onMounted,
     reactive,
-    ref,
     watch,
 } from 'vue';
-import Icon from '@/Components/Icon.vue';
 import InventoryFilters from '@/Components/InventoryFilters.vue';
-import SiteDialog from '@/Components/SiteDialog.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
 import VehicleCard from '@/Components/VehicleCard.vue';
@@ -21,7 +16,6 @@ const props = defineProps({
     filters: { type: Object, default: () => ({}) },
     filterOptions: { type: Object, default: () => ({}) },
 });
-const filtersOpen = ref(false);
 const form = reactive({
     make: props.filters.make || '',
     model: props.filters.model || '',
@@ -74,7 +68,6 @@ const apply = () => {
     Object.entries(form).forEach(([key, value]) => {
         if (value !== '' && value !== null) query[key] = value;
     });
-    filtersOpen.value = false;
     router.get('/inventory', query, {
         preserveState: true,
         preserveScroll: true,
@@ -85,7 +78,6 @@ const reset = () => {
     Object.keys(form).forEach((key) => {
         form[key] = key === 'sort' ? 'newest' : '';
     });
-    filtersOpen.value = false;
     router.get(
         '/inventory',
         {},
@@ -107,13 +99,13 @@ watch(
 </script>
 <template>
     <SeoHead
-        title="Find your next vehicle"
-        description="Explore available pre-owned cars, trucks and SUVs at Southern York Motors in New Freedom, PA. Filter by the details that matter to you."
+        title="Used Vehicle Inventory"
+        description="Browse available used cars, trucks, and SUVs at Advantage Auto Sales in Uniontown, PA. Filter inventory by the details that matter to you."
     />
     <section class="site-container pb-16 pt-12">
-        <p class="eyebrow">The Southern York selection</p>
+        <p class="eyebrow">Advantage Auto Sales inventory</p>
         <div class="mb-9 mt-4 flex flex-wrap items-end justify-between gap-5">
-            <h1 class="page-title">Find your kind of drive.</h1>
+            <h1 class="page-title">Find the right vehicle.</h1>
             <p class="text-sm text-text-muted">
                 {{ vehicles.total }} vehicle{{
                     vehicles.total === 1 ? '' : 's'
@@ -122,16 +114,7 @@ watch(
             </p>
         </div>
         <div class="inventory-toolbar">
-            <button class="btn-secondary lg:hidden" @click="filtersOpen = true">
-                <Icon name="sliders" />
-                Filters
-                {{
-                    activeFilters.length ? '(' + activeFilters.length + ')' : ''
-                }}
-            </button>
-            <p class="hidden text-sm text-text-muted lg:block">
-                A closer look starts with the details.
-            </p>
+            <p class="text-sm text-text-muted">Filter the inventory, then sort the results.</p>
             <label
                 class="flex flex-wrap items-center gap-3 text-xs font-semibold"
             >
@@ -151,18 +134,14 @@ watch(
                 </select>
             </label>
         </div>
-        <div class="grid items-start gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-            <aside class="filter-panel hidden lg:block">
-                <h2 class="mb-6 text-lg font-semibold">Narrow your search</h2>
-                <InventoryFilters
-                    :form="form"
-                    :options="filterOptions"
-                    :models="models"
-                    @apply="apply"
-                    @reset="reset"
-                />
-            </aside>
-            <div class="min-w-0">
+        <InventoryFilters
+            :form="form"
+            :options="filterOptions"
+            :models="models"
+            @apply="apply"
+            @reset="reset"
+        />
+        <div class="min-w-0">
                 <div
                     v-if="activeFilters.length"
                     class="mb-6 flex flex-wrap gap-2"
@@ -179,7 +158,7 @@ watch(
                 </div>
                 <div
                     v-if="vehicles.data.length"
-                    class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"
+                    class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
                 >
                     <VehicleCard
                         v-for="vehicle in vehicles.data"
@@ -225,21 +204,6 @@ watch(
                         v-html="link.label"
                     />
                 </nav>
-            </div>
         </div>
     </section>
-    <SiteDialog
-        :open="filtersOpen"
-        title="Find your fit"
-        drawer
-        @close="filtersOpen = false"
-    >
-        <InventoryFilters
-            :form="form"
-            :options="filterOptions"
-            :models="models"
-            @apply="apply"
-            @reset="reset"
-        />
-    </SiteDialog>
 </template>

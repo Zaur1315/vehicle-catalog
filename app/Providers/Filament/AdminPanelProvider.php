@@ -28,8 +28,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->brandName('Advantage Auto Sales')
+            ->brandLogo(asset('images/brand/advantage-logo-dark.svg'))
+            ->darkModeBrandLogo(asset('images/brand/advantage-logo-light.svg'))
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Orange,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

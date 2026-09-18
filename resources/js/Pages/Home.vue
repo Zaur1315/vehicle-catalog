@@ -1,7 +1,6 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import BrandImage from '@/Components/BrandImage.vue';
 import VehicleCard from '@/Components/VehicleCard.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import Icon from '@/Components/Icon.vue';
@@ -16,7 +15,8 @@ const schema = computed(() => ({
     name: site.value.name,
     telephone: site.value.phone_tel,
     email: site.value.email,
-    url: 'https://' + site.value.domain,
+    url: `https://${site.value.domain}`,
+    image: `https://${site.value.domain}/images/advantage/home-hero-v2.webp`,
     address: {
         '@type': 'PostalAddress',
         streetAddress: site.value.street_address,
@@ -27,232 +27,70 @@ const schema = computed(() => ({
     },
 }));
 </script>
+
 <template>
-    <SeoHead
-        :title="'Used vehicles in ' + site.city + ', ' + site.state"
-        :description="
-            'Discover pre-owned vehicles at ' +
-            site.name +
-            '. Browse current inventory, explore auto financing, or tell us about the vehicle you may want to trade.'
-        "
-        image="/images/southern-york/road-1280.webp"
-        :schema="schema"
-    />
-    <section class="home-hero site-container">
-        <div class="home-hero-copy">
-            <p class="eyebrow">Southern York County, Pennsylvania</p>
-            <h1>
-                A new chapter.
-                <br />
-                A better
-                <em>drive.</em>
-            </h1>
-            <p>
-                For the everyday miles and the places you haven't been. Find a
-                pre-owned vehicle that feels right for what comes next.
-            </p>
-            <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
-                <Link href="/inventory" class="btn-primary">
-                    Explore the inventory
-                    <Icon name="arrow-right" />
-                </Link>
-                <Link href="/about" class="btn-ghost">
-                    Why Southern York
-                </Link>
+    <SeoHead title="Used Cars in Uniontown, PA" description="Explore available used cars, trucks, and SUVs at Advantage Auto Sales in Uniontown, Pennsylvania. View inventory details and contact our team when you are ready." image="/images/advantage/home-hero-v2.webp" preload-image :schema="schema" />
+    <section class="adv-hero">
+        <div class="site-container adv-hero-grid">
+            <div class="adv-hero-copy">
+                <p class="eyebrow">Advantage Auto Sales · Uniontown, PA</p>
+                <h1>Find the right car.<br /><span>Drive with confidence.</span></h1>
+                <p>Explore available vehicles, compare the details that matter, and talk directly with our Uniontown team when you are ready for the next step.</p>
+                <div class="hero-actions">
+                    <Link href="/inventory" class="btn-primary">Browse Inventory <Icon name="arrow-right" /></Link>
+                    <Link href="/contact" class="text-link">Contact Our Team <Icon name="arrow-right" /></Link>
+                </div>
+                <div class="hero-meta">
+                    <div><small>Located in</small><strong>Uniontown, Pennsylvania</strong></div>
+                    <div><small>Questions?</small><a :href="`tel:${site.phone_tel}`">{{ site.phone }}</a></div>
+                </div>
             </div>
-            <div class="hero-location">
-                <Icon name="pin" />
-                <span>
-                    Your local dealership in {{ site.city }}, {{ site.state }}
-                </span>
-            </div>
-        </div>
-        <div class="home-hero-media">
-            <BrandImage
-                name="road"
-                alt="A graphite crossover beside rolling Pennsylvania countryside"
-                eager
-            />
-            <div class="hero-image-caption">
-                <span>Southern York Motors</span>
-                <span>Made for the road ahead ↗</span>
+            <div class="adv-hero-media">
+                <img :src="'/images/advantage/home-hero-v2.webp'" alt="Bronze crossover displayed in an open-air automotive pavilion in Pennsylvania" width="1536" height="1024" fetchpriority="high" />
             </div>
         </div>
     </section>
-    <section class="path-strip">
-        <div class="site-container grid md:grid-cols-3">
-            <Link
-                v-for="item in [
-                    [
-                        '01',
-                        'Find your fit',
-                        'Browse available vehicles',
-                        '/inventory',
-                    ],
-                    [
-                        '02',
-                        'Explore your options',
-                        'Visit Auto Financing',
-                        '/finance',
-                    ],
-                    [
-                        '03',
-                        'Bring your current vehicle',
-                        'Start a sell or trade request',
-                        '/trade-in',
-                    ],
-                ]"
-                :key="item[0]"
-                :href="item[3]"
-                class="path-link"
-            >
-                <span class="path-number">{{ item[0] }}</span>
-                <span>
-                    <strong>{{ item[1] }}</strong>
-                    <small>{{ item[2] }}</small>
-                </span>
-                <Icon name="arrow-right" />
-            </Link>
+    <section class="action-rail">
+        <div class="site-container">
+            <Link href="/inventory"><span>01</span><div><strong>Browse the lot</strong><small>See current inventory</small></div><Icon name="arrow-right" /></Link>
+            <Link href="/finance"><span>02</span><div><strong>Discuss options</strong><small>Start a financing request</small></div><Icon name="arrow-right" /></Link>
+            <Link href="/trade-in"><span>03</span><div><strong>Have a vehicle?</strong><small>Tell us about it</small></div><Icon name="arrow-right" /></Link>
         </div>
     </section>
     <section class="site-section site-container">
-        <div class="section-header">
-            <div>
-                <p class="eyebrow">On the lot</p>
-                <h2 class="heading-lg">Meet your next possibility.</h2>
-            </div>
-            <Link href="/inventory" class="btn-ghost">
-                View all inventory
-                <Icon name="arrow-right" />
-            </Link>
+        <div class="section-header editorial-header">
+            <div><p class="eyebrow">Available now</p><h2 class="heading-lg">Vehicles worth a closer look.</h2></div>
+            <p>Real inventory, useful details, and a direct way to ask questions before you make the drive.</p>
         </div>
-        <div
-            v-if="featuredVehicles.length"
-            class="grid gap-x-7 gap-y-10 md:grid-cols-2 xl:grid-cols-3"
-        >
-            <VehicleCard
-                v-for="vehicle in featuredVehicles"
-                :key="vehicle.id"
-                :vehicle="vehicle"
-            />
+        <div v-if="featuredVehicles.length" class="vehicle-grid">
+            <VehicleCard v-for="vehicle in featuredVehicles" :key="vehicle.id" :vehicle="vehicle" />
         </div>
-        <div v-else class="empty-state">
-            <h3 class="text-2xl">Let's find out what's available.</h3>
-            <p>
-                Our selection changes. Browse the full inventory or call our
-                team for the latest details.
-            </p>
-            <Link href="/inventory" class="btn-primary">Browse inventory</Link>
-        </div>
+        <div v-else class="empty-state"><p class="eyebrow">Inventory update</p><h3>New vehicles are being added.</h3><p>Contact our team for the latest availability.</p><Link href="/contact" class="btn-primary">Contact Us</Link></div>
+        <div class="section-footer-link"><Link href="/inventory" class="text-link">View all inventory <Icon name="arrow-right" /></Link></div>
     </section>
-    <Reveal tag="section" class="home-principles">
-        <div class="site-container grid gap-12 lg:grid-cols-[1fr_1.1fr]">
-            <div>
-                <p class="eyebrow">Shop with confidence</p>
-                <h2 class="heading-lg">A clearer way to move forward.</h2>
-                <p class="mt-6 max-w-md leading-8">
-                    Start online, look closely at the vehicles that interest
-                    you, and reach a real person when you are ready. We keep
-                    each next step easy to understand.
-                </p>
-                <Link href="/about" class="btn-light mt-8">
-                    Why Southern York
-                    <Icon name="arrow-right" />
-                </Link>
-            </div>
-            <div>
-                <article
-                    v-for="item in [
-                        [
-                            'Straightforward shopping',
-                            'Vehicle photos, listed prices, mileage and specifications give you useful information before you visit.',
-                        ],
-                        [
-                            'Real support',
-                            'Ask about availability, auto financing, or your current vehicle by phone or message before making the trip.',
-                        ],
-                        [
-                            'Flexible next steps',
-                            'Browse first, start a preliminary financing request, or tell us about a vehicle you may want to trade.',
-                        ],
-                        [
-                            'Local convenience',
-                            'Visit us in New Freedom, within reach of drivers across Southern York County and nearby Maryland communities.',
-                        ],
-                    ]"
-                    :key="item[0]"
-                    class="principle"
-                >
-                    <h3>{{ item[0] }}</h3>
-                    <p>{{ item[1] }}</p>
-                </article>
-            </div>
+    <Reveal tag="section" class="advantage-story">
+        <div class="site-container story-grid">
+            <div><p class="eyebrow">The Advantage approach</p><h2>A clear path from browsing to a real conversation.</h2></div>
+            <div class="story-copy"><p>Start online. Look closely at the vehicles that fit. Reach a real person when a listing deserves your attention.</p><Link href="/about" class="text-link light">How we help <Icon name="arrow-right" /></Link></div>
+        </div>
+        <div class="site-container principles-row">
+            <article><span>01</span><h3>Useful details first</h3><p>Review photos, mileage, price, and available specifications before you visit.</p></article>
+            <article><span>02</span><h3>Direct communication</h3><p>Call or send a message about a vehicle, financing, or a possible trade.</p></article>
+            <article><span>03</span><h3>Local and accessible</h3><p>Find us on National Pike in Uniontown, Pennsylvania.</p></article>
         </div>
     </Reveal>
     <Reveal tag="section" class="site-section site-container">
-        <div class="process-heading">
-            <div>
-                <p class="eyebrow">How buying a vehicle works</p>
-                <h2 class="heading-lg">
-                    A simple way to find your next vehicle.
-                </h2>
+        <div class="split-callout">
+            <div class="split-callout-image"><img :src="'/images/advantage/home-road.webp'" alt="A silver crossover on a road through southwestern Pennsylvania" width="1280" height="853" loading="lazy" /></div>
+            <div class="split-callout-copy">
+                <p class="eyebrow">Your next step, your choice</p>
+                <h2>Shop at your own pace.</h2>
+                <p>Browse what is available, ask a focused question, or stop by after confirming the vehicle you want to see.</p>
+                <ul><li><span>01</span><Link href="/inventory">Compare available vehicles</Link></li><li><span>02</span><Link href="/finance">Talk about purchase options</Link></li><li><span>03</span><Link href="/trade-in">Discuss your current vehicle</Link></li></ul>
             </div>
-            <p>
-                Use the site to narrow the search, then bring us into the
-                conversation when you want details or help with the next step.
-            </p>
-        </div>
-        <ol class="numbered-process mt-10">
-            <li v-for="step in [
-                ['Explore inventory', 'See what is currently available and narrow the list around your needs.'],
-                ['Find the right fit', 'Review photos, mileage, features, pricing, and vehicle details.'],
-                ['Talk with our team', 'Ask about a vehicle and discuss auto financing or a possible trade.'],
-                ['Take the next step', 'Contact Southern York Motors to continue the purchase conversation.'],
-            ]" :key="step[0]">
-                <span aria-hidden="true"></span>
-                <h3>{{ step[0] }}</h3>
-                <p>{{ step[1] }}</p>
-            </li>
-        </ol>
-    </Reveal>
-    <Reveal tag="section" class="site-section home-services">
-        <div class="site-container">
-        <div class="section-header">
-            <div>
-                <p class="eyebrow">More than inventory</p>
-                <h2 class="heading-lg">Choose where to begin.</h2>
-            </div>
-            <p class="body-muted max-w-md">
-                Every shopper arrives at a different point. Start with the part
-                of the process that matters to you now.
-            </p>
-        </div>
-        <div class="service-paths">
-            <article v-for="item in [
-                ['Find your vehicle', 'Compare the pre-owned vehicles currently on the lot.', '/inventory', 'Browse Inventory'],
-                ['Explore auto financing', 'Send a preliminary request and start a conversation about possible next steps.', '/finance', 'Auto Financing'],
-                ['Sell or trade your car', 'Share the basics about your current vehicle so our team can follow up.', '/trade-in', 'Sell or Trade'],
-            ]" :key="item[0]" class="service-path">
-                <Icon name="arrow-right" />
-                <h3>{{ item[0] }}</h3>
-                <p>{{ item[1] }}</p>
-                <Link :href="item[2]" class="btn-ghost">{{ item[3] }}</Link>
-            </article>
-        </div>
         </div>
     </Reveal>
-    <Reveal tag="section" class="local-callout">
-        <div class="site-container grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-            <div>
-                <p class="eyebrow">Serving drivers around Southern Pennsylvania</p>
-                <h2 class="heading-lg">Local to New Freedom.</h2>
-                <p class="mt-5 max-w-2xl leading-8 text-white/75">
-                    Southern York Motors is located on Susquehanna Trail South,
-                    convenient for shoppers in Southern York County, across York
-                    County, and in nearby northern Maryland communities.
-                </p>
-            </div>
-            <Link href="/contact" class="btn-light">Plan your visit</Link>
-        </div>
-    </Reveal>
+    <section class="home-contact-band">
+        <div class="site-container"><div><p class="eyebrow">Ready when you are</p><h2>Let’s talk about the vehicle you have in mind.</h2></div><div><a :href="`tel:${site.phone_tel}`" class="btn-accent">Call {{ site.phone }}</a><Link href="/contact" class="text-link light">Send a message <Icon name="arrow-right" /></Link></div></div>
+    </section>
 </template>

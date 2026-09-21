@@ -60,6 +60,7 @@ const handleKeydown = (event) => {
 const handleScroll = () => {
     isScrolled.value = window.scrollY > 24;
 };
+const openCookieSettings = () => window.dispatchEvent(new CustomEvent('open-cookie-settings'));
 
 watch(mobileMenuOpen, (open) => {
     document.body.style.overflow = open ? 'hidden' : '';
@@ -75,17 +76,24 @@ watch(() => [successFlash.value, errorFlash.value], () => {
     }, 5000);
 }, {immediate: true});
 const hasMarketingConsent = () => typeof window !== 'undefined' && document.cookie.split('; ').some((item) => item === 'cookie_marketing_consent=1');
-watch(() => page.props.flash?.meta_event, (event) => {
-    if (!event || typeof window === 'undefined' || typeof window.fbq !== 'function' || !hasMarketingConsent() || event.event_name !== 'Lead') return;
+const sentMetaEventIds = new Set();
+const sendMetaLead = (event) => {
+    if (!event || typeof window === 'undefined' || typeof window.fbq !== 'function' || window.__delmarMetaPixelId !== page.props.tracking?.meta_pixel_id || !hasMarketingConsent() || event.event_name !== 'Lead') return;
+    if (sentMetaEventIds.has(event.event_id)) return;
+    sentMetaEventIds.add(event.event_id);
     window.fbq('track', 'Lead', {
         form_type: event.form_type,
         lead_type: event.form_type,
         content_category: event.form_type
     }, {eventID: event.event_id});
-}, {immediate: true});
+};
+const handleMetaPixelReady = () => sendMetaLead(page.props.flash?.meta_event);
+if (typeof window !== 'undefined') window.addEventListener('meta-pixel-ready', handleMetaPixelReady);
+watch(() => page.props.flash?.meta_event, sendMetaLead, {immediate: true});
 onBeforeUnmount(() => {
     document.body.style.overflow = '';
     clearTimeout(flashTimeout);
+    window.removeEventListener('meta-pixel-ready', handleMetaPixelReady);
 });
 onMounted(() => {
     handleScroll();
@@ -222,6 +230,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', handleScroll));
                     <div class="flex gap-5">
                         <Link href="/privacy-policy">Privacy Policy</Link>
                         <Link href="/terms">Terms of Use</Link>
+                        <button type="button" class="transition hover:text-white" @click="openCookieSettings">Cookie Settings</button>
                         <a href="/sitemap.xml">Sitemap</a></div>
                 </div>
             </div>

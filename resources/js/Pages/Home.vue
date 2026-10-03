@@ -6,6 +6,7 @@ import Icon from '@/Components/Icon.vue';
 import Reveal from '@/Components/Reveal.vue';
 import SeoHead from '@/Components/SeoHead.vue';
 import SiteLayout from '@/Layouts/SiteLayout.vue';
+import TeamSection from '@/Components/TeamSection.vue';
 import VehicleCard from '@/Components/VehicleCard.vue';
 
 defineOptions({ layout: SiteLayout });
@@ -35,6 +36,8 @@ const schema = computed(() => ({ '@context': 'https://schema.org', '@type': 'Aut
     <section class="site-section"><div class="site-container"><div class="section-header"><div><p class="eyebrow">Fresh on the lot</p><h2 class="mt-4 heading-lg">Vehicles worth a closer look.</h2><p class="mt-5 max-w-xl text-text-muted">Review real photos, specifications, mileage, and pricing from our current inventory.</p></div><Link href="/inventory" class="btn-secondary">View all vehicles <Icon name="arrow-right" /></Link></div><div v-if="featuredVehicles.length" class="grid gap-5 md:grid-cols-2 xl:grid-cols-3"><Reveal v-for="(vehicle, index) in featuredVehicles.slice(0, 6)" :key="vehicle.id" :style="{ '--reveal-delay': `${Math.min(index, 4) * 70}ms` }"><VehicleCard :vehicle="vehicle" /></Reveal></div><div v-else class="border-l-4 border-brand bg-white p-8"><h2 class="text-2xl font-bold">Inventory is being updated.</h2><p class="mt-3 text-text-muted">Call {{ site.name }} for current availability.</p><a :href="`tel:${site.phone_tel}`" class="btn-primary mt-6"><Icon name="phone" />Call {{ site.phone }}</a></div></div></section>
 
     <section class="bg-ink text-white"><div class="site-container grid gap-10 py-16 lg:grid-cols-[.75fr_1.25fr] lg:py-24"><div><p class="delmar-kicker">Why Delmar</p><h2 class="mt-5 heading-lg">A more direct way to shop for your next vehicle.</h2></div><div class="grid gap-8 sm:grid-cols-2"><article v-for="item in [['Local', 'A local dealership in Salisbury, Maryland.'], ['Straightforward', 'Clear details and an easy way to ask useful questions.'], ['Current inventory', 'Start online with vehicles available to review now.'], ['Personal assistance', 'Call, message, or visit when you are ready for the next step.']]" :key="item[0]" class="border-t border-white/20 pt-5"><h3 class="text-xl font-bold">{{ item[0] }}</h3><p class="mt-3 leading-7 text-white/60">{{ item[1] }}</p></article></div></div></section>
+
+    <TeamSection :members="site.team" />
 
     <section class="site-section bg-white"><div class="site-container"><div class="max-w-2xl"><p class="eyebrow">The process</p><h2 class="mt-4 heading-lg">A simpler way to find your next car.</h2></div><div class="mt-12 grid border-y border-border md:grid-cols-4"><article v-for="item in [['01', 'Browse', 'Explore our current inventory.'], ['02', 'Choose', 'Review the vehicle details and photos.'], ['03', 'Connect', 'Ask about availability, financing, or trade-in.'], ['04', 'Visit', 'Come see us in Salisbury when you are ready.']]" :key="item[0]" class="border-b border-border py-7 md:border-b-0 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"><span class="text-sm font-bold text-brand">{{ item[0] }}</span><h3 class="mt-5 text-2xl font-bold">{{ item[1] }}</h3><p class="mt-3 leading-7 text-text-muted">{{ item[2] }}</p></article></div></div></section>
 

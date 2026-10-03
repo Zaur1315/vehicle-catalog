@@ -61,6 +61,7 @@ class HandleInertiaRequests extends Middleware
                 'country' => config('site.country'),
                 'business_hours' => config('site.business_hours'),
                 'logo' => config('site.logo'),
+                'team' => config('site.team'),
             ],
 
             'tracking' => [

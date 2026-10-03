@@ -115,6 +115,23 @@
     .about-local-section, .about-cta-section { @apply bg-ink-deep; }
     .about-contact-panel { @apply rounded-[var(--radius-card)] border border-border bg-white p-6 sm:p-8; }
     @media (max-width: 639px) { .about-hero { min-height: 680px; } .about-hero-image { object-position: 68% center; } .about-hero-overlay { background: linear-gradient(90deg,rgba(10,12,15,.94),rgba(10,12,15,.7)),linear-gradient(180deg,rgba(10,12,15,.12),rgba(10,12,15,.7)); } }
+    .team-section { @apply overflow-hidden bg-surface-muted py-16 sm:py-20 lg:py-28; }
+    .team-heading { @apply mb-10 grid gap-6 border-b border-border pb-7 lg:grid-cols-[1fr_.7fr] lg:items-end; }
+    .team-heading h2 span { @apply text-brand; }
+    .team-grid { @apply grid gap-5 md:grid-cols-3; }
+    .team-card { @apply overflow-hidden rounded-[var(--radius-card)] border border-border bg-white transition duration-300 hover:-translate-y-1 hover:border-brand hover:shadow-[0_18px_45px_rgba(16,19,24,.12)]; }
+    .team-card-media { @apply relative aspect-[4/5] overflow-hidden bg-ink; }
+    .team-card-media::after { content: ''; @apply pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(10,12,15,.42)_100%)]; }
+    .team-card-media img { @apply h-full w-full object-cover transition duration-700 ease-out; }
+    .team-card:hover .team-card-media img { @apply scale-[1.02]; }
+    .team-card-number { @apply absolute bottom-4 right-4 z-10 font-display text-sm font-bold text-white/75; }
+    .team-card-body { @apply relative border-t-4 border-brand px-6 py-6 text-center; }
+    .team-card-body::before { content: ''; @apply absolute left-1/2 top-[-4px] h-1 w-14 -translate-x-1/2 bg-ink; }
+    .team-card-body h3 { @apply text-2xl font-bold tracking-[-.035em]; }
+    .team-card-body p { @apply mt-2 text-xs font-bold uppercase tracking-[.18em] text-brand; }
+    .team-cta { @apply mt-8 grid gap-7 bg-ink px-6 py-8 text-white sm:px-8 lg:grid-cols-[1fr_1fr_auto] lg:items-center lg:px-10; }
+    .team-cta h3 { @apply mt-3 text-2xl font-bold tracking-[-.035em] sm:text-3xl; }
+    .team-cta > p { @apply max-w-xl leading-7 text-white/65; }
     .contact-hero { @apply relative min-h-[650px] overflow-hidden bg-ink-deep; }
     .contact-hero-image { @apply absolute inset-0 h-full w-full object-cover object-[64%_center]; }
     .contact-hero-overlay { @apply absolute inset-0 bg-[linear-gradient(90deg,rgba(10,12,15,.95)_0%,rgba(10,12,15,.84)_38%,rgba(10,12,15,.52)_68%,rgba(10,12,15,.24)_100%),linear-gradient(180deg,rgba(10,12,15,.1)_50%,rgba(10,12,15,.58)_100%)]; }

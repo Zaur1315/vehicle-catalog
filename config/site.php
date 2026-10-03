@@ -25,4 +25,22 @@ return [
     'business_hours' => env('SITE_BUSINESS_HOURS', 'Monday–Friday: 9:00 AM – 5:00 PM'),
 
     'logo' => env('SITE_LOGO', ''),
+
+    'team' => [
+        [
+            'name' => 'William',
+            'role' => 'Sales',
+            'image' => '/images/owners/william.webp',
+        ],
+        [
+            'name' => 'Bruce Detroy',
+            'role' => 'Owner',
+            'image' => '/images/owners/bruce-detroy.webp',
+        ],
+        [
+            'name' => 'Martin',
+            'role' => 'Sales',
+            'image' => '/images/owners/martin.webp',
+        ],
+    ],
 ];
